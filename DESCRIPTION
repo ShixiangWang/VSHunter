@@ -1,0 +1,15 @@
+Package: cnPattern
+Title: Decode Pattern of Copy Number
+Version: 0.1.0
+Authors@R: person("Shixiang", "Wang", email = "w_shixiang@163.com", role = c("aut", "cre"), 
+            comment = c(ORCID = "0000-0001-9855-7357"))
+Maintainer: Shixiang Wang <w_shixiang@163.com>
+Description: Identify copy number signature from distribution of copy number feature and 
+    location for enabling the interpretation of complex genomic changes in cancer. 
+Depends: R (>= 2.10)
+Imports: dplyr, ggplot2, QDNAseq, flexmix, NMF
+Suggests: knitr, rmarkdown, prettydoc
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
