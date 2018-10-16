@@ -53,8 +53,8 @@
 #     # Both are not the case. Maybe we are in an R GUI?
 #     return(NULL)
 # }
-#this_path <- locationOfThisScript()
-#source(paste(this_path, "helper_functions.R", sep = "/"))
+# this_path <- locationOfThisScript()
+# source(paste(this_path, "helper_functions.R", sep = "/"))
 
 quantifySignatures <-
     function(sample_by_component,
