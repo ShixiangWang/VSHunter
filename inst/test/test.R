@@ -98,3 +98,47 @@ g[["grobs"]][[4]]$children[[4]]$size[[1]]<-0.5
 g[["grobs"]][[5]]$children[[4]]$size[[1]]<-0.5
 grid::grid.newpage()
 grid::grid.draw(g)
+
+
+
+#------ 处理allelic copy number
+cndir<-"restricted_data/pcawg_copy-number/"
+
+pcawg_segTabs<-list()
+for(i in pcawg_cohort$tumor_wgs_aliquot_id)
+{
+    if(file.exists(paste0(cndir,i,".consensus.20170119.somatic.cna.annotated.txt")))
+    {
+        cn<-read.table(paste0(cndir,i,".consensus.20170119.somatic.cna.annotated.txt"),header=T,
+                       sep="\t",stringsAsFactors = F)
+        cn<-cn[,c("chromosome","start","end","absolute_broad_major_cn","absolute_broad_minor_cn")]
+        cn<-cbind(cn[,1:3],cn[,4]+cn[,5])
+        colnames(cn)<-c("chromosome","start","end","segVal")
+        cn<-cn[!is.na(cn$segVal),]
+
+        #collapse equal value neighbouring segments
+        segTable<-c()
+        for(c in unique(cn$chromosome))
+        {
+            snfilt<-cn[cn$chromosome==c,]
+            sn.rle<-rle(snfilt[,"segVal"])
+            starts <- cumsum(c(1, sn.rle$lengths[-length(sn.rle$lengths)]))
+            ends <- cumsum(sn.rle$lengths)
+            lapply(1:length(sn.rle$lengths), function(s) {
+                from <- snfilt$start[starts[s]]
+                to <- snfilt$end[ends[s]]
+                segValue <- sn.rle$value[s]
+                c(snfilt$chromosome[starts[s]], from, to, segValue)
+            }) -> segtmp
+            segTableRaw <- data.frame(matrix(unlist(segtmp), ncol=4, byrow=T),stringsAsFactors=F)
+            colnames(segTableRaw)<-c("chromosome","start","end","segVal")
+            segTable<-rbind(segTable,segTableRaw)
+        }
+        if(nrow(cn)>0)
+        {
+            pcawg_segTabs[[i]]<-segTable
+        }
+    }
+}
+pcawg_CN_features<-extractCopynumberFeatures(pcawg_segTabs)
+saveRDS(pcawg_CN_features,"data/pcawg_CN_features.rds")
