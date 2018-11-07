@@ -9,7 +9,7 @@ Description: Identify copy number signature from distribution of copy number fea
 Depends: R (>= 2.10)
 Imports: dplyr, ggplot2, QDNAseq, flexmix, NMF
 Suggests: knitr, rmarkdown, prettydoc
-License: MIT + file LICENSE
+License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0
