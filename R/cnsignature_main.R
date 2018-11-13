@@ -56,14 +56,17 @@
 # this_path <- locationOfThisScript()
 # source(paste(this_path, "helper_functions.R", sep = "/"))
 
+# compute exposure for samples
 quantifySignatures <-
     function(sample_by_component,
              component_by_signature = NULL)
     {
         if (is.null(component_by_signature))
         {
+            # component_by_signature <-
+            #     readRDS(paste(this_path, "data/feat_sig_mat.rds", sep = "/"))
             component_by_signature <-
-                readRDS(paste(this_path, "data/feat_sig_mat.rds", sep = "/"))
+                readRDS(system.file("extdata", "feat_sig_mat.rds", package = "cnPattern"))
         }
         signature_by_sample <- YAPSA::LCD(
             t(sample_by_component),
@@ -428,13 +431,14 @@ generateSampleByComponentMatrix <-
     function(CN_features,
              all_components = NULL,
              cores = 1,
-             rowIter = 1000,
-             subcores = 2)
+             rowIter = 1000)
     {
         if (is.null(all_components))
         {
+            # all_components <-
+            #     readRDS(paste(this_path, "data/component_parameters.rds", sep = "/"))
             all_components <-
-                readRDS(paste(this_path, "data/component_parameters.rds", sep = "/"))
+                readRDS(system.file("extdata", "component_parameters.rds", package = "cnPattern"))
         }
 
         if (cores > 1) {
@@ -454,7 +458,7 @@ generateSampleByComponentMatrix <-
                     all_components[[feat]],
                     feat,
                     rowIter = rowIter,
-                    cores = subcores
+                    cores = cores
                 )
             }
         } else {

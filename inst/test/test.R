@@ -19,12 +19,21 @@ for(i in unique(tcga$Sample)){
 
 tcga_CN_features<-extractCopynumberFeatures(tcga_segTabs)
 
-tcga_sample_component_matrix<-generateSampleByComponentMatrix(tcga_CN_features,CN_components)
-NMF::aheatmap(tcga_sample_component_matrix,Rowv=NULL, main="Sample x Component matrix")
+# tcga_sample_component_matrix<-generateSampleByComponentMatrix(tcga_CN_features,CN_components)
+tcga_sample_component_matrix<-generateSampleByComponentMatrix(tcga_CN_features)
+
+NMF::aheatmap(tcga_sample_component_matrix,Rowv=NULL, main="Sample x Component matrix", fontsize = 7)
+pheatmap::pheatmap(tcga_sample_component_matrix,
+                   cluster_rows = F, cluster_cols = F, fontsize_row = 5)
+
 
 tcga_ids<-rownames(tcga_sample_component_matrix)
 
-tcga_sigs<-NMF::nmf(t(tcga_sample_component_matrix),nsig,seed=seed,nrun=1000,method=nmfalg,.opt = "p16")
+nmfalg<-"brunet"
+seed<-77777
+nsig = 7
+
+tcga_sigs<-NMF::nmf(t(tcga_sample_component_matrix),nsig,seed=seed,nrun=1000,method=nmfalg,.opt = "p4")
 coefmap(tcga_sigs,Colv="consensus",tracks=c("consensus:"), main="Sample x Signature matrix")#annCol=annCol,
 basismap(tcga_sigs,Rowv=NA,main="Signature x Component matrix")
 
@@ -131,3 +140,7 @@ for(i in pcawg_cohort$tumor_wgs_aliquot_id)
 }
 pcawg_CN_features<-extractCopynumberFeatures(pcawg_segTabs)
 saveRDS(pcawg_CN_features,"data/pcawg_CN_features.rds")
+
+
+#-------- 自动选择最优化的数目
+# https://github.com/PoisonAlien/maftools/blob/edfd1469e732506d82083a669d01bd76d9987d53/R/extractSignatures.R
