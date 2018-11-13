@@ -180,13 +180,26 @@ getBPnum <- function(abs_profiles, chrlen)
             segTab <- abs_profiles[[i]]
             colnames(segTab)[4] <- "segVal"
         }
+
+        # unify chromosome column
+        segTab$chromosome = as.character(segTab$chromosome)
+        segTab$chromosome = sub(pattern = "chr", replacement = "chr", x = segTab$chromosome, ignore.case = TRUE)
+        if (any(!grepl("chr", segTab$chromosome))) {
+            segTab$chromosome[!grepl("chr", segTab$chromosome)] = paste0("chr", segTab$chromosome[!grepl("chr", segTab$chromosome)])
+        }
+        if (any(grepl("chr23", segTab$chromosome))) {
+            warning("'23' is not a supported chromosome, related rows will be discarded.")
+            segTab = segTab[!grepl("chr23", segTab$chromosome), ]
+        }
+
         chrs <- unique(segTab$chromosome)
+
         allBPnum <- c()
         for (c in chrs)
         {
             currseg <- segTab[segTab$chromosome == c, ]
             intervals <-
-                seq(1, chrlen[chrlen[, 1] == paste0("chr", c), 2] + 10000000, 10000000)
+                seq(1, chrlen[chrlen[, 1] == c, 2] + 10000000, 10000000)
             res <-
                 hist(as.numeric(currseg$end[-nrow(currseg)]),
                      breaks = intervals,
@@ -200,7 +213,7 @@ getBPnum <- function(abs_profiles, chrlen)
     data.frame(out, stringsAsFactors = F)
 }
 
-getOscilation <- function(abs_profiles, chrlen)
+getOscilation <- function(abs_profiles)
 {
     out <- c()
     samps <- getSampNames(abs_profiles)
@@ -214,6 +227,18 @@ getOscilation <- function(abs_profiles, chrlen)
             segTab <- abs_profiles[[i]]
             colnames(segTab)[4] <- "segVal"
         }
+
+        # unify chromosome column
+        segTab$chromosome = as.character(segTab$chromosome)
+        segTab$chromosome = sub(pattern = "chr", replacement = "chr", x = segTab$chromosome, ignore.case = TRUE)
+        if (any(!grepl("chr", segTab$chromosome))) {
+            segTab$chromosome[!grepl("chr", segTab$chromosome)] = paste0("chr", segTab$chromosome[!grepl("chr", segTab$chromosome)])
+        }
+        if (any(grepl("chr23", segTab$chromosome))) {
+            warning("'23' is not a supported chromosome, related rows will be discarded.")
+            segTab = segTab[!grepl("chr23", segTab$chromosome), ]
+        }
+
         chrs <- unique(segTab$chromosome)
         oscCounts <- c()
         for (c in chrs)
@@ -262,6 +287,16 @@ getCentromereDistCounts <- function(abs_profiles, centromeres, chrlen)
             segTab <- abs_profiles[[i]]
             colnames(segTab)[4] <- "segVal"
         }
+        # unify chromosome column
+        segTab$chromosome = as.character(segTab$chromosome)
+        segTab$chromosome = sub(pattern = "chr", replacement = "chr", x = segTab$chromosome, ignore.case = TRUE)
+        if (any(!grepl("chr", segTab$chromosome))) {
+            segTab$chromosome[!grepl("chr", segTab$chromosome)] = paste0("chr", segTab$chromosome[!grepl("chr", segTab$chromosome)])
+        }
+        if (any(grepl("chr23", segTab$chromosome))) {
+            warning("'23' is not a supported chromosome, related rows will be discarded.")
+            segTab = segTab[!grepl("chr23", segTab$chromosome), ]
+        }
         chrs <- unique(segTab$chromosome)
         all_dists <- c()
         for (c in chrs)
@@ -274,11 +309,18 @@ getCentromereDistCounts <- function(abs_profiles, centromeres, chrlen)
                 ends <- as.numeric(segTab[segTab$chromosome == c, 3])
                 segend <- ends[length(ends)]
                 ends <- ends[-length(ends)]
+                # centstart <-
+                #     as.numeric(centromeres[substr(centromeres[, 2], 4, 5) == c, 3])
+                # centend <-
+                #     as.numeric(centromeres[substr(centromeres[, 2], 4, 5) == c, 4])
+                # chrend <- chrlen[substr(chrlen[, 1], 4, 5) == c, 2]
+
                 centstart <-
-                    as.numeric(centromeres[substr(centromeres[, 2], 4, 5) == c, 3])
+                    as.numeric(centromeres[centromeres$chrom == c, 2])
                 centend <-
-                    as.numeric(centromeres[substr(centromeres[, 2], 4, 5) == c, 4])
-                chrend <- chrlen[substr(chrlen[, 1], 4, 5) == c, 2]
+                    as.numeric(centromeres[centromeres$chrom == c, 3])
+                chrend <- chrlen[chrlen$chrom == c, 2]
+
                 ndist <-
                     cbind(rep(NA, length(starts)), rep(NA, length(starts)))
                 ndist[starts <= centstart, 1] <-

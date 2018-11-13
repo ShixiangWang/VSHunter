@@ -142,25 +142,37 @@ chooseNumberSignatures <-
 
     }
 
-extractCopynumberFeatures <- function(CN_data, cores = 1)
-{
-    #get chromosome lengths
-    chrlen <-
-        read.table(
-            paste(this_path, "data/hg19.chrom.sizes.txt", sep = "/"),
-            sep = "\t",
-            stringsAsFactors = F
-        )[1:24, ]
+extractCopynumberFeatures <- function(CN_data, cores = 1, genome_build = c("hg19", "hg38")){
 
-    #get centromere locations
-    gaps <-
-        read.table(
-            paste(this_path, "data/gap_hg19.txt", sep = "/"),
-            sep = "\t",
-            header = F,
-            stringsAsFactors = F
-        )
-    centromeres <- gaps[gaps[, 8] == "centromere", ]
+    genome_build = match.arg(genome_build)
+    # get chromosome lengths and centromere locations
+    if (genome_build == "hg19") {
+        data("chromsize.hg19", package = "cnPattern")
+        data("centromeres.hg19", package = "cnPattern")
+        chrlen = chromsize.hg19
+        centromeres = centromeres.hg19
+    } else {
+        data("chromsize.hg38", package = "cnPattern")
+        data("centromeres.hg38", package = "cnPattern")
+        chrlen = chromsize.hg38
+        centromeres = centromeres.hg38
+    }
+
+    # chrlen <-
+    #     read.table(
+    #         paste(this_path, "data/hg19.chrom.sizes.txt", sep = "/"),
+    #         sep = "\t",
+    #         stringsAsFactors = F
+    #     )[1:24, ]
+    #
+    # gaps <-
+    #     read.table(
+    #         paste(this_path, "data/gap_hg19.txt", sep = "/"),
+    #         sep = "\t",
+    #         header = F,
+    #         stringsAsFactors = F
+    #     )
+    # centromeres <- gaps[gaps[, 8] == "centromere", ]
 
     if (cores > 1) {
         require(foreach)
@@ -186,7 +198,7 @@ extractCopynumberFeatures <- function(CN_data, cores = 1)
     } else {
         segsize <- getSegsize(CN_data)
         bp10MB <- getBPnum(CN_data, chrlen)
-        osCN <- getOscilation(CN_data, chrlen)
+        osCN <- getOscilation(CN_data)
         bpchrarm <-
             getCentromereDistCounts(CN_data, centromeres, chrlen)
         changepoint <- getChangepointCN(CN_data)

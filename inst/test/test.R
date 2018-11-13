@@ -1,24 +1,15 @@
 #run this code if processing from raw copy-number data
 #download copy-number segment table from https://www.synapse.org/#!Synapse:syn1710464 into data/ directory
-tcga<-read.table("data/pancan12_absolute.segtab.txt",sep="\t",header=T,stringsAsFactors = F)
+data("pancan12_absolute")
+data("pancan12_info")
 
-tcga_clin<-read.table("data/tcga_sample_info.tsv",stringsAsFactors = F,header=T,sep="\t")
-tcga<-tcga[tcga$Sample%in%tcga_clin$bcr_aliquot_barcode,]
-
-pcawg_clin<-read.table("data/pcawg_sample_info.tsv",sep="\t",header=T,stringsAsFactors = F)
-
-#filter cases that appear in pcawg
-tcga<-tcga[!substr(tcga$Sample,1,12)%in%pcawg_clin$submitted_donor_id,]
-
-#download sample info file from https://www.synapse.org/#!Synapse:syn1710466 in data/ directory
-tcga_info<-read.table("data/pancan12.sample_info.txt",sep="\t",header=T,stringsAsFactors = F)
-rownames(tcga_info)<-tcga_info$tcga_id
-tcga_info<-tcga_info[tcga_info$abs_call=="called",]
-tcga_info<-tcga_info[tcga_info$tcga_id%in%tcga$Sample,]
+tcga_info <- pancan12_info[pancan12_info$abs_call=="called",]
+set.seed(111)
+slt = sample(1:nrow(tcga_info), 50)
+tcga = pancan12_absolute[pancan12_absolute$Sample %in% tcga_info$tcga_id[slt], ]
 
 tcga_segTabs<-list()
-for(i in unique(tcga$Sample))
-{
+for(i in unique(tcga$Sample)){
     tab<-tcga[tcga$Sample==i,c("Chromosome","Start","End","Expected_HSCN_a1","Expected_HSCN_a2")]
     tab$segVal<-tab$Expected_HSCN_a1+tab$Expected_HSCN_a2
     tab<-tab[,c(-4,-5)]
@@ -28,8 +19,6 @@ for(i in unique(tcga$Sample))
 
 tcga_CN_features<-extractCopynumberFeatures(tcga_segTabs)
 
-
-tcga_CN_features<-readRDS("data/tcga_CN_features.rds")
 tcga_sample_component_matrix<-generateSampleByComponentMatrix(tcga_CN_features,CN_components)
 NMF::aheatmap(tcga_sample_component_matrix,Rowv=NULL, main="Sample x Component matrix")
 
