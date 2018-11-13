@@ -1,0 +1,40 @@
+---
+title: "Test"
+author: "Shixiang Wang"
+date: "2018/11/13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+devtools::load_all()
+library(flexmix)
+library(QDNAseq)
+library(NMF)
+```
+
+
+Load example data:
+
+```{r}
+load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+```
+
+`tcga_segTabs` is a list contain absolute copy number profile for multiple samples, each sample is a `data.frame` in the list.
+
+Derive feature distributions.
+
+```{r}
+tcga_features = derive_features(CN_data = tcga_segTabs, cores = 4, genome_build = "hg19")
+```
+
+Fit model components.
+
+```{r}
+tcga_components = fit_mixModels(CN_features = tcga_features, cores = 4)
+```
+

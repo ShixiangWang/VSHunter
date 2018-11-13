@@ -30,7 +30,7 @@ derive_features = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"))
             } else if (i == 2) {
                 list(bp10MB = getBPnum(CN_data, chrlen))
             } else if (i == 3) {
-                list(osCN = getOscilation(CN_data, chrlen))
+                list(osCN = getOscilation(CN_data))
             } else if (i == 4) {
                 list(bpchrarm = getCentromereDistCounts(CN_data, centromeres, chrlen))
             } else if (i == 5) {
