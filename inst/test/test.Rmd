@@ -35,6 +35,80 @@ tcga_features = derive_features(CN_data = tcga_segTabs, cores = 4, genome_build 
 Fit model components.
 
 ```{r}
-tcga_components = fit_mixModels(CN_features = tcga_features, cores = 4)
+tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+```
+
+
+
+Test errors.
+
+```{r}
+seed = 77777
+min_prior = 0.001
+model_selection = "BIC"
+nrep = 1
+niter = 1000
+CN_features = tcga_features
+
+dat <- as.numeric(CN_features[["changepoint"]][, 2])
+changepoint_mm <-
+    fitComponent(
+        dat,
+        seed = seed,
+        model_selection = model_selection,
+        min_prior = min_prior,
+        niter = niter,
+        nrep = nrep,
+        min_comp = 2,
+        max_comp = 7
+    )
+
+dat <- as.numeric(CN_features[["copynumber"]][, 2])
+copynumber_mm <-
+    fitComponent(
+        dat,
+        seed = seed,
+        model_selection = model_selection,
+        nrep = nrep,
+        min_comp = min_comp,
+        max_comp = max_comp,
+        min_prior = 0.005,
+        niter = 2000
+    )
+
+```
+
+
+Test same problem from paper.
+
+```{r}
+load("../extdata/example_cn_QDNASeq.RData")
+```
+
+```{r}
+CN_feature2 = derive_features(hq_CN)
+```
+
+
+```{r}
+seed = 77777
+min_prior = 0.001
+model_selection = "BIC"
+nrep = 1
+niter = 1000
+
+
+dat2 <- as.numeric(CN_feature2[["changepoint"]][, 2])
+changepoint_mm <-
+    fitComponent(
+        dat2,
+        seed = seed,
+        model_selection = model_selection,
+        min_prior = min_prior,
+        niter = niter,
+        nrep = nrep,
+        min_comp = 7,
+        max_comp = 10
+    )
 ```
 

@@ -61,7 +61,10 @@ fitComponent <-
                         nrep = nrep,
                         control = control
                     )
-                fit <- flexmix::getModel(fit, which = model_selection)
+
+                if (inherits(fit, "stepFlexmix")) {
+                    fit <- flexmix::getModel(fit, which = model_selection)
+                }
             }
 
         } else if (dist == "pois")
@@ -84,7 +87,9 @@ fitComponent <-
                         nrep = nrep,
                         control = control
                     )
-                fit <- flexmix::getModel(fit, which = model_selection)
+                if (inherits(fit, "stepFlexmix")) {
+                    fit <- flexmix::getModel(fit, which = model_selection)
+                }
             }
         }
         fit
