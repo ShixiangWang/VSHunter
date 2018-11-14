@@ -7,7 +7,7 @@ Maintainer: Shixiang Wang <w_shixiang@163.com>
 Description: Identify copy number signature from distribution of copy number feature and 
     location for enabling the interpretation of complex genomic changes in cancer. 
 Depends: R (>= 3.3)
-Imports: ggplot2, QDNAseq, flexmix, NMF, data.table
+Imports: ggplot2, QDNAseq, flexmix, NMF, data.table,doMC
 Suggests: knitr, rmarkdown, prettydoc, pheatmap
 License: MIT
 Encoding: UTF-8

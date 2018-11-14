@@ -48,6 +48,6 @@ tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components
 Choose optimal number of signatures.
 
 ```{r}
-choose_nSignatures(tcga_sample_component_matrix, iter = 5, cores = 4)
+tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 5, cores = 4)
 ```
 
