@@ -1,9 +1,11 @@
 
+#------------------------------------------------------------------
 # read copy number as a list of data.frame from data.frame or files
 read_copynumbers = function(input){
 
 }
 
+#-------------------------------------------
 # derive copy number feature distributions
 derive_features = function(CN_data, cores = 1, genome_build = c("hg19", "hg38")) {
     genome_build = match.arg(genome_build)
@@ -63,7 +65,7 @@ derive_features = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"))
 }
 
 
-
+#------------------------------------------------
 # fit optimal number of mixture model components
 fit_mixModels = function(CN_features,
                          seed = 77777,
@@ -271,7 +273,7 @@ fit_mixModels = function(CN_features,
                 )
             }
 }
-
+#------------------------------------
 # generate sample by component matrix
 generate_sbcMatrix = function(CN_features,
              all_components = NULL,
@@ -323,22 +325,27 @@ generate_sbcMatrix = function(CN_features,
     }
 
 
+#------------------------------------
 # choose optimal number of signatures
+
+# The most
+# common approach is to choose the smallest rank for which cophenetic correlation coefficient
+# starts decreasing. Another approach is to choose the rank for which the plot of the residual
+# sum of squares (RSS) between the input matrix and its estimate shows an inflection point.
 choose_nSignatures <-
     function(sample_by_component,
-             outfile = "numSigs.pdf",
-             min_sig = 3,
-             max_sig = 12,
+             nTry = 12,
              iter = 100,
              cores = 1)
     {
+        message('Estimating best rank..')
         nmfalg <- "brunet"
         seed <- 77777
 
         estim.r <-
             NMF::nmfEstimateRank(
                 t(sample_by_component),
-                min_sig:max_sig,
+                seq(2,nTry),
                 seed = seed,
                 nrun = iter,
                 verbose = FALSE,
@@ -346,11 +353,32 @@ choose_nSignatures <-
                 .opt = list(shared.memory = FALSE, paste0("p", cores))
             )
 
+        #--- copy from maftools and modified ---#
+        nmf.sum = summary(estim.r) # Get summary of estimates
+        # data.table::setDT(nmf.sum)
+        print(nmf.sum)
+        nmf.sum$diff = c(0, diff(nmf.sum$cophenetic))
+        bestFit = nmf.sum$rank[which(nmf.sum$diff < 0)][1]
+        #bestFit = nmf.sum[diff < 0, rank][1] #First point where cophenetic correlation coefficient starts decreasing
+
+        plot(nmf.sum$rank, nmf.sum$cophenetic, axes = FALSE, pch = 16, col = "#D8B365", cex = 1.2, xlab = NA, ylab = NA)
+        axis(side = 1, at = nmf.sum$rank, labels = nmf.sum$rank, lwd = 3, font = 2, cex.axis = 1.2)
+        lines(x = nmf.sum$rank, y = round(nmf.sum$cophenetic, digits = 4), lwd = 3)
+        points(nmf.sum$rank, nmf.sum$cophenetic, pch = 16, col = "#D8B365", cex = 1.6)
+        axis(side = 2, at = round(nmf.sum$cophenetic, digits = 4), lwd = 3, font = 2, las = 2, cex = 1.4, cex.axis = 1.2)
+        segments(x0 = bestFit, y0 = 0, x1 = bestFit, y1 = nmf.sum[rank == bestFit, cophenetic], lwd= 3, lty = 2, col = "maroon")
+        title(main = "cophenetic metric", adj = 0, font.main = 4)
+
+
+        #bestFit = nmf.sum[which(nmf.sum$cophenetic == max(nmf.sum$)),'rank'] #Get the best rank based on highest cophenetic correlation coefficient
+        message(paste('Using ',bestFit, ' as a best-fit rank based on decreasing cophenetic correlation coefficient.', sep=''))
+        n = as.numeric(bestFit)
+
         V.random <- NMF::randomize(t(sample_by_component))
         estim.r.random <-
             NMF::nmfEstimateRank(
                 V.random,
-                min_sig:max_sig,
+                seq(2,nTry),
                 seed = seed,
                 nrun = iter,
                 verbose = FALSE,
@@ -364,18 +392,13 @@ choose_nSignatures <-
             what = c("cophenetic", "dispersion", "sparseness", "silhouette"),
             xname = "Observed",
             yname = "Randomised",
-            main = ""
+            main = "NMF Rank Survey"
         )
-        pdf(file = outfile,
-            width = 10,
-            height = 10)
-        p
-        dev.off()
-
         return(p)
 
     }
 
+#--------------------------
 # extract signatures
 extract_Signatures <-
     function(sample_by_component,
