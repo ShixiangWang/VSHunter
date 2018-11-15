@@ -48,6 +48,27 @@ tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components
 Choose optimal number of signatures.
 
 ```{r}
-tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 5, cores = 4)
+tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 1, cores = 4)
 ```
 
+Extract signatures.
+
+```{r}
+tcga_signatures = extract_Signatures(tcga_sample_component_matrix, nsig = 3, cores = 4)
+```
+
+Quantify exposure for samples.
+
+```{r}
+w = NMF::basis(tcga_signatures)
+#h = NMF::coef(tcga_signatures)
+tcga_exposure = quantify_Signatures(sample_by_component = tcga_sample_component_matrix, component_by_signature = w)
+```
+
+Function `autoCapture_Signatures()` finish three steps (choose best number of signatures, extract signatures and quantify exposure) above in an  antomated way. The arguments of this function are same as `choose_nSignatures()`.
+
+```{r}
+tcga_results = autoCapture_Signatures(tcga_sample_component_matrix, nrun=10, cores = 4)
+```
+
+The result object is a `list` which contains all results need fro downstream analysis, include NMF result related to best rank value, signature matrix, absolute and relative exposure (contribution) and best rank survey etc..

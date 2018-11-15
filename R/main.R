@@ -1,3 +1,26 @@
+# License Part ------------------------------------------------------------
+
+# MIT License
+#
+# Copyright (c) [2018] [Geoffrey Macintyre, Shixiang Wang]
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+#     The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 #------------------------------------------------------------------
 # read copy number as a list of data.frame from data.frame or files
@@ -335,8 +358,8 @@ generate_sbcMatrix = function(CN_features,
 choose_nSignatures <-
     function(sample_by_component,
              nTry = 12,
-             nrun = 100,
-             cores = 1, seed = 77777)
+             nrun = 50,
+             cores = 1, seed = 77777, plot = TRUE)
     {
         message('Estimating best rank..')
         nmfalg <- "brunet"
@@ -347,14 +370,14 @@ choose_nSignatures <-
                 seq(2,nTry),
                 seed = seed,
                 nrun = nrun,
-                verbose = FALSE,
+                verbose = TRUE,
                 method = nmfalg,
                 .opt = list(shared.memory = FALSE, paste0("p", cores))
             )
 
+
         #--- copy from maftools and modified ---#
         nmf.sum = summary(estim.r) # Get summary of estimates
-        # data.table::setDT(nmf.sum)
         print(nmf.sum)
         nmf.sum$diff = c(0, diff(nmf.sum$cophenetic))
         bestFit = nmf.sum$rank[which(nmf.sum$diff < 0)][1]
@@ -365,7 +388,7 @@ choose_nSignatures <-
         message(paste('Using ', bestFit, ' as a best-fit rank based on decreasing cophenetic correlation coefficient.', sep=''))
         n = as.numeric(bestFit)
 
-        message("Generating random matrix and survey plot...")
+        message("Generating random matrix and run NMF...")
         V.random <- NMF::randomize(t(sample_by_component))
         estim.r.random <-
             NMF::nmfEstimateRank(
@@ -373,23 +396,39 @@ choose_nSignatures <-
                 seq(2,nTry),
                 seed = seed,
                 nrun = nrun,
-                verbose = FALSE,
+                verbose = TRUE,
                 method = nmfalg,
                 .opt = list(shared.memory = FALSE, paste0("p", cores))
             )
 
-        p <- NMF::plot(
-            estim.r,
-            estim.r.random,
-            what = c("cophenetic", "dispersion", "sparseness", "silhouette", "residuals", "rss"),
-            xname = "Observed",
-            yname = "Randomised",
-            main = "NMF Rank Survey"
-        )
+        if(plot){
 
-        print(p)
+            # message('Creating nmf consensusmap plot...')
+            # pdf('nmf_consensus.pdf', bg = 'white', pointsize = 9, width = 12, height = 12, paper = "special")
+            # NMF::consensusmap(estim.r)
+            # dev.off()
 
-        return(list(targetNMF=estim.r, randomNMF=estim.r.random, bestRank = n, survey = nmf.sum, plot = p, seed = seed))
+
+            message('Creating nmf rank survey plot...')
+            p <- NMF::plot(
+                estim.r,
+                estim.r.random,
+                what = c("cophenetic", "dispersion", "sparseness", "silhouette", "residuals", "rss"),
+                xname = "Observed",
+                yname = "Randomised",
+                main = "NMF Rank Survey"
+            )
+
+            print(p)
+
+            pdf('nmf_rank_survey.pdf', bg = 'white', pointsize = 9, width = 8, height = 6, paper = "special")
+            print(p)
+            dev.off()
+
+
+        }
+
+        return(list(nmfEstimate=estim.r,  bestRank = n, survey = nmf.sum, survey_plot = p, seed = seed))
 }
 
 #--------------------------
@@ -401,24 +440,27 @@ extract_Signatures <-
              nmfalg = "brunet",
              cores = 1)
     {
+        message("Running NMF based on specified rank...")
         NMF::nmf(
             t(sample_by_component),
             nsig,
             seed = seed,
             nrun = 1000,
             method = nmfalg,
-            .opt = paste0("p", cores)
+            .opt = paste0("vp", cores)
         )
     }
 
-
-# quantify exposure for samples
+#---------------------------------------------------------------------------
+# quantify exposure for samples using Linear Combination Decomposition (LCD)
 quantify_Signatures <-
     function(sample_by_component,
              component_by_signature = NULL)
     {
+        message("Quantifying exposure of signatures by LCD analysis...")
         if (is.null(component_by_signature))
         {
+            message("Using reference component_by_signature data from Nat.Gen paper.")
             component_by_signature <-
                 readRDS(system.file("extdata", "feat_sig_mat.rds", package = "cnPattern"))
         }
@@ -426,6 +468,28 @@ quantify_Signatures <-
             t(sample_by_component),
             YAPSA:::normalize_df_per_dim(component_by_signature, 2)
         )
-        signature_by_sample <- normaliseMatrix(signature_by_sample)
-        signature_by_sample
+        absolute_exposure = signature_by_sample
+        relative_exposure = normaliseMatrix(signature_by_sample)
+        invisible(list(absolute_exposure = absolute_exposure,
+                       relative_exposure = relative_exposure))
     }
+
+#-------------------------------------------------------------------------------------
+# capture signature and coresponding exposure
+# this is a wrapper function of choose_nSignatures, extract_* and quantify_Signatures
+autoCapture_Signatures = function(
+    sample_by_component,
+    nTry = 12,
+    nrun = 50,
+    cores = 1, seed = 77777, plot = TRUE
+){
+    choose_res = choose_nSignatures(sample_by_component, nTry, nrun, cores, seed, plot = plot)
+    NMF_res = extract_Signatures(sample_by_component, nsig = choose_res$bestRank, cores = cores)
+    w = NMF::basis(NMF_res)
+    #h = NMF::coef(NMF_res)
+    exposure = quantify_Signatures(sample_by_component = tcga_sample_component_matrix, component_by_signature = w)
+    message("Done.")
+    invisible(list(NMF = NMF_res, signature = w, exposure = exposure,
+                   bestRank = choose_res$n, survey = choose_res$survey,
+                   survey_plot = choose_res$survey_plot, seed = choose_res$seed))
+}
