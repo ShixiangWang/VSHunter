@@ -39,12 +39,14 @@ Apply mixture modelling to breakdown each feature distribution into mixtures
 of Gaussian or mixtures of Poison distributions using the \code{flexmix} package.
 }
 \examples{
+\dontrun{
 ## load example copy-number data from tcga
 load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 ## generate copy-number features
 tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 ## fit mixture model  (this will take some time)
 tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+}
 }
 \author{
 Geoffrey Macintyre, Shixiang Wang

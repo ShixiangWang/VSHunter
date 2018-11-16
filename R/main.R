@@ -24,7 +24,7 @@
 
 #------------------------------------------------------------------
 # read copy number as a list of data.frame from data.frame or files
-read_copynumbers = function(input){
+read_copynumbers = function(input) {
 
 }
 
@@ -42,32 +42,44 @@ read_copynumbers = function(input){
 #' @param genome_build genome build version, must be one of 'hg19' or 'hg38'.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a \code{list} contains six copy number feature distributions.
-#' @import foreach doMC QDNAseq
+#' @import foreach doMC QDNAseq Biobase
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
-#'
-derive_features = function(CN_data, cores = 1, genome_build = c("hg19", "hg38")) {
+#'}
+derive_features = function(CN_data,
+                           cores = 1,
+                           genome_build = c("hg19", "hg38")) {
     genome_build = match.arg(genome_build)
     # get chromosome lengths and centromere locations
     if (genome_build == "hg19") {
-        data("chromsize.hg19", package = "cnPattern", envir = environment())
-        data("centromeres.hg19", package = "cnPattern", envir = environment())
+        data("chromsize.hg19",
+             package = "cnPattern",
+             envir = environment())
+        data("centromeres.hg19",
+             package = "cnPattern",
+             envir = environment())
         chrlen = chromsize.hg19
         centromeres = centromeres.hg19
     } else {
-        data("chromsize.hg38", package = "cnPattern", envir = environment())
-        data("centromeres.hg38", package = "cnPattern", envir = environment())
+        data("chromsize.hg38",
+             package = "cnPattern",
+             envir = environment())
+        data("centromeres.hg38",
+             package = "cnPattern",
+             envir = environment())
         chrlen = chromsize.hg38
         centromeres = centromeres.hg38
     }
 
     if (cores > 1) {
-        require(foreach)
+        #require(foreach)
+        requireNamespace("foreach", quietly = TRUE)
         doMC::registerDoMC(cores)
 
         temp_list = foreach::foreach(i = 1:6) %dopar% {
@@ -133,12 +145,14 @@ derive_features = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"))
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
 #' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+#' }
 fit_mixModels = function(CN_features,
                          seed = 77777,
                          min_comp = 2,
@@ -149,114 +163,16 @@ fit_mixModels = function(CN_features,
                          niter = 1000,
                          cores = 1,
                          featsToFit = seq(1, 6)) {
+    if (cores > 1) {
+        #require(foreach)
+        requireNamespace("foreach", quietly = TRUE)
+        doMC::registerDoMC(cores)
 
-            if (cores > 1) {
-                require(foreach)
-
-                doMC::registerDoMC(cores)
-
-                temp_list = foreach(i = 1:6) %dopar% {
-                    if (i == 1 & i %in% featsToFit) {
-                        dat <- as.numeric(CN_features[["segsize"]][, 2])
-                        list(
-                            segsize = fitComponent(
-                                dat,
-                                seed = seed,
-                                model_selection = model_selection,
-                                min_prior = min_prior,
-                                niter = niter,
-                                nrep = nrep,
-                                min_comp = min_comp,
-                                max_comp = max_comp
-                            )
-                        )
-
-                    } else if (i == 2 & i %in% featsToFit) {
-                        dat <- as.numeric(CN_features[["bp10MB"]][, 2])
-                        list(
-                            bp10MB = fitComponent(
-                                dat,
-                                dist = "pois",
-                                seed = seed,
-                                model_selection = model_selection,
-                                min_prior = min_prior,
-                                niter = niter,
-                                nrep = nrep,
-                                min_comp = min_comp,
-                                max_comp = max_comp
-                            )
-                        )
-
-                    } else if (i == 3 & i %in% featsToFit) {
-                        dat <- as.numeric(CN_features[["osCN"]][, 2])
-                        list(
-                            osCN = fitComponent(
-                                dat,
-                                dist = "pois",
-                                seed = seed,
-                                model_selection = model_selection,
-                                min_prior = min_prior,
-                                niter = niter,
-                                nrep = nrep,
-                                min_comp = min_comp,
-                                max_comp = max_comp
-                            )
-                        )
-
-                    } else if (i == 4 & i %in% featsToFit) {
-                        dat <- as.numeric(CN_features[["bpchrarm"]][, 2])
-                        list(
-                            bpchrarm = fitComponent(
-                                dat,
-                                dist = "pois",
-                                seed = seed,
-                                model_selection = model_selection,
-                                min_prior = min_prior,
-                                niter = niter,
-                                nrep = nrep,
-                                min_comp = min_comp,
-                                max_comp = max_comp
-                            )
-                        )
-
-                    } else if (i == 5 & i %in% featsToFit) {
-                        dat <- as.numeric(CN_features[["changepoint"]][, 2])
-                        list(
-                            changepoint = fitComponent(
-                                dat,
-                                seed = seed,
-                                model_selection = model_selection,
-                                min_prior = min_prior,
-                                niter = niter,
-                                nrep = nrep,
-                                min_comp = min_comp,
-                                max_comp = max_comp
-                            )
-                        )
-
-                    } else if (i == 6 & i %in% featsToFit) {
-                        dat <- as.numeric(CN_features[["copynumber"]][, 2])
-                        list(
-                            copynumber = fitComponent(
-                                dat,
-                                seed = seed,
-                                model_selection = model_selection,
-                                nrep = nrep,
-                                min_comp = min_comp,
-                                max_comp = max_comp,
-                                min_prior = 0.005,
-                                niter = 2000
-                            )
-                        )
-
-                    }
-
-                }
-                unlist(temp_list, recursive = FALSE)
-            } else {
+        temp_list = foreach(i = 1:6) %dopar% {
+            if (i == 1 & i %in% featsToFit) {
                 dat <- as.numeric(CN_features[["segsize"]][, 2])
-                segsize_mm <-
-                    fitComponent(
+                list(
+                    segsize = fitComponent(
                         dat,
                         seed = seed,
                         model_selection = model_selection,
@@ -266,10 +182,12 @@ fit_mixModels = function(CN_features,
                         min_comp = min_comp,
                         max_comp = max_comp
                     )
+                )
 
+            } else if (i == 2 & i %in% featsToFit) {
                 dat <- as.numeric(CN_features[["bp10MB"]][, 2])
-                bp10MB_mm <-
-                    fitComponent(
+                list(
+                    bp10MB = fitComponent(
                         dat,
                         dist = "pois",
                         seed = seed,
@@ -280,10 +198,12 @@ fit_mixModels = function(CN_features,
                         min_comp = min_comp,
                         max_comp = max_comp
                     )
+                )
 
+            } else if (i == 3 & i %in% featsToFit) {
                 dat <- as.numeric(CN_features[["osCN"]][, 2])
-                osCN_mm <-
-                    fitComponent(
+                list(
+                    osCN = fitComponent(
                         dat,
                         dist = "pois",
                         seed = seed,
@@ -294,10 +214,12 @@ fit_mixModels = function(CN_features,
                         min_comp = min_comp,
                         max_comp = max_comp
                     )
+                )
 
+            } else if (i == 4 & i %in% featsToFit) {
                 dat <- as.numeric(CN_features[["bpchrarm"]][, 2])
-                bpchrarm_mm <-
-                    fitComponent(
+                list(
+                    bpchrarm = fitComponent(
                         dat,
                         dist = "pois",
                         seed = seed,
@@ -308,10 +230,12 @@ fit_mixModels = function(CN_features,
                         min_comp = min_comp,
                         max_comp = max_comp
                     )
+                )
 
+            } else if (i == 5 & i %in% featsToFit) {
                 dat <- as.numeric(CN_features[["changepoint"]][, 2])
-                changepoint_mm <-
-                    fitComponent(
+                list(
+                    changepoint = fitComponent(
                         dat,
                         seed = seed,
                         model_selection = model_selection,
@@ -321,10 +245,12 @@ fit_mixModels = function(CN_features,
                         min_comp = min_comp,
                         max_comp = max_comp
                     )
+                )
 
+            } else if (i == 6 & i %in% featsToFit) {
                 dat <- as.numeric(CN_features[["copynumber"]][, 2])
-                copynumber_mm <-
-                    fitComponent(
+                list(
+                    copynumber = fitComponent(
                         dat,
                         seed = seed,
                         model_selection = model_selection,
@@ -334,16 +260,103 @@ fit_mixModels = function(CN_features,
                         min_prior = 0.005,
                         niter = 2000
                     )
-
-                list(
-                    segsize = segsize_mm,
-                    bp10MB = bp10MB_mm,
-                    osCN = osCN_mm,
-                    bpchrarm = bpchrarm_mm,
-                    changepoint = changepoint_mm,
-                    copynumber = copynumber_mm
                 )
+
             }
+
+        }
+        unlist(temp_list, recursive = FALSE)
+    } else {
+        dat <- as.numeric(CN_features[["segsize"]][, 2])
+        segsize_mm <-
+            fitComponent(
+                dat,
+                seed = seed,
+                model_selection = model_selection,
+                min_prior = min_prior,
+                niter = niter,
+                nrep = nrep,
+                min_comp = min_comp,
+                max_comp = max_comp
+            )
+
+        dat <- as.numeric(CN_features[["bp10MB"]][, 2])
+        bp10MB_mm <-
+            fitComponent(
+                dat,
+                dist = "pois",
+                seed = seed,
+                model_selection = model_selection,
+                min_prior = min_prior,
+                niter = niter,
+                nrep = nrep,
+                min_comp = min_comp,
+                max_comp = max_comp
+            )
+
+        dat <- as.numeric(CN_features[["osCN"]][, 2])
+        osCN_mm <-
+            fitComponent(
+                dat,
+                dist = "pois",
+                seed = seed,
+                model_selection = model_selection,
+                min_prior = min_prior,
+                niter = niter,
+                nrep = nrep,
+                min_comp = min_comp,
+                max_comp = max_comp
+            )
+
+        dat <- as.numeric(CN_features[["bpchrarm"]][, 2])
+        bpchrarm_mm <-
+            fitComponent(
+                dat,
+                dist = "pois",
+                seed = seed,
+                model_selection = model_selection,
+                min_prior = min_prior,
+                niter = niter,
+                nrep = nrep,
+                min_comp = min_comp,
+                max_comp = max_comp
+            )
+
+        dat <- as.numeric(CN_features[["changepoint"]][, 2])
+        changepoint_mm <-
+            fitComponent(
+                dat,
+                seed = seed,
+                model_selection = model_selection,
+                min_prior = min_prior,
+                niter = niter,
+                nrep = nrep,
+                min_comp = min_comp,
+                max_comp = max_comp
+            )
+
+        dat <- as.numeric(CN_features[["copynumber"]][, 2])
+        copynumber_mm <-
+            fitComponent(
+                dat,
+                seed = seed,
+                model_selection = model_selection,
+                nrep = nrep,
+                min_comp = min_comp,
+                max_comp = max_comp,
+                min_prior = 0.005,
+                niter = 2000
+            )
+
+        list(
+            segsize = segsize_mm,
+            bp10MB = bp10MB_mm,
+            osCN = osCN_mm,
+            bpchrarm = bpchrarm_mm,
+            changepoint = changepoint_mm,
+            copynumber = copynumber_mm
+        )
+    }
 }
 #------------------------------------
 #' @title Generate a sample-by-component matrix
@@ -362,6 +375,7 @@ fit_mixModels = function(CN_features,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 #' ## generate copy-number features
@@ -370,54 +384,55 @@ fit_mixModels = function(CN_features,
 #' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
 #' ## generate a sample-by-component matrix
 #' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
+#' }
 generate_sbcMatrix = function(CN_features,
-             all_components = NULL,
-             cores = 1,
-             rowIter = 1000)
+                              all_components = NULL,
+                              cores = 1,
+                              rowIter = 1000)
+{
+    if (is.null(all_components))
     {
-        if (is.null(all_components))
-        {
-            # all_components <-
-            #     readRDS(paste(this_path, "data/component_parameters.rds", sep = "/"))
-            all_components <-
-                readRDS(system.file("extdata", "component_parameters.rds", package = "cnPattern"))
-        }
+        # all_components <-
+        #     readRDS(paste(this_path, "data/component_parameters.rds", sep = "/"))
+        all_components <-
+            readRDS(system.file("extdata", "component_parameters.rds", package = "cnPattern"))
+    }
 
-        if (cores > 1) {
-            require(foreach)
+    if (cores > 1) {
+        #require(foreach)
+        requireNamespace("foreach", quietly = TRUE)
+        feats = c("segsize",
+                  "bp10MB",
+                  "osCN",
+                  "changepoint",
+                  "copynumber",
+                  "bpchrarm")
+        doMC::registerDoMC(cores)
 
-            feats = c("segsize",
-                      "bp10MB",
-                      "osCN",
-                      "changepoint",
-                      "copynumber",
-                      "bpchrarm")
-            doMC::registerDoMC(cores)
-
-            full_mat = foreach(feat = feats, .combine = cbind) %dopar% {
-                calculateSumOfPosteriors(
-                    CN_features[[feat]],
-                    all_components[[feat]],
-                    feat,
-                    rowIter = rowIter,
-                    cores = cores
-                )
-            }
-        } else {
-            full_mat <- cbind(
-                calculateSumOfPosteriors(CN_features[["segsize"]], all_components[["segsize"]], "segsize"),
-                calculateSumOfPosteriors(CN_features[["bp10MB"]], all_components[["bp10MB"]], "bp10MB"),
-                calculateSumOfPosteriors(CN_features[["osCN"]], all_components[["osCN"]], "osCN"),
-                calculateSumOfPosteriors(CN_features[["changepoint"]], all_components[["changepoint"]], "changepoint"),
-                calculateSumOfPosteriors(CN_features[["copynumber"]], all_components[["copynumber"]], "copynumber"),
-                calculateSumOfPosteriors(CN_features[["bpchrarm"]], all_components[["bpchrarm"]], "bpchrarm")
+        full_mat = foreach(feat = feats, .combine = cbind) %dopar% {
+            calculateSumOfPosteriors(
+                CN_features[[feat]],
+                all_components[[feat]],
+                feat,
+                rowIter = rowIter,
+                cores = cores
             )
         }
-
-        rownames(full_mat) <- unique(CN_features[["segsize"]][, 1])
-        full_mat[is.na(full_mat)] <- 0
-        full_mat
+    } else {
+        full_mat <- cbind(
+            calculateSumOfPosteriors(CN_features[["segsize"]], all_components[["segsize"]], "segsize"),
+            calculateSumOfPosteriors(CN_features[["bp10MB"]], all_components[["bp10MB"]], "bp10MB"),
+            calculateSumOfPosteriors(CN_features[["osCN"]], all_components[["osCN"]], "osCN"),
+            calculateSumOfPosteriors(CN_features[["changepoint"]], all_components[["changepoint"]], "changepoint"),
+            calculateSumOfPosteriors(CN_features[["copynumber"]], all_components[["copynumber"]], "copynumber"),
+            calculateSumOfPosteriors(CN_features[["bpchrarm"]], all_components[["bpchrarm"]], "bpchrarm")
+        )
     }
+
+    rownames(full_mat) <- unique(CN_features[["segsize"]][, 1])
+    full_mat[is.na(full_mat)] <- 0
+    full_mat
+}
 
 
 #------------------------------------
@@ -437,11 +452,13 @@ generate_sbcMatrix = function(CN_features,
 #' @param plot \code{logical}. If \code{TRUE}, plot best rank survey.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import NMF
+#' @import grDevices
 #'
 #' @return a \code{list} contains information of NMF run and rank survey.
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 #' ## generate copy-number features
@@ -451,24 +468,26 @@ generate_sbcMatrix = function(CN_features,
 #' ## generate a sample-by-component matrix
 #' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
 #' ## optimal rank survey
-#' \donttest{
-#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 10, cores = 1, plot = FALSE)
+#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix,
+#'  nrun = 10, cores = 1, plot = FALSE)
 #' }
 #'
 choose_nSignatures <-
     function(sample_by_component,
              nTry = 12,
              nrun = 50,
-             cores = 1, seed = 77777, plot = TRUE)
+             cores = 1,
+             seed = 77777,
+             plot = TRUE)
     {
         message('Estimating best rank..')
         nmfalg <- "brunet"
 
-        suppressMessages(library(NMF))
+        #suppressMessages(library(NMF))
         estim.r <-
             NMF::nmfEstimateRank(
                 t(sample_by_component),
-                seq(2,nTry),
+                seq(2, nTry),
                 seed = seed,
                 nrun = nrun,
                 verbose = TRUE,
@@ -486,7 +505,14 @@ choose_nSignatures <-
 
         # https://blog.csdn.net/YJJ18636810884/article/details/83214566
         # https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-367
-        message(paste('Using ', bestFit, ' as a best-fit rank based on decreasing cophenetic correlation coefficient.', sep=''))
+        message(
+            paste(
+                'Using ',
+                bestFit,
+                ' as a best-fit rank based on decreasing cophenetic correlation coefficient.',
+                sep = ''
+            )
+        )
         n = as.numeric(bestFit)
 
         message("Generating random matrix and run NMF...")
@@ -494,7 +520,7 @@ choose_nSignatures <-
         estim.r.random <-
             NMF::nmfEstimateRank(
                 V.random,
-                seq(2,nTry),
+                seq(2, nTry),
                 seed = seed,
                 nrun = nrun,
                 verbose = TRUE,
@@ -502,8 +528,7 @@ choose_nSignatures <-
                 .opt = list(shared.memory = FALSE, paste0("p", cores))
             )
 
-        if(plot){
-
+        if (plot) {
             # message('Creating nmf consensusmap plot...')
             # pdf('nmf_consensus.pdf', bg = 'white', pointsize = 9, width = 12, height = 12, paper = "special")
             # NMF::consensusmap(estim.r)
@@ -514,7 +539,14 @@ choose_nSignatures <-
             p <- NMF::plot(
                 estim.r,
                 estim.r.random,
-                what = c("cophenetic", "dispersion", "sparseness", "silhouette", "residuals", "rss"),
+                what = c(
+                    "cophenetic",
+                    "dispersion",
+                    "sparseness",
+                    "silhouette",
+                    "residuals",
+                    "rss"
+                ),
                 xname = "Observed",
                 yname = "Randomised",
                 main = "NMF Rank Survey"
@@ -522,16 +554,36 @@ choose_nSignatures <-
 
             print(p)
 
-            pdf('nmf_rank_survey.pdf', bg = 'white', pointsize = 9, width = 8, height = 6, paper = "special")
+            pdf(
+                'nmf_rank_survey.pdf',
+                bg = 'white',
+                pointsize = 9,
+                width = 8,
+                height = 6,
+                paper = "special"
+            )
             print(p)
             dev.off()
 
-            invisible(list(nmfEstimate=estim.r,  bestRank = n, survey = nmf.sum, survey_plot = p, seed = seed))
+            invisible(
+                list(
+                    nmfEstimate = estim.r,
+                    bestRank = n,
+                    survey = nmf.sum,
+                    survey_plot = p,
+                    seed = seed
+                )
+            )
 
         }
 
-        invisible(list(nmfEstimate=estim.r,  bestRank = n, survey = nmf.sum, seed = seed))
-}
+        invisible(list(
+            nmfEstimate = estim.r,
+            bestRank = n,
+            survey = nmf.sum,
+            seed = seed
+        ))
+    }
 
 #--------------------------
 # extract signatures
@@ -546,6 +598,7 @@ choose_nSignatures <-
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 #' ## generate copy-number features
@@ -555,10 +608,9 @@ choose_nSignatures <-
 #' ## generate a sample-by-component matrix
 #' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
 #' ## optimal rank survey
-#' \donttest{
-#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 10, cores = 1, plot = FALSE)
+#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 10,
+#'  cores = 1, plot = FALSE)
 #'  tcga_signatures = extract_Signatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
-
 #' }
 extract_Signatures <-
     function(sample_by_component,
@@ -568,7 +620,7 @@ extract_Signatures <-
              cores = 1)
     {
         message("Running NMF based on specified rank...")
-        suppressMessages(library(NMF))
+        #suppressMessages(library(NMF))
         NMF::nmf(
             t(sample_by_component),
             nsig,
@@ -593,6 +645,7 @@ extract_Signatures <-
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 #' ## generate copy-number features
@@ -602,11 +655,12 @@ extract_Signatures <-
 #' ## generate a sample-by-component matrix
 #' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
 #' ## optimal rank survey
-#' \donttest{
-#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 10, cores = 1, plot = FALSE)
+#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix,
+#'  nrun = 10, cores = 1, plot = FALSE)
 #'  tcga_signatures = extract_Signatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
 #'  w = NMF::basis(tcga_signatures) # signature matrix
-#'  tcga_exposure = quantify_Signatures(sample_by_component = tcga_sample_component_matrix, component_by_signature = w)
+#'  tcga_exposure = quantify_Signatures(sample_by_component =
+#'  tcga_sample_component_matrix, component_by_signature = w)
 #' }
 quantify_Signatures <-
     function(sample_by_component,
@@ -621,12 +675,16 @@ quantify_Signatures <-
         }
         signature_by_sample <- YAPSA::LCD(
             t(sample_by_component),
-            YAPSA:::normalize_df_per_dim(component_by_signature, 2)
+            YAPSA::normalize_df_per_dim(component_by_signature, 2)
         )
         absolute_exposure = signature_by_sample
         relative_exposure = normaliseMatrix(signature_by_sample)
-        invisible(list(absolute_exposure = absolute_exposure,
-                       relative_exposure = relative_exposure))
+        invisible(
+            list(
+                absolute_exposure = absolute_exposure,
+                relative_exposure = relative_exposure
+            )
+        )
     }
 
 #-------------------------------------------------------------------------------------
@@ -641,6 +699,7 @@ quantify_Signatures <-
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 #' ## generate copy-number features
@@ -649,23 +708,36 @@ quantify_Signatures <-
 #' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
 #' ## generate a sample-by-component matrix
 #' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
-#' ## optimal rank survey
-#' \donttest{
+#' ## optimal rank survey13
 #' tcga_results = autoCapture_Signatures(tcga_sample_component_matrix, nrun=10, cores = 1)
 #' }
-autoCapture_Signatures = function(
-    sample_by_component,
-    nTry = 12,
-    nrun = 50,
-    cores = 1, seed = 77777, plot = TRUE
-){
+autoCapture_Signatures = function(sample_by_component,
+                                  nTry = 12,
+                                  nrun = 50,
+                                  cores = 1,
+                                  seed = 77777,
+                                  plot = TRUE) {
     choose_res = choose_nSignatures(sample_by_component, nTry, nrun, cores, seed, plot = plot)
-    NMF_res = extract_Signatures(sample_by_component, nsig = choose_res$bestRank, cores = cores)
+    NMF_res = extract_Signatures(sample_by_component,
+                                 nsig = choose_res$bestRank,
+                                 cores = cores)
     w = NMF::basis(NMF_res)
     #h = NMF::coef(NMF_res)
-    exposure = quantify_Signatures(sample_by_component = tcga_sample_component_matrix, component_by_signature = w)
+    exposure = quantify_Signatures(sample_by_component = sample_by_component,
+                                   component_by_signature = w)
     message("Done.")
-    invisible(list(NMF = NMF_res, signature = w, exposure = exposure,
-                   bestRank = choose_res$n, survey = choose_res$survey,
-                   survey_plot = choose_res$survey_plot, seed = choose_res$seed))
+    invisible(
+        list(
+            NMF = NMF_res,
+            signature = w,
+            exposure = exposure,
+            bestRank = choose_res$n,
+            survey = choose_res$survey,
+            survey_plot = choose_res$survey_plot,
+            seed = choose_res$seed
+        )
+    )
 }
+
+utils::globalVariables(c("centromeres.hg19", "centromeres.hg38", "chromsize.hg19", "chromsize.hg38",
+                         "feat", "i"))

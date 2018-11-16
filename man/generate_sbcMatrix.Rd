@@ -27,6 +27,7 @@ This function generate a sample-by-component matrix representing the sum of
 posterior probabilities of each copy-number event being assigned to each component.
 }
 \examples{
+\dontrun{
 ## load example copy-number data from tcga
 load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 ## generate copy-number features
@@ -35,6 +36,7 @@ tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build 
 tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
 ## generate a sample-by-component matrix
 tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
+}
 }
 \author{
 Geoffrey Macintyre, Shixiang Wang

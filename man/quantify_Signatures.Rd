@@ -20,6 +20,7 @@ a \code{list} contains absolute/relative exposure.
 quantify exposure for samples using Linear Combination Decomposition (LCD)
 }
 \examples{
+\dontrun{
 ## load example copy-number data from tcga
 load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 ## generate copy-number features
@@ -29,11 +30,12 @@ tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
 ## generate a sample-by-component matrix
 tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
 ## optimal rank survey
-\donttest{
- tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 10, cores = 1, plot = FALSE)
+ tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix,
+ nrun = 10, cores = 1, plot = FALSE)
  tcga_signatures = extract_Signatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
  w = NMF::basis(tcga_signatures) # signature matrix
- tcga_exposure = quantify_Signatures(sample_by_component = tcga_sample_component_matrix, component_by_signature = w)
+ tcga_exposure = quantify_Signatures(sample_by_component =
+ tcga_sample_component_matrix, component_by_signature = w)
 }
 }
 \author{

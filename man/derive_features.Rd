@@ -25,11 +25,12 @@ segment copy-number, breakpoint number(per chromosome arm), length of segments w
 copy-number
 }
 \examples{
+\dontrun{
 ## load example copy-number data from tcga
 load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
 ## generate copy-number features
 tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
-
+}
 }
 \author{
 Geoffrey Macintyre, Shixiang Wang

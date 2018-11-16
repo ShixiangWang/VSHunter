@@ -1,21 +1,16 @@
 ---
-title: "cnPattern: Decode Pattern of Copy Number Profile"
-author: "Shixiang Wang \\
-        ShanghaiTech. University"
-date: "`r Sys.Date()`"
-
-output:
-  prettydoc::html_pretty:
-    toc: true
-    theme: cayman
-    highlight: github
-  pdf_document:
-    toc: true
-vignette: >
-  %\VignetteIndexEntry{download publical data in batch quickly and easily}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\usepackage[utf8]{inputenc}
+output: github_document
 ---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# cnPattern: Decode Pattern of Copy Number Profile
+
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/ShixiangWang/cnPattern?branch=master&svg=true)](https://ci.appveyor.com/project/ShixiangWang/cnPattern)
+
+The goal of cnPattern is to decode copy number pattern from **absolute copy number profile**. This package collects R code from paper _[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)_ and tidy them as a open source R package for bioinformatics community.
+
+Before you use this tool, you have to obtain **absolute copy number profile** for samples via software like ABSOLUTE v2, QDNASeq etc..
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -24,20 +19,6 @@ knitr::opts_chunk$set(
   eval = FALSE
 )
 ```
-
-```{r, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
-# devtools::load_all()
-# library(flexmix)
-# library(QDNAseq)
-# library(NMF)
-if(!require("cnPattern")){
-  devtools::load_all()
-}
-```
-
-The goal of cnPattern is to decode copy number pattern from **absolute copy number profile**. This package collects R code from paper _[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)_ and tidy them as a open source R package for bioinformatics community.
-
-Before you use this tool, you have to obtain **absolute copy number profile** for samples via software like ABSOLUTE v2, QDNASeq etc..
 
 ## Procedure
 
@@ -55,9 +36,18 @@ Before you use this tool, you have to obtain **absolute copy number profile** fo
 knitr::include_graphics(path = "https://media.springernature.com/m685/springer-static/image/art%3A10.1038%2Fs41588-018-0179-8/MediaObjects/41588_2018_179_Fig1_HTML.png")
 ```
 
-
+```{r, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
+# devtools::load_all()
+# library(flexmix)
+# library(QDNAseq)
+# library(NMF)
+if(!require("cnPattern")){
+  devtools::load_all()
+}
+```
 
 ## Installation
+
 
 You can install UCSCXenaTools from github with:
 
@@ -73,6 +63,8 @@ browseVignettes("cnPattern")
 # or
 ??cnPattern
 ```
+
+> update features and function will show in vignettes in the future
 
 Load package.
 

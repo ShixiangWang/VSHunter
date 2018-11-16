@@ -103,8 +103,10 @@ calculateSumOfPosteriors <-
              cores = 1)
     {
         if (cores > 1) {
-            require(foreach)
-            require(doMC)
+            # require(foreach)
+            # require(doMC)
+            requireNamespace("foreach", quietly = T)
+            requireNamespace("doMC", quietly = T)
 
             len = dim(CN_feature)[1]
             iters = floor(len / rowIter)
