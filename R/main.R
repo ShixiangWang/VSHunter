@@ -677,7 +677,7 @@ quantify_Signatures <-
             t(sample_by_component),
             YAPSA::normalize_df_per_dim(component_by_signature, 2)
         )
-        absolute_exposure = signature_by_sample
+        absolute_exposure = as.matrix(signature_by_sample)
         relative_exposure = normaliseMatrix(signature_by_sample)
         invisible(
             list(

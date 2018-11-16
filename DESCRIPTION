@@ -7,8 +7,8 @@ Authors@R: c(person("Shixiang", "Wang", email = "w_shixiang@163.com", role = c("
 Maintainer: Shixiang Wang <w_shixiang@163.com>
 Description: Identify copy number signature from distribution of copy number features and 
     location for enabling the interpretation of complex genomic changes in cancer. 
-Depends: R (>= 3.3)
-Imports: flexmix, NMF, foreach, doMC, YAPSA, QDNAseq, grDevices, Biobase
+Depends: R (>= 3.3), NMF
+Imports: flexmix, foreach, doMC, YAPSA, QDNAseq, grDevices, Biobase
 Suggests: knitr, rmarkdown, prettydoc, pheatmap, ggplot2
 License: MIT + file LICENSE
 Encoding: UTF-8
