@@ -23,9 +23,85 @@
 # SOFTWARE.
 
 #------------------------------------------------------------------
-# read copy number as a list of data.frame from data.frame or files
-read_copynumbers = function(input) {
+#' @title  Read copy number as a list of data.frame from data.frame or files
+#' @description This function is used to read copy number profile for preparing CNV signature
+#' analysis.
+#' @param input a \code{data.frame} or a file or a directory contains copy number profile
+#' @param is_dir is \code{input} a directory?
+#' @param pattern a optional regular expression used to select part of files if input is a directory, more detail please see
+#' \code{list.files} function.
+#' @param ignore_case logical. Should pattern-matching be case-insensitive?
+#' @param sep the field separator character. Values on each line of the file are separated by this character.
+#' @param cols four characters used to specify chromosome, start position,
+#'  end position and copy number value, respectively. Default use names from ABSOLUTE calling result.
+#' @param have_sampleCol Whether input have sample column or not.
+#' This argument must be \code{TRUE} and \code{sample_col} also
+#' properly be assigned when input is a file or a \code{data.frame}.
+#' @param sample_col a character used to specify the sample column name.
+#' @author  Shixiang Wang <w_shixiang@163.com>
+#' @return a \code{list} contains absolute copy-number profile for multiple samples.
+#' @importFrom utils read.csv
+#' @export
+read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case = FALSE, sep = "\t",
+                            cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
+                            have_sampleCol = TRUE, sample_col = "sample") {
+    stopifnot(is.logical(is_dir), is.logical(have_sampleCol),
+              is.character(sample_col), length(sample_col) == 1)
+    if (is_dir) {
+        message("Treat input as a directory...")
+        if (length(input) != 1) {
+            stop("Only can take one directory as input!")
+        }
+        # get files and exclude directories
+        all.files <- list.files(path = input, pattern = pattern,
+                                all.files = FALSE, recursive = FALSE,
+                                ignore.case = ignore_case)
+        files = all.files[!file.info(all.files)$isdir]
+        files_path = file.path(input, files)
+        files_list = list()
+        for (i in seq_along(files_path)) {
+            temp = read.csv(file = files_path[i], sep = sep, comment.char = "#", stringsAsFactors = FALSE)
+            if (!all(cols %in% colnames(temp))) stop("not all cols are in file, please check.")
+            if (have_sampleCol) {
+                tempName = unique(temp[, sample_col])
+                if (length(tempName) > 1) {
+                    stop("When input is a directory, a file contains only one sample.")
+                }
+                temp = temp[, cols]
+                colnames(temp) = c("chromosome", "start", "end", "segVal")
+                files_list[[tempName]] = temp
+            } else {
+                message("Select file names as sample names.")
+                temp = temp[, cols]
+                colnames(temp) = c("chromosome", "start", "end", "segVal")
+                files_list[[files[i]]] == temp
+            }
+        }
+        invisible(files_list)
+    } else if (all(is.character(input))) {
+        message("Treat input as a file...")
+        if (length(input) > 1) {
+            stop("Muliple files are not a valid input, please use directory as input.")
+        }
 
+        if (!file.exists(input)) stop("input file not exists")
+        if (!have_sampleCol) stop("When input is a file, sample column must set.")
+        input = read.csv(file = input, sep = sep, comment.char = "#", stringsAsFactors = FALSE)
+    }
+
+    if (!sample_col %in% colnames(input)) stop("sample column user set not exists in input file.")
+    if (!all(cols %in% colnames(input))) stop("not all cols are in file, please check.")
+    samples = unique(input[, sample_col])
+
+    res_list = list()
+    for (i in seq_along(samples)) {
+        tempDF = input[input[, sample_col] == i, ]
+        tempDF = tempDF[, cols]
+        colnames(tempDF) = c("chromosome", "start", "end", "segVal")
+        res_list[[samples[i]]] = tempDF
+    }
+
+    invisible(res_list)
 }
 
 #-------------------------------------------
@@ -394,8 +470,12 @@ generate_sbcMatrix = function(CN_features,
     {
         # all_components <-
         #     readRDS(paste(this_path, "data/component_parameters.rds", sep = "/"))
+        message("argument all_components is not set, will download reference components.")
+        message("more detail please see https://github.com/ShixiangWang/absoluteCNVdata")
+        download.file(url = "https://github.com/ShixiangWang/absoluteCNVdata/raw/master/component_parameters.rds",
+                      destfile = "Nat_Gen_component_parameters.rds")
         all_components <-
-            readRDS(system.file("extdata", "component_parameters.rds", package = "cnPattern"))
+            readRDS("Nat_Gen_component_parameters.rds")
     }
 
     if (cores > 1) {

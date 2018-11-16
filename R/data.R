@@ -33,26 +33,3 @@ NULL
 #' @examples data(chromsize.hg38)
 NULL
 
-#' absolute copy number file profile of ABSOLUTE pancan paper
-#' @docType data
-#' @name pancan12_absolute
-#' @format A data.frame
-#' @source Generate from Synapse, paper link https://www.nature.com/articles/nbt.2203
-#' @examples data(pancan12_absolute)
-NULL
-
-#' clinical information of samples in ABSOLUTE pancan paper
-#' @docType data
-#' @name pancan12_info
-#' @format A data.frame
-#' @source Generate from Synapse, paper link https://www.nature.com/articles/nbt.2203
-#' @examples data(pancan12_info)
-NULL
-
-#' copy number features of 91 samples from Nat.Gen paper
-#' @docType data
-#' @name NatGen_features
-#' @format A list
-#' @source Generate from https://www.nature.com/articles/s41588-018-0179-8
-#' @examples data(NatGen_features)
-NULL
