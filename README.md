@@ -3,7 +3,7 @@
 cnPattern: Decode Pattern of Copy Number Profile
 ================================================
 
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/ShixiangWang/cnPattern?branch=master&svg=true)](https://ci.appveyor.com/project/ShixiangWang/cnPattern)
+[![GitHub tag](https://img.shields.io/github/tag/ShixiangWang/cnPattern.svg?label=Github)](https://github.com/ShixiangWang/cnPattern)
 
 The goal of cnPattern is to decode copy number pattern from **absolute copy number profile**. This package collects R code from paper *[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)* and tidy them as a open source R package for bioinformatics community.
 
@@ -35,14 +35,6 @@ You can install UCSCXenaTools from github with:
 ``` r
 # install.packages("devtools")
 devtools::install_github("ShixiangWang/cnPattern", build_vignettes = TRUE)
-```
-
-Read this vignettes.
-
-``` r
-browseVignettes("cnPattern")
-# or
-??cnPattern
 ```
 
 > update features and function will show in vignettes in the future

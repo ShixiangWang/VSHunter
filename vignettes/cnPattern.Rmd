@@ -66,14 +66,6 @@ You can install UCSCXenaTools from github with:
 devtools::install_github("ShixiangWang/cnPattern", build_vignettes = TRUE)
 ```
 
-Read this vignettes.
-
-```{r, eval=FALSE}
-browseVignettes("cnPattern")
-# or
-??cnPattern
-```
-
 Load package.
 
 ```{r, eval=FALSE}

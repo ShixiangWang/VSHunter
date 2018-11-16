@@ -1,3 +1,5 @@
+^doc$
+^Meta$
 ^LICENSE\.md$
 ^README\.Rmd$
 ^appveyor\.yml$

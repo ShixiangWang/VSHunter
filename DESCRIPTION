@@ -5,6 +5,8 @@ Authors@R: c(person("Shixiang", "Wang", email = "w_shixiang@163.com", role = c("
             comment = c(ORCID = "0000-0001-9855-7357")),
             person("Geoffrey", "Macintyre", role = "aut"))
 Maintainer: Shixiang Wang <w_shixiang@163.com>
+URL: https://github.com/ShixiangWang/cnPattern
+BugReports: https://github.com/ShixiangWang/cnPattern/issues
 Description: Identify copy number signature from distribution of copy number features and 
     location for enabling the interpretation of complex genomic changes in cancer. 
 Depends: R (>= 3.3), NMF
