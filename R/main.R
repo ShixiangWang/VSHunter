@@ -77,7 +77,7 @@ read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case =
                 files_list[[files[i]]] == temp
             }
         }
-        invisible(files_list)
+        return(files_list)
     } else if (all(is.character(input))) {
         message("Treat input as a file...")
         if (length(input) > 1) {
@@ -101,7 +101,7 @@ read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case =
         res_list[[samples[i]]] = tempDF
     }
 
-    invisible(res_list)
+    return(res_list)
 }
 
 #-------------------------------------------
@@ -645,7 +645,7 @@ choose_nSignatures <-
             print(p)
             dev.off()
 
-            invisible(
+            return(
                 list(
                     nmfEstimate = estim.r,
                     bestRank = n,
@@ -657,7 +657,7 @@ choose_nSignatures <-
 
         }
 
-        invisible(list(
+        return(list(
             nmfEstimate = estim.r,
             bestRank = n,
             survey = nmf.sum,
@@ -759,7 +759,7 @@ quantify_Signatures <-
         )
         absolute_exposure = as.matrix(signature_by_sample)
         relative_exposure = normaliseMatrix(signature_by_sample)
-        invisible(
+        return(
             list(
                 absolute_exposure = absolute_exposure,
                 relative_exposure = relative_exposure
@@ -806,7 +806,7 @@ autoCapture_Signatures = function(sample_by_component,
     exposure = quantify_Signatures(sample_by_component = sample_by_component,
                                    component_by_signature = w)
     message("Done.")
-    invisible(
+    return(
         list(
             NMF = NMF_res,
             signature = w,
