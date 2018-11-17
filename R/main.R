@@ -56,7 +56,7 @@ read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case =
         all.files <- list.files(path = input, pattern = pattern,
                                 all.files = FALSE, recursive = FALSE,
                                 ignore.case = ignore_case)
-        files = all.files[!file.info(all.files)$isdir]
+        files = all.files[!file.info(file.path(input, all.files))$isdir]
         files_path = file.path(input, files)
         files_list = list()
         for (i in seq_along(files_path)) {
