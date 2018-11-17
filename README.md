@@ -1,11 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-cnPattern: Decode Pattern of Copy Number Profile
-================================================
+VSHunter: Capture variation signatures from genomic data
+========================================================
 
-[![GitHub tag](https://img.shields.io/github/tag/ShixiangWang/cnPattern.svg?label=Github)](https://github.com/ShixiangWang/cnPattern)
+[![GitHub tag](https://img.shields.io/github/tag/ShixiangWang/VSHunter.svg?label=Github)](https://github.com/ShixiangWang/VSHunter)
 
-The goal of cnPattern is to decode copy number pattern from **absolute copy number profile**. This package collects R code from paper *[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)* and tidy them as a open source R package for bioinformatics community.
+The goal of VSHunter is to capture variation signature from genomic data. For now, we decode copy number pattern from **absolute copy number profile**. This package collects R code from paper *[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)* and tidy them as a open source R package for bioinformatics community.
 
 Before you use this tool, you have to obtain **absolute copy number profile** for samples via software like ABSOLUTE v2, QDNASeq etc..
 
@@ -34,7 +34,7 @@ You can install UCSCXenaTools from github with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("ShixiangWang/cnPattern", build_vignettes = TRUE)
+devtools::install_github("ShixiangWang/VSHunter", build_vignettes = TRUE)
 ```
 
 > update features and function will show in vignettes in the future
@@ -42,7 +42,7 @@ devtools::install_github("ShixiangWang/cnPattern", build_vignettes = TRUE)
 Load package.
 
 ``` r
-library(cnPattern)
+library(VSHunter)
 ```
 
 Usage
@@ -51,7 +51,7 @@ Usage
 Load example data:
 
 ``` r
-load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 ```
 
 `tcga_segTabs` is a list contain absolute copy number profile for multiple samples, each sample is a `data.frame` in the list.

@@ -1,19 +1,19 @@
-Package: cnPattern
-Title: Decode Pattern of Copy Number Profile
-Version: 0.2.0
-Authors@R: c(person("Shixiang", "Wang", email = "w_shixiang@163.com", role = c("aut", "cre"), 
-            comment = c(ORCID = "0000-0001-9855-7357")),
-            person("Geoffrey", "Macintyre", role = "aut"))
-Maintainer: Shixiang Wang <w_shixiang@163.com>
-URL: https://github.com/ShixiangWang/cnPattern
-BugReports: https://github.com/ShixiangWang/cnPattern/issues
+Package: VSHunter
+Title: Capture variation signatures from genomic data
 Description: Identify copy number signature from distribution of copy number features and 
-    location for enabling the interpretation of complex genomic changes in cancer. 
+    location for enabling the interpretation of complex genomic changes in cancer
+    (mutation signature also will be included). 
+Version: 0.3.0
+Authors@R: person("Shixiang", "Wang", email = "w_shixiang@163.com", role = c("aut", "cre"), 
+            comment = c(ORCID = "0000-0001-9855-7357"))
+Maintainer: Shixiang Wang <w_shixiang@163.com>
+URL: https://github.com/ShixiangWang/VSHunter
+BugReports: https://github.com/ShixiangWang/VSHunter/issues
 Depends: R (>= 3.3), NMF
 biocViews:
 Imports: flexmix, foreach, doMC, YAPSA, QDNAseq, grDevices, Biobase
 Suggests: knitr, rmarkdown, prettydoc, pheatmap, ggplot2
-License: MIT + file LICENSE
+License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1

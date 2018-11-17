@@ -2,7 +2,7 @@
 
 # MIT License
 #
-# Copyright (c) [2018] [Geoffrey Macintyre, Shixiang Wang]
+# Copyright (c) [2018] [Geoffrey Macintyre]
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -124,7 +124,7 @@ read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case =
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
-#' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+#' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #'}
@@ -135,19 +135,19 @@ derive_features = function(CN_data,
     # get chromosome lengths and centromere locations
     if (genome_build == "hg19") {
         data("chromsize.hg19",
-             package = "cnPattern",
+             package = "VSHunter",
              envir = environment())
         data("centromeres.hg19",
-             package = "cnPattern",
+             package = "VSHunter",
              envir = environment())
         chrlen = chromsize.hg19
         centromeres = centromeres.hg19
     } else {
         data("chromsize.hg38",
-             package = "cnPattern",
+             package = "VSHunter",
              envir = environment())
         data("centromeres.hg38",
-             package = "cnPattern",
+             package = "VSHunter",
              envir = environment())
         chrlen = chromsize.hg38
         centromeres = centromeres.hg38
@@ -223,7 +223,7 @@ derive_features = function(CN_data,
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
-#' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+#' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
@@ -453,7 +453,7 @@ fit_mixModels = function(CN_features,
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
-#' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+#' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
@@ -540,7 +540,7 @@ generate_sbcMatrix = function(CN_features,
 #' @examples
 #' \dontrun{
 #' #' ## load example copy-number data from tcga
-#' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+#' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
@@ -680,7 +680,7 @@ choose_nSignatures <-
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
-#' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+#' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
@@ -727,7 +727,7 @@ extract_Signatures <-
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
-#' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+#' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
@@ -751,7 +751,7 @@ quantify_Signatures <-
         {
             message("Using reference component_by_signature data from Nat.Gen paper.")
             component_by_signature <-
-                readRDS(system.file("extdata", "feat_sig_mat.rds", package = "cnPattern"))
+                readRDS(system.file("extdata", "feat_sig_mat.rds", package = "VSHunter"))
         }
         signature_by_sample <- YAPSA::LCD(
             t(sample_by_component),
@@ -781,7 +781,7 @@ quantify_Signatures <-
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
-#' load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+#' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
 #' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)

@@ -1,5 +1,5 @@
 ---
-title: "cnPattern: Decode Pattern of Copy Number Profile"
+title: "VSHunter: Decode Pattern of Copy Number Profile"
 author: "Shixiang Wang \\
         ShanghaiTech. University"
 date: "`r Sys.Date()`"
@@ -30,12 +30,12 @@ knitr::opts_chunk$set(
 # library(flexmix)
 # library(QDNAseq)
 # library(NMF)
-if(!require("cnPattern")){
+if(!require("VSHunter")){
   devtools::load_all()
 }
 ```
 
-The goal of cnPattern is to decode copy number pattern from **absolute copy number profile**. This package collects R code from paper _[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)_ and tidy them as a open source R package for bioinformatics community.
+The goal of VSHunter is to capture variation signature from genomic data. For now, we decode copy number pattern from **absolute copy number profile**. This package collects R code from paper _[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)_ and tidy them as a open source R package for bioinformatics community.
 
 Before you use this tool, you have to obtain **absolute copy number profile** for samples via software like ABSOLUTE v2, QDNASeq etc..
 
@@ -63,13 +63,13 @@ You can install UCSCXenaTools from github with:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("ShixiangWang/cnPattern", build_vignettes = TRUE)
+devtools::install_github("ShixiangWang/VSHunter", build_vignettes = TRUE)
 ```
 
 Load package.
 
 ```{r, eval=FALSE}
-library(cnPattern)
+library(VSHunter)
 ```
 
 
@@ -78,7 +78,7 @@ library(cnPattern)
 Load example data:
 
 ```{r}
-load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 ```
 
 `tcga_segTabs` is a list contain absolute copy number profile for multiple samples, each sample is a `data.frame` in the list.

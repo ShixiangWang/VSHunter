@@ -32,7 +32,7 @@ and \code{quantify_Signatures} these three functions.
 \examples{
 \dontrun{
 ## load example copy-number data from tcga
-load(system.file("inst/extdata", "example_cn_list.RData", package = "cnPattern"))
+load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 ## generate copy-number features
 tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 ## fit mixture model  (this will take some time)
