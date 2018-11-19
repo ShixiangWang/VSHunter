@@ -95,7 +95,7 @@ read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case =
 
     res_list = list()
     for (i in seq_along(samples)) {
-        tempDF = input[input[, sample_col] == i, ]
+        tempDF = input[input[, sample_col] == samples[i], ]
         tempDF = tempDF[, cols]
         colnames(tempDF) = c("chromosome", "start", "end", "segVal")
         res_list[[samples[i]]] = tempDF
