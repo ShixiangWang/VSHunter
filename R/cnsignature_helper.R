@@ -346,11 +346,13 @@ getCentromereDistCounts <- function(abs_profiles, centromeres, chrlen)
         }
         if (nrow(all_dists) > 0)
         {
-            out <- rbind(out, cbind(ID = i, ct1 = all_dists[, 1]))
+            out <- rbind(out, cbind(ID = i, value = all_dists[, 1]))
         }
     }
     rownames(out) <- NULL
-    data.frame(out, stringsAsFactors = F)
+    out = data.frame(out, stringsAsFactors = F)
+    out = na.omit(out)
+    out
 }
 
 

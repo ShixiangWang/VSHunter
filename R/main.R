@@ -57,6 +57,7 @@ read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case =
                                 all.files = FALSE, recursive = FALSE,
                                 ignore.case = ignore_case)
         files = all.files[!file.info(file.path(input, all.files))$isdir]
+        if (length(files) == 0) stop("No files exist, please check!")
         files_path = file.path(input, files)
         files_list = list()
         for (i in seq_along(files_path)) {
@@ -153,6 +154,8 @@ derive_features = function(CN_data,
         centromeres = centromeres.hg38
     }
 
+    # only keep 1:22 and x, y
+    chrlen = chrlen[chrlen$chrom %in% centromeres$chrom, ]
     if (cores > 1) {
         #require(foreach)
         requireNamespace("foreach", quietly = TRUE)
@@ -344,6 +347,7 @@ fit_mixModels = function(CN_features,
         unlist(temp_list, recursive = FALSE)
     } else {
         dat <- as.numeric(CN_features[["segsize"]][, 2])
+        message("Fit feature: Segment size")
         segsize_mm <-
             fitComponent(
                 dat,
@@ -357,6 +361,7 @@ fit_mixModels = function(CN_features,
             )
 
         dat <- as.numeric(CN_features[["bp10MB"]][, 2])
+        message("Fit feature: Breakpoint count per 10 Mb")
         bp10MB_mm <-
             fitComponent(
                 dat,
@@ -371,6 +376,7 @@ fit_mixModels = function(CN_features,
             )
 
         dat <- as.numeric(CN_features[["osCN"]][, 2])
+        message("Fit feature: Length of oscillating copy-number chain")
         osCN_mm <-
             fitComponent(
                 dat,
@@ -385,6 +391,7 @@ fit_mixModels = function(CN_features,
             )
 
         dat <- as.numeric(CN_features[["bpchrarm"]][, 2])
+        message("Fit feature: Breakpoint count per arm")
         bpchrarm_mm <-
             fitComponent(
                 dat,
@@ -399,6 +406,7 @@ fit_mixModels = function(CN_features,
             )
 
         dat <- as.numeric(CN_features[["changepoint"]][, 2])
+        message("Fit feature: Copy number change")
         changepoint_mm <-
             fitComponent(
                 dat,
@@ -412,6 +420,7 @@ fit_mixModels = function(CN_features,
             )
 
         dat <- as.numeric(CN_features[["copynumber"]][, 2])
+        message("Fit feature: Absolute copy number")
         copynumber_mm <-
             fitComponent(
                 dat,
