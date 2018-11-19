@@ -249,6 +249,7 @@ fit_mixModels = function(CN_features,
 
         temp_list = foreach(i = 1:6) %dopar% {
             if (i == 1 & i %in% featsToFit) {
+                message("Fit feature: Segment size")
                 dat <- as.numeric(CN_features[["segsize"]][, 2])
                 list(
                     segsize = fitComponent(
@@ -264,6 +265,7 @@ fit_mixModels = function(CN_features,
                 )
 
             } else if (i == 2 & i %in% featsToFit) {
+                message("Fit feature: Breakpoint count per 10 Mb")
                 dat <- as.numeric(CN_features[["bp10MB"]][, 2])
                 list(
                     bp10MB = fitComponent(
@@ -280,6 +282,7 @@ fit_mixModels = function(CN_features,
                 )
 
             } else if (i == 3 & i %in% featsToFit) {
+                message("Fit feature: Length of oscillating copy-number chain")
                 dat <- as.numeric(CN_features[["osCN"]][, 2])
                 list(
                     osCN = fitComponent(
@@ -296,6 +299,7 @@ fit_mixModels = function(CN_features,
                 )
 
             } else if (i == 4 & i %in% featsToFit) {
+                message("Fit feature: Breakpoint count per arm")
                 dat <- as.numeric(CN_features[["bpchrarm"]][, 2])
                 list(
                     bpchrarm = fitComponent(
@@ -312,6 +316,7 @@ fit_mixModels = function(CN_features,
                 )
 
             } else if (i == 5 & i %in% featsToFit) {
+                message("Fit feature: Copy number change")
                 dat <- as.numeric(CN_features[["changepoint"]][, 2])
                 list(
                     changepoint = fitComponent(
@@ -327,6 +332,7 @@ fit_mixModels = function(CN_features,
                 )
 
             } else if (i == 6 & i %in% featsToFit) {
+                message("Fit feature: Absolute copy number")
                 dat <- as.numeric(CN_features[["copynumber"]][, 2])
                 list(
                     copynumber = fitComponent(
