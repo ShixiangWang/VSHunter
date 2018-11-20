@@ -540,7 +540,7 @@ generate_sbcMatrix = function(CN_features,
 #' @param sample_by_component a sample-by-component \code{matrix}, generate from \code{generate_sbcMatrix} function.
 #' @param nTry the maximal tried number of signatures, default is 12. Of note, this value should far less than number
 #' of features or samples.
-#' @param nrun a numeric giving the number of run to perform for each value in range of 2 to \code{nTry}, default is 50.
+#' @param nrun a numeric giving the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
 #' According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.
 #' @param cores number of compute cores to run this task.
 #' @param seed seed number.
@@ -570,7 +570,7 @@ generate_sbcMatrix = function(CN_features,
 choose_nSignatures <-
     function(sample_by_component,
              nTry = 12,
-             nrun = 50,
+             nrun = 10,
              cores = 1,
              seed = 77777,
              plot = TRUE)
@@ -808,7 +808,7 @@ quantify_Signatures <-
 #' }
 autoCapture_Signatures = function(sample_by_component,
                                   nTry = 12,
-                                  nrun = 50,
+                                  nrun = 10,
                                   cores = 1,
                                   seed = 77777,
                                   plot = TRUE) {
@@ -833,6 +833,12 @@ autoCapture_Signatures = function(sample_by_component,
         )
     )
 }
+
+# all in one function
+pipe_cnv_hunter = function(){
+
+}
+
 
 utils::globalVariables(c("centromeres.hg19", "centromeres.hg38", "chromsize.hg19", "chromsize.hg38",
                          "feat", "i"))
