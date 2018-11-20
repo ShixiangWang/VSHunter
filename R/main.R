@@ -835,9 +835,9 @@ autoCapture_Signatures = function(sample_by_component,
 }
 
 # all in one function
-pipe_cnv_hunter = function(){
-
-}
+# pipe_cnv_hunter = function(){
+#
+# }
 
 
 utils::globalVariables(c("centromeres.hg19", "centromeres.hg38", "chromsize.hg19", "chromsize.hg38",
