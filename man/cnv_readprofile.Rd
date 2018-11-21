@@ -14,7 +14,7 @@ cnv_readprofile(input, is_dir = FALSE, pattern = NULL,
 
 \item{is_dir}{is \code{input} a directory?}
 
-\item{pattern}{a optional regular expression used to select part of files if input is a directory, more detail please see
+\item{pattern}{an optional regular expression used to select part of files if input is a directory, more detail please see
 \code{list.files} function.}
 
 \item{ignore_case}{logical. Should pattern-matching be case-insensitive?}

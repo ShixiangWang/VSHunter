@@ -28,7 +28,7 @@
 #' analysis.
 #' @param input a \code{data.frame} or a file or a directory contains copy number profile
 #' @param is_dir is \code{input} a directory?
-#' @param pattern a optional regular expression used to select part of files if input is a directory, more detail please see
+#' @param pattern an optional regular expression used to select part of files if input is a directory, more detail please see
 #' \code{list.files} function.
 #' @param ignore_case logical. Should pattern-matching be case-insensitive?
 #' @param sep the field separator character. Values on each line of the file are separated by this character.
@@ -541,7 +541,7 @@ cnv_generateSbCMatrix = function(CN_features,
 #' @param sample_by_component a sample-by-component \code{matrix}, generate from \code{cnv_generateSbCMatrix} function.
 #' @param nTry the maximal tried number of signatures, default is 12. Of note, this value should far less than number
 #' of features or samples.
-#' @param nrun a numeric giving the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
+#' @param nrun the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
 #' According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.
 #' @inheritParams cnv_derivefeatures
 #' @param seed seed number.

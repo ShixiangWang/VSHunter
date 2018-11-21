@@ -13,7 +13,7 @@ cnv_chooseSigNumber(sample_by_component, nTry = 12, nrun = 10,
 \item{nTry}{the maximal tried number of signatures, default is 12. Of note, this value should far less than number
 of features or samples.}
 
-\item{nrun}{a numeric giving the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
+\item{nrun}{the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
 According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.}
 
 \item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how

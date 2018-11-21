@@ -37,7 +37,7 @@ refer to \code{flexmix} package.}
 \item{nTry}{the maximal tried number of signatures, default is 12. Of note, this value should far less than number
 of features or samples.}
 
-\item{nrun}{a numeric giving the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
+\item{nrun}{the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
 According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.}
 
 \item{seed}{seed number.}
