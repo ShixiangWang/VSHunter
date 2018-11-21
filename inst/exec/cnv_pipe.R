@@ -22,6 +22,7 @@ if (!require("devtools")) {
 # specify desired options in a list
 option_list = list(
     make_option(c("-i", "--input"), type = "character", default = NULL, help = "Path to input file or directory"),
+    make_option("--RDS", action = "store_true", default = FALSE, help = "Input is a RDS file which is a list contain cnv of multiple samples"),
     make_option(c("-o", "--output"), type = "character", default = "cns.RData", help = "Output RData file name, [default %default], directory can be specified as [directory/filename]"),
     make_option(c("-d", "--directory"), action = "store_true", default = FALSE, help = "Input is a directory"),
     make_option("--pattern", type = "character", default = NULL, help = "An optional regular expression used to select part of files if input is a directory [default %default]"),
@@ -50,16 +51,22 @@ opt <- parse_args(OptionParser(option_list=option_list))
 
 # opt = parse_args(OptionParser(option_list=option_list), args = c("-d", "--plot", "--random", "--input=wsx", "--colnames=Chromosome, Start, End, SegVal"))
 
-# check some option
-cols = trimws(unlist(strsplit(opt$colnames, split = ",")))
-if (length(cols) != 4) stop("--colnames option should follow by 4 character sperated by comma.")
-sample_col = trimws(opt$sampleCol)
-
 if (is.null(opt$input)) stop("input must be specified with -i or --input option")
 
-# read input
-cnp = cnv_readprofile(input = opt$input, is_dir = opt$directory, pattern = opt$pattern,
-                      sep = opt$sep, cols = cols, have_sampleCol = !opt$noSampleCol, sample_col = sample_col)
+if (opt$RDS) {
+    if (!file.exists(opt$input)) stop("input file does not exist")
+    cnp = readRDS(opt$input)
+} else {
+    # check some option
+    cols = trimws(unlist(strsplit(opt$colnames, split = ",")))
+    if (length(cols) != 4) stop("--colnames option should follow by 4 character sperated by comma.")
+    sample_col = trimws(opt$sampleCol)
+
+    # read input
+    cnp = cnv_readprofile(input = opt$input, is_dir = opt$directory, pattern = opt$pattern,
+                          sep = opt$sep, cols = cols, have_sampleCol = !opt$noSampleCol, sample_col = sample_col)
+}
+
 
 # run pipeline
 res = cnv_pipe(CN_data = cnp, cores = opt$thread, genome_build = opt$refversion,
