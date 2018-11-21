@@ -83,49 +83,62 @@ load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 
 `tcga_segTabs` is a list contain absolute copy number profile for multiple samples, each sample is a `data.frame` in the list.
 
-Derive feature distributions.
+### Derive feature distributions
 
 ```{r}
-tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 ```
 
-Fit model components.
+### Fit model components
 
 ```{r}
-tcga_components = fit_mixModels(CN_features = tcga_features, cores = 4)
+tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 4)
 ```
+
+
+### Generate a sample-by-component matrix
 
 Generate a sample-by-component matrix representing the sum of posterior probabilities of each copy-number event being assigned to each component.
 
 ```{r}
-tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 4)
+tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_components, cores = 4)
 ```
 
 
-Choose optimal number of signatures.
+### Choose optimal number of signatures.
 
 ```{r}
-tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 10, cores = 4)
+tcga_sig_choose = cnv_chooseSigNumber(tcga_sample_component_matrix, nrun = 10, cores = 4)
 ```
 
-Extract signatures.
+
+Do not test a randomise data (save time).
+
+```{r}
+tcga_sig_choose2 = cnv_chooseSigNumber(tcga_sample_component_matrix, nrun = 10, cores = 4, testRandom = FALSE)
+```
+
+
+### Extract signatures
 
 ```{r}
 tcga_signatures = extract_Signatures(tcga_sample_component_matrix, nsig = 3, cores = 4)
 ```
 
-Quantify exposure for samples.
+### Quantify exposure for samples
 
 ```{r}
 w = NMF::basis(tcga_signatures)
 #h = NMF::coef(tcga_signatures)
-tcga_exposure = quantify_Signatures(sample_by_component = tcga_sample_component_matrix, component_by_signature = w)
+tcga_exposure = cnv_quantifySigExposure(sample_by_component = tcga_sample_component_matrix, component_by_signature = w)
 ```
 
-Function `autoCapture_Signatures()` finish three steps (choose best number of signatures, extract signatures and quantify exposure) above in an  antomated way. The arguments of this function are same as `choose_nSignatures()`.
+### Auto-capture signatures
+
+Function `cnv_autoCaptureSignatures()` finish three steps (choose best number of signatures, extract signatures and quantify exposure) above in an  antomated way. The arguments of this function are same as `cnv_chooseSigNumber()`.
 
 ```{r, eval=FALSE}
-tcga_results = autoCapture_Signatures(tcga_sample_component_matrix, nrun=10, cores = 4)
+tcga_results = cnv_autoCaptureSignatures(tcga_sample_component_matrix, nrun=10, cores = 4)
 ```
 
 The result object is a `list` which contains all results need fro downstream analysis, include NMF result related to best rank value, signature matrix, absolute and relative exposure (contribution) and best rank survey etc..

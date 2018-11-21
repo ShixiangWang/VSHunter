@@ -42,7 +42,7 @@
 #' @return a \code{list} contains absolute copy-number profile for multiple samples.
 #' @importFrom utils read.csv
 #' @export
-read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case = FALSE, sep = "\t",
+cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = FALSE, sep = "\t",
                             cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
                             have_sampleCol = TRUE, sample_col = "sample") {
     stopifnot(is.logical(is_dir), is.logical(have_sampleCol),
@@ -127,9 +127,9 @@ read_copynumbers = function(input, is_dir = FALSE, pattern = NULL, ignore_case =
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
-#' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+#' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #'}
-derive_features = function(CN_data,
+cnv_derivefeatures = function(CN_data,
                            cores = 1,
                            genome_build = c("hg19", "hg38")) {
     genome_build = match.arg(genome_build)
@@ -206,7 +206,7 @@ derive_features = function(CN_data,
 #' @description Apply mixture modelling to breakdown each feature distribution into mixtures
 #' of Gaussian or mixtures of Poison distributions using the \code{flexmix} package.
 #'
-#' @param CN_features a \code{list} generate from \code{derive_features} function.
+#' @param CN_features a \code{list} generate from \code{cnv_derivefeatures} function.
 #' @param seed seed number.
 #' @param min_comp minimal number of components to fit, default is 2.
 #' @param max_comp maximal number of components to fit, default is 10.
@@ -228,11 +228,11 @@ derive_features = function(CN_data,
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
-#' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+#' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
-#' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+#' tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 #' }
-fit_mixModels = function(CN_features,
+cnv_fitMixModels = function(CN_features,
                          seed = 77777,
                          min_comp = 2,
                          max_comp = 10,
@@ -454,9 +454,9 @@ fit_mixModels = function(CN_features,
 #' @description This function generate a sample-by-component matrix representing the sum of
 #' posterior probabilities of each copy-number event being assigned to each component.
 #' @param CN_features a \code{list} contains six copy number feature distributions, obtain this from
-#' \code{derive_features} function.
+#' \code{cnv_derivefeatures} function.
 #' @param all_components a \code{list} contain \code{flexmix} object of copy-number features, obtain this
-#' from \code{fit_mixModels} function or use pre-compiled components data which come from CNV signature paper
+#' from \code{cnv_fitMixModels} function or use pre-compiled components data which come from CNV signature paper
 #' https://www.nature.com/articles/s41588-018-0179-8 (set this argument as \code{NULL}).
 #' @param cores number of compute cores to run this task.
 #' @param rowIter step size of iteration for rows of ech CNV feature \code{data.frame}.
@@ -470,13 +470,13 @@ fit_mixModels = function(CN_features,
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
-#' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+#' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
-#' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+#' tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 #' ## generate a sample-by-component matrix
-#' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
+#' tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_components, cores = 1)
 #' }
-generate_sbcMatrix = function(CN_features,
+cnv_generateSbCMatrix = function(CN_features,
                               all_components = NULL,
                               cores = 1,
                               rowIter = 1000)
@@ -537,7 +537,7 @@ generate_sbcMatrix = function(CN_features,
 # starts decreasing (Used by this function). Another approach is to choose the rank for which the plot of the residual
 # sum of squares (RSS) between the input matrix and its estimate shows an inflection point.
 #'
-#' @param sample_by_component a sample-by-component \code{matrix}, generate from \code{generate_sbcMatrix} function.
+#' @param sample_by_component a sample-by-component \code{matrix}, generate from \code{cnv_generateSbCMatrix} function.
 #' @param nTry the maximal tried number of signatures, default is 12. Of note, this value should far less than number
 #' of features or samples.
 #' @param nrun a numeric giving the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
@@ -545,6 +545,7 @@ generate_sbcMatrix = function(CN_features,
 #' @param cores number of compute cores to run this task.
 #' @param seed seed number.
 #' @param plot \code{logical}. If \code{TRUE}, plot best rank survey.
+#' @param testRandom if generate random data from input to test measurements. Default is \code{TRUE}.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import NMF
 #' @import grDevices
@@ -557,23 +558,23 @@ generate_sbcMatrix = function(CN_features,
 #' #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
-#' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+#' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
-#' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+#' tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 #' ## generate a sample-by-component matrix
-#' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
+#' tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_components, cores = 1)
 #' ## optimal rank survey
-#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix,
+#'  tcga_sig_choose = cnv_chooseSigNumber(tcga_sample_component_matrix,
 #'  nrun = 10, cores = 1, plot = FALSE)
 #' }
 #'
-choose_nSignatures <-
+cnv_chooseSigNumber <-
     function(sample_by_component,
              nTry = 12,
              nrun = 10,
              cores = 1,
              seed = 77777,
-             plot = TRUE)
+             plot = TRUE, testRandom = TRUE)
     {
         message('Estimating best rank..')
         nmfalg <- "brunet"
@@ -610,42 +611,54 @@ choose_nSignatures <-
         )
         n = as.numeric(bestFit)
 
-        message("Generating random matrix and run NMF...")
-        V.random <- NMF::randomize(t(sample_by_component))
-        estim.r.random <-
-            NMF::nmfEstimateRank(
-                V.random,
-                seq(2, nTry),
-                seed = seed,
-                nrun = nrun,
-                verbose = TRUE,
-                method = nmfalg,
-                .opt = list(shared.memory = FALSE, paste0("p", cores))
-            )
+        if (testRandom) {
+            message("Generating random matrix and run NMF...")
+            V.random <- NMF::randomize(t(sample_by_component))
+            estim.r.random <-
+                NMF::nmfEstimateRank(
+                    V.random,
+                    seq(2, nTry),
+                    seed = seed,
+                    nrun = nrun,
+                    verbose = TRUE,
+                    method = nmfalg,
+                    .opt = list(shared.memory = FALSE, paste0("p", cores))
+                )
+        }
 
         if (plot) {
-            # message('Creating nmf consensusmap plot...')
-            # pdf('nmf_consensus.pdf', bg = 'white', pointsize = 9, width = 12, height = 12, paper = "special")
-            # NMF::consensusmap(estim.r)
-            # dev.off()
-
-
             message('Creating nmf rank survey plot...')
-            p <- NMF::plot(
-                estim.r,
-                estim.r.random,
-                what = c(
-                    "cophenetic",
-                    "dispersion",
-                    "sparseness",
-                    "silhouette",
-                    "residuals",
-                    "rss"
-                ),
-                xname = "Observed",
-                yname = "Randomised",
-                main = "NMF Rank Survey"
-            )
+
+            if (testRandom) {
+                p <- NMF::plot(
+                    estim.r,
+                    estim.r.random,
+                    what = c(
+                        "cophenetic",
+                        "dispersion",
+                        "sparseness",
+                        "silhouette",
+                        "residuals",
+                        "rss"
+                    ),
+                    xname = "Observed",
+                    yname = "Randomised",
+                    main = "NMF Rank Survey"
+                )
+            } else {
+                p <- NMF::plot(
+                    estim.r,
+                    what = c(
+                        "cophenetic",
+                        "dispersion",
+                        "sparseness",
+                        "silhouette",
+                        "residuals",
+                        "rss"
+                    ),
+                    main = "NMF Rank Survey"
+                )
+            }
 
             print(p)
 
@@ -683,7 +696,7 @@ choose_nSignatures <-
 #--------------------------
 # extract signatures
 #' @title Extract signature based on specified rank value
-#' @inheritParams choose_nSignatures
+#' @inheritParams cnv_chooseSigNumber
 #' @param nsig specification of the factorization rank.
 #' @param nmfalg specification of the NMF algorithm.
 #' @author Geoffrey Macintyre, Shixiang Wang
@@ -697,17 +710,17 @@ choose_nSignatures <-
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
-#' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+#' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
-#' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+#' tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 #' ## generate a sample-by-component matrix
-#' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
+#' tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_components, cores = 1)
 #' ## optimal rank survey
-#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix, nrun = 10,
+#'  tcga_sig_choose = cnv_chooseSigNumber(tcga_sample_component_matrix, nrun = 10,
 #'  cores = 1, plot = FALSE)
-#'  tcga_signatures = extract_Signatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
+#'  tcga_signatures = cnv_extractSignatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
 #' }
-extract_Signatures <-
+cnv_extractSignatures <-
     function(sample_by_component,
              nsig,
              seed = 77777,
@@ -729,7 +742,7 @@ extract_Signatures <-
 #---------------------------------------------------------------------------
 #' @title quantify exposure for samples using Linear Combination Decomposition (LCD)
 #'
-#' @inheritParams choose_nSignatures
+#' @inheritParams cnv_chooseSigNumber
 #' @param component_by_signature a componet by signature matrix, default is \code{NULL},
 #' it will use pre-compiled data from CNV signature paper
 #' https://www.nature.com/articles/s41588-018-0179-8
@@ -744,20 +757,20 @@ extract_Signatures <-
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
-#' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+#' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
-#' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+#' tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 #' ## generate a sample-by-component matrix
-#' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
+#' tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_components, cores = 1)
 #' ## optimal rank survey
-#'  tcga_sig_choose = choose_nSignatures(tcga_sample_component_matrix,
+#'  tcga_sig_choose = cnv_chooseSigNumber(tcga_sample_component_matrix,
 #'  nrun = 10, cores = 1, plot = FALSE)
-#'  tcga_signatures = extract_Signatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
+#'  tcga_signatures = cnv_extractSignatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
 #'  w = NMF::basis(tcga_signatures) # signature matrix
-#'  tcga_exposure = quantify_Signatures(sample_by_component =
+#'  tcga_exposure = cnv_quantifySigExposure(sample_by_component =
 #'  tcga_sample_component_matrix, component_by_signature = w)
 #' }
-quantify_Signatures <-
+cnv_quantifySigExposure <-
     function(sample_by_component,
              component_by_signature = NULL)
     {
@@ -784,10 +797,10 @@ quantify_Signatures <-
 
 #-------------------------------------------------------------------------------------
 #' Auto-capture signature and coresponding exposure
-#' @description  this is a wrapper of \code{choose_nSignatures}, \code{extract_Signatures}
-#' and \code{quantify_Signatures} these three functions.
+#' @description  this is a wrapper of \code{cnv_chooseSigNumber}, \code{cnv_extractSignatures}
+#' and \code{cnv_quantifySigExposure} these three functions.
 #'
-#' @inheritParams choose_nSignatures
+#' @inheritParams cnv_chooseSigNumber
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
 #' @import doMC NMF YAPSA
@@ -798,27 +811,27 @@ quantify_Signatures <-
 #' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
-#' tcga_features = derive_features(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+#' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' ## fit mixture model  (this will take some time)
-#' tcga_components = fit_mixModels(CN_features = tcga_features, cores = 1)
+#' tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 #' ## generate a sample-by-component matrix
-#' tcga_sample_component_matrix = generate_sbcMatrix(tcga_features, tcga_components, cores = 1)
+#' tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_components, cores = 1)
 #' ## optimal rank survey13
-#' tcga_results = autoCapture_Signatures(tcga_sample_component_matrix, nrun=10, cores = 1)
+#' tcga_results = cnv_autoCaptureSignatures(tcga_sample_component_matrix, nrun=10, cores = 1)
 #' }
-autoCapture_Signatures = function(sample_by_component,
+cnv_autoCaptureSignatures = function(sample_by_component,
                                   nTry = 12,
                                   nrun = 10,
                                   cores = 1,
                                   seed = 77777,
                                   plot = TRUE) {
-    choose_res = choose_nSignatures(sample_by_component, nTry, nrun, cores, seed, plot = plot)
-    NMF_res = extract_Signatures(sample_by_component,
+    choose_res = cnv_chooseSigNumber(sample_by_component, nTry, nrun, cores, seed, plot = plot)
+    NMF_res = cnv_extractSignatures(sample_by_component,
                                  nsig = choose_res$bestRank,
                                  cores = cores)
     w = NMF::basis(NMF_res)
     #h = NMF::coef(NMF_res)
-    exposure = quantify_Signatures(sample_by_component = sample_by_component,
+    exposure = cnv_quantifySigExposure(sample_by_component = sample_by_component,
                                    component_by_signature = w)
     message("Done.")
     return(
