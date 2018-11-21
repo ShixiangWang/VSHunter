@@ -13,11 +13,11 @@ if (!require("devtools")) {
     suppressPackageStartupMessages(library("devtools"))
 }
 
-# if (!require("VSHunter")) {
-#     message("package VSHunter is not installed, try installing it")
-#     devtools::install_github("ShixiangWang/VSHunter", dependencies = TRUE)
-#     suppressPackageStartupMessages(library("VSHunter"))
-# }
+if (!require("VSHunter")) {
+    message("package VSHunter is not installed, try installing it")
+    devtools::install_github("ShixiangWang/VSHunter", dependencies = TRUE)
+    suppressPackageStartupMessages(library("VSHunter"))
+}
 
 # specify desired options in a list
 option_list = list(
