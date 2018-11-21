@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>chromosome size of genome build hg19 — chromsize.hg19 • VSHunter</title>
+<title>Read copy number as a list of data.frame from data.frame or files — cnv_readprofile • VSHunter</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="chromosome size of genome build hg19 — chromsize.hg19" />
+<meta property="og:title" content="Read copy number as a list of data.frame from data.frame or files — cnv_readprofile" />
 
-<meta property="og:description" content="chromosome size of genome build hg19" />
+<meta property="og:description" content="This function is used to read copy number profile for preparing CNV signature
+analysis." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -109,40 +110,81 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>chromosome size of genome build hg19</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ShixiangWang/VSHunter/blob/master/R/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>chromsize.hg19.Rd</code></div>
+    <h1>Read copy number as a list of data.frame from data.frame or files</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ShixiangWang/VSHunter/blob/master/R/cnv_main.R'><code>R/cnv_main.R</code></a></small>
+    <div class="hidden name"><code>cnv_readprofile.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>chromosome size of genome build hg19</p>
+    <p>This function is used to read copy number profile for preparing CNV signature
+analysis.</p>
     
     </div>
 
-        
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>A data.frame</p>
+    <pre class="usage"><span class='fu'>cnv_readprofile</span>(<span class='no'>input</span>, <span class='kw'>is_dir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>ignore_case</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\t"</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Chromosome"</span>,
+  <span class='st'>"Start.bp"</span>, <span class='st'>"End.bp"</span>, <span class='st'>"modal_cn"</span>), <span class='kw'>have_sampleCol</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>sample_col</span> <span class='kw'>=</span> <span class='st'>"sample"</span>)</pre>
     
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>input</th>
+      <td><p>a <code>data.frame</code> or a file or a directory contains copy number profile</p></td>
+    </tr>
+    <tr>
+      <th>is_dir</th>
+      <td><p>is <code>input</code> a directory?</p></td>
+    </tr>
+    <tr>
+      <th>pattern</th>
+      <td><p>a optional regular expression used to select part of files if input is a directory, more detail please see
+<code>list.files</code> function.</p></td>
+    </tr>
+    <tr>
+      <th>ignore_case</th>
+      <td><p>logical. Should pattern-matching be case-insensitive?</p></td>
+    </tr>
+    <tr>
+      <th>sep</th>
+      <td><p>the field separator character. Values on each line of the file are separated by this character.</p></td>
+    </tr>
+    <tr>
+      <th>cols</th>
+      <td><p>four characters used to specify chromosome, start position,
+end position and copy number value, respectively. Default use names from ABSOLUTE calling result.</p></td>
+    </tr>
+    <tr>
+      <th>have_sampleCol</th>
+      <td><p>Whether input have sample column or not.
+This argument must be <code>TRUE</code> and <code>sample_col</code> also
+properly be assigned when input is a file or a <code>data.frame</code>.</p></td>
+    </tr>
+    <tr>
+      <th>sample_col</th>
+      <td><p>a character used to specify the sample column name.</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Generate from UCSC gold path</p>
+    <p>a <code>list</code> contains absolute copy-number profile for multiple samples.</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>chromsize.hg19</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#format">Format</a></li>
+      <li><a href="#value">Value</a></li>
+          </ul>
 
-      <li><a href="#source">Source</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+    <h2>Author</h2>
+    
+Shixiang Wang &lt;w_shixiang@163.com&gt;
 
   </div>
 </div>

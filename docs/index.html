@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">VSHunter</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
       </span>
     </div>
 
@@ -123,30 +123,6 @@ devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocument
 <p>Load package.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(VSHunter)</code></pre></div>
 </div>
-<div id="usage" class="section level2">
-<h2 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h2>
-<p>Load example data:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="kw">system.file</span>(<span class="st">"inst/extdata"</span>, <span class="st">"example_cn_list.RData"</span>, <span class="dt">package =</span> <span class="st">"VSHunter"</span>))</code></pre></div>
-<p><code>tcga_segTabs</code> is a list contain absolute copy number profile for multiple samples, each sample is a <code>data.frame</code> in the list.</p>
-<p>Derive feature distributions.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tcga_features =<span class="st"> </span><span class="kw"><a href="reference/derive_features.html">derive_features</a></span>(<span class="dt">CN_data =</span> tcga_segTabs, <span class="dt">cores =</span> <span class="dv">4</span>, <span class="dt">genome_build =</span> <span class="st">"hg19"</span>)</code></pre></div>
-<p>Fit model components.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tcga_components =<span class="st"> </span><span class="kw"><a href="reference/fit_mixModels.html">fit_mixModels</a></span>(<span class="dt">CN_features =</span> tcga_features, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
-<p>Generate a sample-by-component matrix representing the sum of posterior probabilities of each copy-number event being assigned to each component.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tcga_sample_component_matrix =<span class="st"> </span><span class="kw"><a href="reference/generate_sbcMatrix.html">generate_sbcMatrix</a></span>(tcga_features, tcga_components, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
-<p>Choose optimal number of signatures.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tcga_sig_choose =<span class="st"> </span><span class="kw"><a href="reference/choose_nSignatures.html">choose_nSignatures</a></span>(tcga_sample_component_matrix, <span class="dt">nrun =</span> <span class="dv">10</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
-<p>Extract signatures.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tcga_signatures =<span class="st"> </span><span class="kw"><a href="reference/extract_Signatures.html">extract_Signatures</a></span>(tcga_sample_component_matrix, <span class="dt">nsig =</span> <span class="dv">3</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
-<p>Quantify exposure for samples.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">w =<span class="st"> </span>NMF<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/NMF/topics/basis-coef-methods">basis</a></span>(tcga_signatures)
-<span class="co">#h = NMF::coef(tcga_signatures)</span>
-tcga_exposure =<span class="st"> </span><span class="kw"><a href="reference/quantify_Signatures.html">quantify_Signatures</a></span>(<span class="dt">sample_by_component =</span> tcga_sample_component_matrix, <span class="dt">component_by_signature =</span> w)</code></pre></div>
-<p>Function <code><a href="reference/autoCapture_Signatures.html">autoCapture_Signatures()</a></code> finish three steps (choose best number of signatures, extract signatures and quantify exposure) above in an antomated way. The arguments of this function are same as <code><a href="reference/choose_nSignatures.html">choose_nSignatures()</a></code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tcga_results =<span class="st"> </span><span class="kw"><a href="reference/autoCapture_Signatures.html">autoCapture_Signatures</a></span>(tcga_sample_component_matrix, <span class="dt">nrun=</span><span class="dv">10</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
-<p>The result object is a <code>list</code> which contains all results need fro downstream analysis, include NMF result related to best rank value, signature matrix, absolute and relative exposure (contribution) and best rank survey etc..</p>
-</div>
 <div id="citation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#citation" class="anchor"></a>Citation</h2>
@@ -174,8 +150,7 @@ tcga_exposure =<span class="st"> </span><span class="kw"><a href="reference/quan
 <div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
-<li><a href="LICENSE.html">Full license</a></li>
-<li><small>Apache License (&gt;= 2.0)</small></li>
+<li>Apache License (&gt;= 2.0)</li>
 </ul>
 </div>
 <div class="developers">
