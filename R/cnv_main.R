@@ -115,7 +115,8 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
 #' @param CN_data a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s
 #' each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 #' 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.
-#' @param cores number of compute cores to run this task.
+#' @param cores number of compute cores to run this task. You can use \code{detectCores} function to check how
+#' many cores you can use.
 #' @param genome_build genome build version, must be one of 'hg19' or 'hg38'.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a \code{list} contains six copy number feature distributions.
@@ -214,9 +215,9 @@ cnv_derivefeatures = function(CN_data,
 #' refer to \code{flexmix} package.
 #' @param model_selection model selection strategy, default is 'BIC'.Details about custom setting please
 #' refer to \code{flexmix} package.
-#' @param nrep number of run times fro each value of component, keep only the solution with maximum likelihood.
+#' @param nrep number of run times for each value of component, keep only the solution with maximum likelihood.
 #' @param niter maximal number of iteration to achive converge.
-#' @param cores number of compute cores to run this task.
+#' @inheritParams cnv_derivefeatures
 #' @param featsToFit integer vector used for task assignment in parallel computation. Do not change it.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a \code{list} contain \code{flexmix} object of copy-number features.
@@ -233,7 +234,7 @@ cnv_derivefeatures = function(CN_data,
 #' tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 #' }
 cnv_fitMixModels = function(CN_features,
-                         seed = 77777,
+                         seed = 123456,
                          min_comp = 2,
                          max_comp = 10,
                          min_prior = 0.001,
@@ -458,7 +459,7 @@ cnv_fitMixModels = function(CN_features,
 #' @param all_components a \code{list} contain \code{flexmix} object of copy-number features, obtain this
 #' from \code{cnv_fitMixModels} function or use pre-compiled components data which come from CNV signature paper
 #' https://www.nature.com/articles/s41588-018-0179-8 (set this argument as \code{NULL}).
-#' @param cores number of compute cores to run this task.
+#' @inheritParams cnv_derivefeatures
 #' @param rowIter step size of iteration for rows of ech CNV feature \code{data.frame}.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import doMC
@@ -542,7 +543,7 @@ cnv_generateSbCMatrix = function(CN_features,
 #' of features or samples.
 #' @param nrun a numeric giving the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
 #' According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.
-#' @param cores number of compute cores to run this task.
+#' @inheritParams cnv_derivefeatures
 #' @param seed seed number.
 #' @param plot \code{logical}. If \code{TRUE}, plot best rank survey.
 #' @param testRandom if generate random data from input to test measurements. Default is \code{TRUE}.
@@ -573,7 +574,7 @@ cnv_chooseSigNumber <-
              nTry = 12,
              nrun = 10,
              cores = 1,
-             seed = 77777,
+             seed = 123456,
              plot = TRUE, testRandom = TRUE)
     {
         message('Estimating best rank..')
@@ -723,7 +724,7 @@ cnv_chooseSigNumber <-
 cnv_extractSignatures <-
     function(sample_by_component,
              nsig,
-             seed = 77777,
+             seed = 123456,
              nmfalg = "brunet",
              cores = 1)
     {
@@ -823,8 +824,9 @@ cnv_autoCaptureSignatures = function(sample_by_component,
                                   nTry = 12,
                                   nrun = 10,
                                   cores = 1,
-                                  seed = 77777,
-                                  plot = TRUE) {
+                                  seed = 123456,
+                                  plot = TRUE,
+                                  testRandom = TRUE) {
     choose_res = cnv_chooseSigNumber(sample_by_component, nTry, nrun, cores, seed, plot = plot)
     NMF_res = cnv_extractSignatures(sample_by_component,
                                  nsig = choose_res$bestRank,
@@ -847,10 +849,96 @@ cnv_autoCaptureSignatures = function(sample_by_component,
     )
 }
 
-# all in one function
-# pipe_cnv_hunter = function(){
+
+#' CNV signature pipeline
+#' @description  this pipeline integrate multiple independent steps in \code{VSHunter}.
+#' @inheritParams cnv_derivefeatures
+#' @inheritParams cnv_fitMixModels
+#' @inheritParams cnv_chooseSigNumber
+#' @inheritParams cnv_extractSignatures
+#' @param plot_survey \code{logical}. If \code{TRUE}, plot best rank survey.
+#' @author Shixiang Wang <w_shixiang@163.com>
+#' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
+#' @import foreach doMC QDNAseq Biobase NMF YAPSA
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' ## load example copy-number data from tcga
+#' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
+#' ## run cnv signature pipeline
+#' result = cnv_pipe(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
+#' }
+cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
+                    min_comp = 2, max_comp = 10, min_prior = 0.001, model_selection = "BIC",
+                    nrep = 1, niter = 1000,
+                    nTry = 12, nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = TRUE,
+                    nmfalg = "brunet"){
+    stopifnot(exists("CN_data"), nTry < 100, is.logical(plot_survey), testRandom = TRUE)
+
+    genome_build = match.arg(genome_build)
+    cat("===============================================\n")
+    cat("===== VSHunter: CNV Signature Pipeline ========\n")
+    cat("===============================================\n")
+
+    cat("Part 1 - Reading arguments\n")
+    cat("==========\n")
+    cat("Thread number                          :", cores, "\n")
+    cat("Genome build                           :", genome_build, "\n")
+    cat("Minimal number of components           :", min_comp, "\n")
+    cat("Maximal number of components           :", max_comp, "\n")
+    cat("Minimal prior value                    :", min_prior, "\n")
+    cat("Model selection strategy               :", model_selection, "\n")
+    cat("Number of run for each component       :", nrep, "\n")
+    cat("Maximal number of iteration            :", niter, "\n")
+    cat("Maximum NMF rank in survey             :", nTry, "\n")
+    cat("Number of run for each rank            :", nrun, "\n")
+    cat("Seed number                            :", seed, "\n")
+    cat("Plot survey                            :", plot_survey, "\n")
+    cat("Use random data in survey              :", testRandom, "\n")
+    cat("Algorithm of NMF                       :", nmfalg, "\n")
+    cat("==========\n")
+
+    cat("Part 2 - Derive feature distributions\n")
+    cat("==========\n")
+    features = cnv_derivefeatures(CN_data = CN_data, cores = cores, genome_build = genome_build)
+
+    cat("Part 3 - Fit model components (this may take some time)\n")
+    cat("==========\n")
+    components = cnv_fitMixModels(CN_features = features, seed = seed,
+                                  min_comp = min_comp, max_comp = max_comp,
+                                  min_prior = min_prior, model_selection = model_selection,
+                                  nrep = nrep, niter = niter, cores = cores)
+
+    cat("Part 4 - Generate a sample-by-component matrix\n")
+    cat("==========\n")
+    sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = cores)
+
+    cat("Part 5 - Capture signatures of copy number profile (this may take much time)\n")
+    cat("==========\n")
+    results = cnv_autoCaptureSignatures(sample_component_matrix, nTry = nTry,
+                                        nrun=nrun, cores = cores, seed = seed,
+                                        plot = plot_survey, testRandom = testRandom)
+
+    cat("Pipeline done.\n")
+    return(c(list(features = features, components = components,
+             sample_component_matrix = sample_component_matrix), results))
+}
+
+
+
+# Visualization Part ------------------------------------------------------
+# cnv_plotMixComponents = function() {
 #
 # }
+#
+# cnv_plotSigExposure = function() {
+#
+# }
+
+
+# Analyses Part -----------------------------------------------------------
+# create multiple function used from association analysis.
 
 
 utils::globalVariables(c("centromeres.hg19", "centromeres.hg38", "chromsize.hg19", "chromsize.hg38",

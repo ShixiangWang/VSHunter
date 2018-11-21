@@ -5,7 +5,7 @@
 \title{Choose optimal number of signatures}
 \usage{
 cnv_chooseSigNumber(sample_by_component, nTry = 12, nrun = 10,
-  cores = 1, seed = 77777, plot = TRUE, testRandom = TRUE)
+  cores = 1, seed = 123456, plot = TRUE, testRandom = TRUE)
 }
 \arguments{
 \item{sample_by_component}{a sample-by-component \code{matrix}, generate from \code{cnv_generateSbCMatrix} function.}
@@ -16,7 +16,8 @@ of features or samples.}
 \item{nrun}{a numeric giving the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
 According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.}
 
-\item{cores}{number of compute cores to run this task.}
+\item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
+many cores you can use.}
 
 \item{seed}{seed number.}
 

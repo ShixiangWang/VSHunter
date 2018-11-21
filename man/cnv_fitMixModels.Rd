@@ -4,7 +4,7 @@
 \alias{cnv_fitMixModels}
 \title{Fit optimal number of mixture model components}
 \usage{
-cnv_fitMixModels(CN_features, seed = 77777, min_comp = 2,
+cnv_fitMixModels(CN_features, seed = 123456, min_comp = 2,
   max_comp = 10, min_prior = 0.001, model_selection = "BIC",
   nrep = 1, niter = 1000, cores = 1, featsToFit = seq(1, 6))
 }
@@ -23,11 +23,12 @@ refer to \code{flexmix} package.}
 \item{model_selection}{model selection strategy, default is 'BIC'.Details about custom setting please
 refer to \code{flexmix} package.}
 
-\item{nrep}{number of run times fro each value of component, keep only the solution with maximum likelihood.}
+\item{nrep}{number of run times for each value of component, keep only the solution with maximum likelihood.}
 
 \item{niter}{maximal number of iteration to achive converge.}
 
-\item{cores}{number of compute cores to run this task.}
+\item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
+many cores you can use.}
 
 \item{featsToFit}{integer vector used for task assignment in parallel computation. Do not change it.}
 }

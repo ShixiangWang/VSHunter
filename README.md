@@ -50,6 +50,6 @@ Citation
 
 -   *Macintyre, Geoff, et al. "Copy number signatures and mutational processes in ovarian carcinoma." Nature genetics 50.9 (2018): 1262.*
 
-If you wanna thanks for my work of this package, you can also cite:
+If you wanna thank my work for this package, you can also cite (and inlucde link of this package - <https://github.com/ShixiangWang/VSHunter>):
 
 -   *Wang, Shixiang, et al. "APOBEC3B and APOBEC mutational signature as potential predictive markers for immunotherapy response in non-small cell lung cancer." Oncogene (2018).*

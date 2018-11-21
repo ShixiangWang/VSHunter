@@ -12,7 +12,8 @@ cnv_derivefeatures(CN_data, cores = 1, genome_build = c("hg19",
 each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.}
 
-\item{cores}{number of compute cores to run this task.}
+\item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
+many cores you can use.}
 
 \item{genome_build}{genome build version, must be one of 'hg19' or 'hg38'.}
 }

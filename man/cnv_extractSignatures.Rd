@@ -4,7 +4,7 @@
 \alias{cnv_extractSignatures}
 \title{Extract signature based on specified rank value}
 \usage{
-cnv_extractSignatures(sample_by_component, nsig, seed = 77777,
+cnv_extractSignatures(sample_by_component, nsig, seed = 123456,
   nmfalg = "brunet", cores = 1)
 }
 \arguments{
@@ -16,7 +16,8 @@ cnv_extractSignatures(sample_by_component, nsig, seed = 77777,
 
 \item{nmfalg}{specification of the NMF algorithm.}
 
-\item{cores}{number of compute cores to run this task.}
+\item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
+many cores you can use.}
 }
 \value{
 a object of \code{NMF} run.
