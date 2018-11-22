@@ -912,7 +912,7 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
 
     cat("Part 4 - Generate a sample-by-component matrix\n")
     cat("==========\n")
-    sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = cores)
+    sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = 1)
 
     cat("Part 5 - Capture signatures of copy number profile (this may take much time)\n")
     cat("==========\n")
