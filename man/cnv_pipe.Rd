@@ -8,7 +8,7 @@ cnv_pipe(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
   min_comp = 2, max_comp = 10, min_prior = 0.001,
   model_selection = "BIC", nrep = 1, niter = 1000, nTry = 12,
   nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = TRUE,
-  nmfalg = "brunet")
+  nmfalg = "brunet", tmp = FALSE)
 }
 \arguments{
 \item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s
@@ -47,6 +47,8 @@ According to \code{NMF} package documentation, nrun set to 50 is enough to achie
 \item{testRandom}{if generate random data from input to test measurements. Default is \code{TRUE}.}
 
 \item{nmfalg}{specification of the NMF algorithm.}
+
+\item{tmp}{whether create a tmp directory to store temp result or not, default is \code{FALSE}.}
 }
 \value{
 a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..

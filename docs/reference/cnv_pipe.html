@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Extract signature based on specified rank value — cnv_extractSignatures • VSHunter</title>
+<title>CNV signature pipeline — cnv_pipe • VSHunter</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Extract signature based on specified rank value — cnv_extractSignatures" />
+<meta property="og:title" content="CNV signature pipeline — cnv_pipe" />
 
-<meta property="og:description" content="Extract signature based on specified rank value" />
+<meta property="og:description" content="this pipeline integrate multiple independent steps in VSHunter." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -109,65 +109,106 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Extract signature based on specified rank value</h1>
+    <h1>CNV signature pipeline</h1>
     <small class="dont-index">Source: <a href='https://github.com/ShixiangWang/VSHunter/blob/master/R/cnv_main.R'><code>R/cnv_main.R</code></a></small>
-    <div class="hidden name"><code>cnv_extractSignatures.Rd</code></div>
+    <div class="hidden name"><code>cnv_pipe.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Extract signature based on specified rank value</p>
+    <p>this pipeline integrate multiple independent steps in <code>VSHunter</code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cnv_extractSignatures</span>(<span class='no'>sample_by_component</span>, <span class='no'>nsig</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123456</span>,
-  <span class='kw'>nmfalg</span> <span class='kw'>=</span> <span class='st'>"brunet"</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
+    <pre class="usage"><span class='fu'>cnv_pipe</span>(<span class='no'>CN_data</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>genome_build</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"hg19"</span>, <span class='st'>"hg38"</span>),
+  <span class='kw'>min_comp</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>max_comp</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>min_prior</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
+  <span class='kw'>model_selection</span> <span class='kw'>=</span> <span class='st'>"BIC"</span>, <span class='kw'>nrep</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>niter</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>nTry</span> <span class='kw'>=</span> <span class='fl'>12</span>,
+  <span class='kw'>nrun</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123456</span>, <span class='kw'>plot_survey</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>testRandom</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>nmfalg</span> <span class='kw'>=</span> <span class='st'>"brunet"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>sample_by_component</th>
-      <td><p>a sample-by-component <code>matrix</code>, generate from <code>cnv_generateSbCMatrix</code> function.</p></td>
-    </tr>
-    <tr>
-      <th>nsig</th>
-      <td><p>specification of the factorization rank.</p></td>
-    </tr>
-    <tr>
-      <th>seed</th>
-      <td><p>seed number.</p></td>
-    </tr>
-    <tr>
-      <th>nmfalg</th>
-      <td><p>specification of the NMF algorithm.</p></td>
+      <th>CN_data</th>
+      <td><p>a <code>QDNAseqCopyNumbers</code> object or a list contains multiple <code>data.frame</code>s
+each one <code>data.frame</code> stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
+'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.</p></td>
     </tr>
     <tr>
       <th>cores</th>
       <td><p>number of compute cores to run this task. You can use <code>detectCores</code> function to check how
 many cores you can use.</p></td>
     </tr>
+    <tr>
+      <th>genome_build</th>
+      <td><p>genome build version, must be one of 'hg19' or 'hg38'.</p></td>
+    </tr>
+    <tr>
+      <th>min_comp</th>
+      <td><p>minimal number of components to fit, default is 2.</p></td>
+    </tr>
+    <tr>
+      <th>max_comp</th>
+      <td><p>maximal number of components to fit, default is 10.</p></td>
+    </tr>
+    <tr>
+      <th>min_prior</th>
+      <td><p>minimal prior value, default is 0.001. Details about custom setting please
+refer to <code>flexmix</code> package.</p></td>
+    </tr>
+    <tr>
+      <th>model_selection</th>
+      <td><p>model selection strategy, default is 'BIC'.Details about custom setting please
+refer to <code>flexmix</code> package.</p></td>
+    </tr>
+    <tr>
+      <th>nrep</th>
+      <td><p>number of run times for each value of component, keep only the solution with maximum likelihood.</p></td>
+    </tr>
+    <tr>
+      <th>niter</th>
+      <td><p>maximal number of iteration to achive converge.</p></td>
+    </tr>
+    <tr>
+      <th>nTry</th>
+      <td><p>the maximal tried number of signatures, default is 12. Of note, this value should far less than number
+of features or samples.</p></td>
+    </tr>
+    <tr>
+      <th>nrun</th>
+      <td><p>the number of run to perform for each value in range of 2 to <code>nTry</code>, default is 10.
+According to <code>NMF</code> package documentation, nrun set to 50 is enough to achieve robust result.</p></td>
+    </tr>
+    <tr>
+      <th>seed</th>
+      <td><p>seed number.</p></td>
+    </tr>
+    <tr>
+      <th>plot_survey</th>
+      <td><p><code>logical</code>. If <code>TRUE</code>, plot best rank survey.</p></td>
+    </tr>
+    <tr>
+      <th>testRandom</th>
+      <td><p>if generate random data from input to test measurements. Default is <code>TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>nmfalg</th>
+      <td><p>specification of the NMF algorithm.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a object of <code>NMF</code> run.</p>
+    <p>a <code>list</code> contains results of NMF best rank survey, run, signature matrix, exposure list etc..</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='co'>## load example copy-number data from tcga</span>
 <span class='fu'>load</span>(<span class='fu'>system.file</span>(<span class='st'>"inst/extdata"</span>, <span class='st'>"example_cn_list.RData"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"VSHunter"</span>))
-<span class='co'>## generate copy-number features</span>
-<span class='no'>tcga_features</span> <span class='kw'>=</span> <span class='fu'><a href='cnv_derivefeatures.html'>cnv_derivefeatures</a></span>(<span class='kw'>CN_data</span> <span class='kw'>=</span> <span class='no'>tcga_segTabs</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>genome_build</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>)
-<span class='co'>## fit mixture model  (this will take some time)</span>
-<span class='no'>tcga_components</span> <span class='kw'>=</span> <span class='fu'><a href='cnv_fitMixModels.html'>cnv_fitMixModels</a></span>(<span class='kw'>CN_features</span> <span class='kw'>=</span> <span class='no'>tcga_features</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='co'>## generate a sample-by-component matrix</span>
-<span class='no'>tcga_sample_component_matrix</span> <span class='kw'>=</span> <span class='fu'><a href='cnv_generateSbCMatrix.html'>cnv_generateSbCMatrix</a></span>(<span class='no'>tcga_features</span>, <span class='no'>tcga_components</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='co'>## optimal rank survey</span>
- <span class='no'>tcga_sig_choose</span> <span class='kw'>=</span> <span class='fu'><a href='cnv_chooseSigNumber.html'>cnv_chooseSigNumber</a></span>(<span class='no'>tcga_sample_component_matrix</span>, <span class='kw'>nrun</span> <span class='kw'>=</span> <span class='fl'>10</span>,
- <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
- <span class='no'>tcga_signatures</span> <span class='kw'>=</span> <span class='fu'>cnv_extractSignatures</span>(<span class='no'>tcga_sample_component_matrix</span>, <span class='kw'>nsig</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='co'>## run cnv signature pipeline</span>
+<span class='no'>result</span> <span class='kw'>=</span> <span class='fu'>cnv_pipe</span>(<span class='kw'>CN_data</span> <span class='kw'>=</span> <span class='no'>tcga_segTabs</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>genome_build</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -182,7 +223,7 @@ many cores you can use.</p></td>
 
     <h2>Author</h2>
     
-Geoffrey Macintyre, Shixiang Wang
+Shixiang Wang &lt;w_shixiang@163.com&gt;
 
   </div>
 </div>

@@ -123,7 +123,7 @@ and <code>cnv_quantifySigExposure</code> these three functions.</p>
     </div>
 
     <pre class="usage"><span class='fu'>cnv_autoCaptureSignatures</span>(<span class='no'>sample_by_component</span>, <span class='kw'>nTry</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>nrun</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>77777</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123456</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>testRandom</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,12 +139,13 @@ of features or samples.</p></td>
     </tr>
     <tr>
       <th>nrun</th>
-      <td><p>a numeric giving the number of run to perform for each value in range of 2 to <code>nTry</code>, default is 10.
+      <td><p>the number of run to perform for each value in range of 2 to <code>nTry</code>, default is 10.
 According to <code>NMF</code> package documentation, nrun set to 50 is enough to achieve robust result.</p></td>
     </tr>
     <tr>
       <th>cores</th>
-      <td><p>number of compute cores to run this task.</p></td>
+      <td><p>number of compute cores to run this task. You can use <code>detectCores</code> function to check how
+many cores you can use.</p></td>
     </tr>
     <tr>
       <th>seed</th>
@@ -153,6 +154,10 @@ According to <code>NMF</code> package documentation, nrun set to 50 is enough to
     <tr>
       <th>plot</th>
       <td><p><code>logical</code>. If <code>TRUE</code>, plot best rank survey.</p></td>
+    </tr>
+    <tr>
+      <th>testRandom</th>
+      <td><p>if generate random data from input to test measurements. Default is <code>TRUE</code>.</p></td>
     </tr>
     </table>
     

@@ -122,7 +122,7 @@ of Gaussian or mixtures of Poison distributions using the <code>flexmix</code> p
     
     </div>
 
-    <pre class="usage"><span class='fu'>cnv_fitMixModels</span>(<span class='no'>CN_features</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>77777</span>, <span class='kw'>min_comp</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+    <pre class="usage"><span class='fu'>cnv_fitMixModels</span>(<span class='no'>CN_features</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123456</span>, <span class='kw'>min_comp</span> <span class='kw'>=</span> <span class='fl'>2</span>,
   <span class='kw'>max_comp</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>min_prior</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>model_selection</span> <span class='kw'>=</span> <span class='st'>"BIC"</span>,
   <span class='kw'>nrep</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>niter</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>featsToFit</span> <span class='kw'>=</span> <span class='fu'>seq</span>(<span class='fl'>1</span>, <span class='fl'>6</span>))</pre>
     
@@ -157,7 +157,7 @@ refer to <code>flexmix</code> package.</p></td>
     </tr>
     <tr>
       <th>nrep</th>
-      <td><p>number of run times fro each value of component, keep only the solution with maximum likelihood.</p></td>
+      <td><p>number of run times for each value of component, keep only the solution with maximum likelihood.</p></td>
     </tr>
     <tr>
       <th>niter</th>
@@ -165,7 +165,8 @@ refer to <code>flexmix</code> package.</p></td>
     </tr>
     <tr>
       <th>cores</th>
-      <td><p>number of compute cores to run this task.</p></td>
+      <td><p>number of compute cores to run this task. You can use <code>detectCores</code> function to check how
+many cores you can use.</p></td>
     </tr>
     <tr>
       <th>featsToFit</th>

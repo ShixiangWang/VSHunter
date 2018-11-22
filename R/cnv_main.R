@@ -856,6 +856,7 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' @inheritParams cnv_fitMixModels
 #' @inheritParams cnv_chooseSigNumber
 #' @inheritParams cnv_extractSignatures
+#' @param tmp whether create a tmp directory to store temp result or not, default is \code{FALSE}.
 #' @param plot_survey \code{logical}. If \code{TRUE}, plot best rank survey.
 #' @author Shixiang Wang <w_shixiang@163.com>
 #' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
@@ -873,7 +874,7 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
                     min_comp = 2, max_comp = 10, min_prior = 0.001, model_selection = "BIC",
                     nrep = 1, niter = 1000,
                     nTry = 12, nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = TRUE,
-                    nmfalg = "brunet"){
+                    nmfalg = "brunet", tmp = FALSE){
     stopifnot(exists("CN_data"), nTry < 100, is.logical(plot_survey), testRandom = TRUE)
 
     genome_build = match.arg(genome_build)
@@ -903,6 +904,13 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
     cat("==========\n")
     features = cnv_derivefeatures(CN_data = CN_data, cores = cores, genome_build = genome_build)
 
+    if (tmp) {
+        tmp_dir = file.path(getwd(), "tmp")
+        dir.create(tmp_dir, showWarnings = FALSE, recursive = TRUE)
+    }
+
+    if (tmp) save(features, file = file.path(tmp_dir), "VSHunter_CNV_features.RData")
+
     cat("Part 3 - Fit model components (this may take some time)\n")
     cat("==========\n")
     components = cnv_fitMixModels(CN_features = features, seed = seed,
@@ -910,9 +918,14 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
                                   min_prior = min_prior, model_selection = model_selection,
                                   nrep = nrep, niter = niter, cores = cores)
 
+    if (tmp) save(components, file = file.path(tmp_dir), "VSHunter_CNV_components.RData")
+
     cat("Part 4 - Generate a sample-by-component matrix\n")
     cat("==========\n")
-    sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = 1)
+    sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = cores)
+
+    if (tmp) save(sample_component_matrix,
+                  file = file.path(tmp_dir), "VSHunter_CNV_SbCMatrix.RData")
 
     cat("Part 5 - Capture signatures of copy number profile (this may take much time)\n")
     cat("==========\n")
@@ -925,16 +938,6 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
              sample_component_matrix = sample_component_matrix), results))
 }
 
-
-
-# Visualization Part ------------------------------------------------------
-# cnv_plotMixComponents = function() {
-#
-# }
-#
-# cnv_plotSigExposure = function() {
-#
-# }
 
 
 # Analyses Part -----------------------------------------------------------

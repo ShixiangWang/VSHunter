@@ -79,7 +79,7 @@
       <h1>VSHunter: Decode Pattern of Copy Number Profile</h1>
                         <h4 class="author">Shixiang Wang  ShanghaiTech. University</h4>
             
-            <h4 class="date">2018-11-21</h4>
+            <h4 class="date">2018-11-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ShixiangWang/VSHunter/blob/master/vignettes/cnPattern.Rmd"><code>vignettes/cnPattern.Rmd</code></a></small>
       <div class="hidden name"><code>cnPattern.Rmd</code></div>
@@ -154,7 +154,7 @@ devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocument
 <div id="extract-signatures" class="section level3">
 <h3 class="hasAnchor">
 <a href="#extract-signatures" class="anchor"></a>Extract signatures</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tcga_signatures =<span class="st"> </span><span class="kw">extract_Signatures</span>(tcga_sample_component_matrix, <span class="dt">nsig =</span> <span class="dv">3</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tcga_signatures =<span class="st"> </span><span class="kw"><a href="../reference/cnv_extractSignatures.html">cnv_extractSignatures</a></span>(tcga_sample_component_matrix, <span class="dt">nsig =</span> <span class="dv">3</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
 </div>
 <div id="quantify-exposure-for-samples" class="section level3">
 <h3 class="hasAnchor">
@@ -177,7 +177,7 @@ tcga_exposure =<span class="st"> </span><span class="kw"><a href="../reference/c
 <ul>
 <li><em>Macintyre, Geoff, et al. “Copy number signatures and mutational processes in ovarian carcinoma.” Nature genetics 50.9 (2018): 1262.</em></li>
 </ul>
-<p>If you wanna thanks for my work of this package, you can also cite:</p>
+<p>If you wanna thank my work for this package, you can also cite (and inlucde link of this package - <a href="https://github.com/ShixiangWang/VSHunter" class="uri">https://github.com/ShixiangWang/VSHunter</a>):</p>
 <ul>
 <li><em>Wang, Shixiang, et al. “APOBEC3B and APOBEC mutational signature as potential predictive markers for immunotherapy response in non-small cell lung cancer.” Oncogene (2018).</em></li>
 </ul>

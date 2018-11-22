@@ -122,7 +122,7 @@ tcga_sig_choose2 = cnv_chooseSigNumber(tcga_sample_component_matrix, nrun = 10, 
 ### Extract signatures
 
 ```{r}
-tcga_signatures = extract_Signatures(tcga_sample_component_matrix, nsig = 3, cores = 4)
+tcga_signatures = cnv_extractSignatures(tcga_sample_component_matrix, nsig = 3, cores = 4)
 ```
 
 ### Quantify exposure for samples
