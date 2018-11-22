@@ -73,7 +73,7 @@ res = cnv_pipe(CN_data = cnp, cores = opt$thread, genome_build = opt$refversion,
                min_comp = opt$mincomp, max_comp = opt$maxcomp, min_prior = opt$minprior,
                model_selection = opt$selectMethod, nrep = opt$nrep, niter = opt$niter,
                nTry = opt$nTry, nrun = opt$nrun, seed = opt$seed, plot_survey = opt$plot,
-               testRandom = opt$random, nmfalg = opt$nmfalg)
+               testRandom = opt$random, nmfalg = opt$nmfalg, tmp = TRUE)
 
 cat("Result RData file is saved to ", opt$output, "\n")
 save(res, file = opt$output, compress = TRUE)
