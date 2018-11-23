@@ -1,23 +1,12 @@
 #!/usr/bin/env Rscript
 # Copyright 2018 Shixiang Wang <w_shixiang@163.com>
 
-if (!require("optparse")) {
+if (suppressMessages(!require("optparse"))) {
     message("package optparse is not installed, try installing it")
     install.package("optparse", dependencies = TRUE)
     suppressPackageStartupMessages(library("optparse"))
 }
 
-if (!require("devtools")) {
-    message("package devtools is not installed, try installing it")
-    install.package("devtools", dependencies = TRUE)
-    suppressPackageStartupMessages(library("devtools"))
-}
-
-if (!require("VSHunter")) {
-    message("package VSHunter is not installed, try installing it")
-    devtools::install_github("ShixiangWang/VSHunter", dependencies = TRUE)
-    suppressPackageStartupMessages(library("VSHunter"))
-}
 
 # specify desired options in a list
 option_list = list(
@@ -48,6 +37,17 @@ option_list = list(
 
 # get command line options
 opt <- parse_args(OptionParser(option_list=option_list))
+
+if (suppressMessages(!require("VSHunter"))) {
+    if (suppressMessages(!require("devtools"))) {
+        message("package devtools is not installed, try installing it")
+        install.package("devtools", dependencies = TRUE)
+        suppressPackageStartupMessages(library("devtools"))
+    }
+    message("package VSHunter is not installed, try installing it")
+    devtools::install_github("ShixiangWang/VSHunter", dependencies = TRUE)
+    suppressPackageStartupMessages(library("VSHunter"))
+}
 
 # opt = parse_args(OptionParser(option_list=option_list), args = c("-d", "--plot", "--random", "--input=wsx", "--colnames=Chromosome, Start, End, SegVal"))
 
