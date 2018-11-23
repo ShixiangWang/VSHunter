@@ -909,7 +909,7 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
         dir.create(tmp_dir, showWarnings = FALSE, recursive = TRUE)
     }
 
-    if (tmp) save(features, file = file.path(tmp_dir), "VSHunter_CNV_features.RData")
+    if (tmp) save(features, file = file.path(tmp_dir, "VSHunter_CNV_features.RData"))
 
     cat("Part 3 - Fit model components (this may take some time)\n")
     cat("==========\n")
@@ -918,14 +918,14 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
                                   min_prior = min_prior, model_selection = model_selection,
                                   nrep = nrep, niter = niter, cores = cores)
 
-    if (tmp) save(components, file = file.path(tmp_dir), "VSHunter_CNV_components.RData")
+    if (tmp) save(components, file = file.path(tmp_dir, "VSHunter_CNV_components.RData"))
 
     cat("Part 4 - Generate a sample-by-component matrix\n")
     cat("==========\n")
     sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = cores)
 
     if (tmp) save(sample_component_matrix,
-                  file = file.path(tmp_dir), "VSHunter_CNV_SbCMatrix.RData")
+                  file = file.path(tmp_dir, "VSHunter_CNV_SbCMatrix.RData"))
 
     cat("Part 5 - Capture signatures of copy number profile (this may take much time)\n")
     cat("==========\n")
