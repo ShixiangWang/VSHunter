@@ -858,6 +858,11 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' @inheritParams cnv_extractSignatures
 #' @param tmp whether create a tmp directory to store temp result or not, default is \code{FALSE}.
 #' @param plot_survey \code{logical}. If \code{TRUE}, plot best rank survey.
+#' @param de_novo default is \code{TRUE}. If set to \code{FALSE}, it will use reference components to
+#' generate sample-by-component matrix and then extract signatures.
+#' @param reference_components the object result from \code{cnv_fitMixModels}, default is \code{NULL}. When \code{de_novo}
+#' is \code{FALSE} and this
+#' argument is \code{NULL}, it will use reference components from Nature Genetics paper.
 #' @author Shixiang Wang <w_shixiang@163.com>
 #' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
 #' @import foreach doMC QDNAseq Biobase NMF YAPSA
@@ -871,6 +876,7 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' result = cnv_pipe(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' }
 cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
+                    de_novo = TRUE, reference_components = NULL,
                     min_comp = 2, max_comp = 10, min_prior = 0.001, model_selection = "BIC",
                     nrep = 1, niter = 1000,
                     nTry = 12, nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = TRUE,
@@ -886,6 +892,8 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
     cat("==========\n")
     cat("Thread number                          :", cores, "\n")
     cat("Genome build                           :", genome_build, "\n")
+    cat("De novo signature analysis?            :", de_novo, "\n")
+    cat("Reference components path              :", reference_components, "\n")
     cat("Minimal number of components           :", min_comp, "\n")
     cat("Maximal number of components           :", max_comp, "\n")
     cat("Minimal prior value                    :", min_prior, "\n")
@@ -913,16 +921,27 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
 
     cat("Part 3 - Fit model components (this may take some time)\n")
     cat("==========\n")
-    components = cnv_fitMixModels(CN_features = features, seed = seed,
-                                  min_comp = min_comp, max_comp = max_comp,
-                                  min_prior = min_prior, model_selection = model_selection,
-                                  nrep = nrep, niter = niter, cores = cores)
+    if (!de_novo) {
+        cat("Detect de_novo argument is FALSE, skip this step...\n")
+    } else {
+        components = cnv_fitMixModels(CN_features = features, seed = seed,
+                                      min_comp = min_comp, max_comp = max_comp,
+                                      min_prior = min_prior, model_selection = model_selection,
+                                      nrep = nrep, niter = niter, cores = cores)
 
-    if (tmp) save(components, file = file.path(tmp_dir, "VSHunter_CNV_components.RData"))
+        if (tmp) save(components, file = file.path(tmp_dir, "VSHunter_CNV_components.RData"))
+    }
+
 
     cat("Part 4 - Generate a sample-by-component matrix\n")
     cat("==========\n")
-    sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = cores)
+
+    if (!de_novo) {
+        cat("Using reference components...\n")
+        sample_component_matrix = cnv_generateSbCMatrix(features, reference_components, cores = cores)
+    } else {
+        sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = cores)
+    }
 
     if (tmp) save(sample_component_matrix,
                   file = file.path(tmp_dir, "VSHunter_CNV_SbCMatrix.RData"))
@@ -934,8 +953,15 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
                                         plot = plot_survey, testRandom = testRandom)
 
     cat("Pipeline done.\n")
-    return(c(list(features = features, components = components,
-             sample_component_matrix = sample_component_matrix), results))
+
+    if (!de_novo) {
+        if (is.null(reference_components)) message("Of note, the components can obtain from https://github.com/ShixiangWang/absoluteCNVdata")
+        return(c(list(features = features, components = reference_components,
+                      sample_component_matrix = sample_component_matrix), results))
+    } else {
+        return(c(list(features = features, components = components,
+                      sample_component_matrix = sample_component_matrix), results))
+    }
 }
 
 

@@ -5,10 +5,11 @@
 \title{CNV signature pipeline}
 \usage{
 cnv_pipe(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
-  min_comp = 2, max_comp = 10, min_prior = 0.001,
-  model_selection = "BIC", nrep = 1, niter = 1000, nTry = 12,
-  nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = TRUE,
-  nmfalg = "brunet", tmp = FALSE)
+  de_novo = TRUE, reference_components = NULL, min_comp = 2,
+  max_comp = 10, min_prior = 0.001, model_selection = "BIC",
+  nrep = 1, niter = 1000, nTry = 12, nrun = 10, seed = 123456,
+  plot_survey = TRUE, testRandom = TRUE, nmfalg = "brunet",
+  tmp = FALSE)
 }
 \arguments{
 \item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s
@@ -19,6 +20,13 @@ each one \code{data.frame} stores copy-number profile for one sample with 'chrom
 many cores you can use.}
 
 \item{genome_build}{genome build version, must be one of 'hg19' or 'hg38'.}
+
+\item{de_novo}{default is \code{TRUE}. If set to \code{FALSE}, it will use reference components to
+generate sample-by-component matrix and then extract signatures.}
+
+\item{reference_components}{the object result from \code{cnv_fitMixModels}, default is \code{NULL}. When \code{de_novo}
+is \code{FALSE} and this
+argument is \code{NULL}, it will use reference components from Nature Genetics paper.}
 
 \item{min_comp}{minimal number of components to fit, default is 2.}
 
