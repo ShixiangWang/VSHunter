@@ -17,7 +17,8 @@ of features or samples.}
 According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.}
 
 \item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
-many cores you can use.}
+many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+cores in your computer, it may cause some unexpected problems.}
 
 \item{seed}{seed number.}
 

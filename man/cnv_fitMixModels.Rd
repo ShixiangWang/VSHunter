@@ -28,7 +28,8 @@ refer to \code{flexmix} package.}
 \item{niter}{maximal number of iteration to achive converge.}
 
 \item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
-many cores you can use.}
+many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+cores in your computer, it may cause some unexpected problems.}
 
 \item{featsToFit}{integer vector used for task assignment in parallel computation. Do not change it.}
 }

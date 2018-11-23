@@ -16,7 +16,8 @@ from \code{cnv_fitMixModels} function or use pre-compiled components data which 
 https://www.nature.com/articles/s41588-018-0179-8 (set this argument as \code{NULL}).}
 
 \item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
-many cores you can use.}
+many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+cores in your computer, it may cause some unexpected problems.}
 
 \item{rowIter}{step size of iteration for rows of ech CNV feature \code{data.frame}.}
 }

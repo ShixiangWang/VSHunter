@@ -13,7 +13,8 @@ each one \code{data.frame} stores copy-number profile for one sample with 'chrom
 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.}
 
 \item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
-many cores you can use.}
+many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+cores in your computer, it may cause some unexpected problems.}
 
 \item{genome_build}{genome build version, must be one of 'hg19' or 'hg38'.}
 }

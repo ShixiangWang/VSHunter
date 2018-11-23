@@ -116,7 +116,8 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
 #' each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 #' 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.
 #' @param cores number of compute cores to run this task. You can use \code{detectCores} function to check how
-#' many cores you can use.
+#' many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+#' cores in your computer, it may cause some unexpected problems.
 #' @param genome_build genome build version, must be one of 'hg19' or 'hg38'.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a \code{list} contains six copy number feature distributions.
@@ -486,10 +487,12 @@ cnv_generateSbCMatrix = function(CN_features,
     {
         # all_components <-
         #     readRDS(paste(this_path, "data/component_parameters.rds", sep = "/"))
-        message("argument all_components is not set, will download reference components.")
-        message("more detail please see https://github.com/ShixiangWang/absoluteCNVdata")
-        download.file(url = "https://github.com/ShixiangWang/absoluteCNVdata/raw/master/component_parameters.rds",
-                      destfile = "Nat_Gen_component_parameters.rds")
+        message("About reference components\n   more detail please see https://github.com/ShixiangWang/absoluteCNVdata")
+        if (!file.exists("Nat_Gen_component_parameters.rds")) {
+            message("Nat_Gen_component_parameters.rds doesnot exist, will download reference components.")
+            download.file(url = "https://github.com/ShixiangWang/absoluteCNVdata/raw/master/component_parameters.rds",
+                          destfile = "Nat_Gen_component_parameters.rds")
+        }
         all_components <-
             readRDS("Nat_Gen_component_parameters.rds")
     }
@@ -879,7 +882,7 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
                     de_novo = TRUE, reference_components = NULL,
                     min_comp = 2, max_comp = 10, min_prior = 0.001, model_selection = "BIC",
                     nrep = 1, niter = 1000,
-                    nTry = 12, nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = TRUE,
+                    nTry = 12, nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = FALSE,
                     nmfalg = "brunet", tmp = FALSE){
     stopifnot(exists("CN_data"), nTry < 100, is.logical(plot_survey), testRandom = TRUE)
 
@@ -893,13 +896,13 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
     cat("Thread number                          :", cores, "\n")
     cat("Genome build                           :", genome_build, "\n")
     cat("De novo signature analysis?            :", de_novo, "\n")
-    cat("Reference components path              :", reference_components, "\n")
+    cat("Use reference components from paper?   :", is.null(reference_components), "\n")
     cat("Minimal number of components           :", min_comp, "\n")
     cat("Maximal number of components           :", max_comp, "\n")
     cat("Minimal prior value                    :", min_prior, "\n")
     cat("Model selection strategy               :", model_selection, "\n")
     cat("Number of run for each component       :", nrep, "\n")
-    cat("Maximal number of iteration            :", niter, "\n")
+    cat("Maxi  mal number of iteration            :", niter, "\n")
     cat("Maximum NMF rank in survey             :", nTry, "\n")
     cat("Number of run for each rank            :", nrun, "\n")
     cat("Seed number                            :", seed, "\n")
@@ -948,6 +951,7 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
 
     cat("Part 5 - Capture signatures of copy number profile (this may take much time)\n")
     cat("==========\n")
+
     results = cnv_autoCaptureSignatures(sample_component_matrix, nTry = nTry,
                                         nrun=nrun, cores = cores, seed = seed,
                                         plot = plot_survey, testRandom = testRandom)
