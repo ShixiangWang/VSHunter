@@ -146,10 +146,108 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
 
 
 }
-# cnv_plotMixComponents = function() {
-#
-# }
-#
-# cnv_plotSigExposure = function() {
-#
-# }
+
+
+cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
+    features = lapply(features, function(x) {
+        x$value = as.numeric(x$value)
+        return(x)
+        })
+
+    p_1 = ggplot(data = features$segsize, aes(x = value)) +
+        geom_line(stat="density") + labs(x = "Segment size", y = ylab) + theme_classic()
+    p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(0, 7:9),
+                                   labels = scales::trans_format("log10", scales::math_format(10^.x)))
+
+    p_2 = ggplot(data = features$copynumber, aes(x = value)) +
+        geom_line(stat="density") + labs(x = "Copy number", y = ylab) + theme_classic()
+    p_3 = ggplot(data = features$changepoint, aes(x = value)) +
+        geom_line(stat="density") + labs(x = "Copy number changepoint", y = ylab) + theme_classic()
+
+    p_4 = ggplot(data = features$bp10MB, aes(x = value)) +
+        geom_bar(stat = "count") + labs(x = "Breakpoint count per 10MB", y = ylab) + theme_classic()
+    p_5 = ggplot(data = features$bpchrarm, aes(x = value)) +
+        geom_bar(stat = "count") + labs(x = "Breakpoint count per chr arm", y = ylab) + theme_classic()
+    p_6 = ggplot(data = features$osCN, aes(x = as.factor(value))) +
+        geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme_classic() + theme(text = element_text(color = "black"))
+
+    p = cowplot::plot_grid(p_1, p_2, p_3, p_4, p_5, p_6,
+                       nrow = 2, align = "hv", ...)
+    p
+}
+
+
+cnv_plotMixComponents = function(features, components, ...) {
+
+
+    cbPalette <- c(RColorBrewer::brewer.pal(8,"Dark2"),RColorBrewer::brewer.pal(9,"Set1"),"black")
+    plotNormDensity = function(value, matrix, xlab) {
+        p = ggplot(data = data.frame(x = c(min(value), max(value))),
+                   aes(x)) + ylab("")
+
+        for (i in 1:ncol(matrix)) {
+            p = p + stat_function(fun = stats::dnorm, n = 1000,
+                                  args = list(
+                                      mean = matrix[1, i],
+                                      sd = matrix[2, i]),
+                                  color = cbPalette[i])
+        }
+
+        p = p+xlab(xlab)+theme_classic()
+        p
+    }
+
+    plotPoisDensity = function(value, lambda, xlab, max_value=10) {
+        if (is.null(max_value)) {
+            p = ggplot(data = data.frame(x = seq(min(value), max(value), length.out = 100)),
+                       aes(x)) + ylab("")
+        } else {
+            p = ggplot(data = data.frame(x = seq(min(value), max_value, length.out = 100)),
+                       aes(x)) + ylab("")
+        }
+
+
+        for (i in 1:length(lambda)) {
+            p = p + stat_function(geom = "line",  n = 11, fun = stats::dpois,
+                                  args = list(lambda = lambda[i]),
+                                  color = cbPalette[i])
+        }
+
+        p = p+xlab(xlab)+theme_classic()
+        p
+    }
+
+
+
+    features = lapply(features, function(x) {
+        x$value = as.numeric(x$value)
+        return(x)
+    })
+
+    # norm distribution
+    comp_segsize = flexmix::parameters(components[["segsize"]])
+    comp_copynumber = flexmix::parameters(components[["copynumber"]])
+    comp_changepoint = flexmix::parameters(components[["changepoint"]])
+    # pois distribution
+    comp_bp10MB = flexmix::parameters(components[["bp10MB"]])
+    comp_bpchrarm = flexmix::parameters(components[["bpchrarm"]])
+    comp_osCN = flexmix::parameters(components[["osCN"]])
+
+    # norm plots
+    p_1 = plotNormDensity(features[["segsize"]]$value, comp_segsize, xlab = "Segment size")
+    p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(0, 7:9),
+            labels = scales::trans_format("log10", scales::math_format(10^.x)))
+    p_2 = plotNormDensity(features[["copynumber"]]$value, comp_copynumber, xlab = "Copy number")
+    p_3 = plotNormDensity(features[["changepoint"]]$value, comp_changepoint, xlab = "Copy-number changepoint")
+
+    # pois plots
+    p_4 = plotPoisDensity(features[["bp10MB"]]$value, comp_bp10MB, xlab = "Breakpoint count per 10MB", max_value = 10)
+    p_5 = plotPoisDensity(features[["bpchrarm"]]$value, comp_bpchrarm, xlab = "Breakpoint count per arm", max_value = 50)
+    p_6 = plotPoisDensity(features[["osCN"]]$value, comp_osCN, xlab = "Oscilating CN chain length")
+
+    p = cowplot::plot_grid(p_1, p_2, p_3, p_4, p_5, p_6,
+                           nrow = 2, align = "hv", ...)
+    p
+}
+
+
