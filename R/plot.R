@@ -1,4 +1,24 @@
 # Visualization Part ------------------------------------------------------
+#' Plot CNV signatures
+#'
+#' Plot CNV signature from multiple result objects from \code{VSHunter} package.
+#'
+#' @param Res a result \code{list} generated from CNV signature pipeline or a \code{NMFfitX} object from \code{NMF} package.
+#' @param contributions if \code{TRUE}, plot contributions instead of signatures.
+#' @param color user custom colors.
+#' @param patient_order user custom patient order.
+#' @param font_size font size.
+#' @param show_title if \code{TRUE}, show title.
+#' @param axis_lwd line width of axis.
+#' @param title_size title size.
+#' @param show_barcodes if \code{TRUE}, show barcode.
+#' @param barcode_size barcode size when plot contribution.
+#' @param yaxisLim limit of y axis.
+#' @param ... other options pass to \code{barplot}.
+#'
+#' @return Nothing
+#' @export
+#'
 cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
                               patient_order = NULL, font_size = 1.2, show_title = TRUE,
                               axis_lwd = 2, title_size = 1.3, show_barcodes = FALSE, barcode_size = 0.5,
@@ -149,6 +169,16 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
 }
 
 
+#' Plot copy number feature distribution
+#'
+#' @param features a \code{list} generate from \code{cnv_derivefeatures} function.
+#' @param ylab lab of y axis.
+#' @param ... other options pass to \code{\link[cowplot]{plot_grid}} function of \code{cowplot} package.
+#'
+#' @return a ggplot object
+#' @import ggplot2 cowplot scales
+#' @export
+#'
 cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
     features = lapply(features, function(x) {
         x$value = as.numeric(x$value)
@@ -178,6 +208,18 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
 }
 
 
+#' Plot mixture fit model components
+#'
+#' @inheritParams cnv_plotFeatureDistribution
+#' @param components a \code{list} contain \code{flexmix} object of copy-number features, obtain this
+#' from \code{cnv_fitMixModels} function or use pre-compiled components data which come from CNV signature paper
+#' https://www.nature.com/articles/s41588-018-0179-8 (set this argument as \code{NULL}).
+#' @param ... other options pass to \code{\link[cowplot]{plot_grid}} function of \code{cowplot} package.
+#'
+#' @return a ggplot object
+#' @import ggplot2 cowplot scales
+#' @export
+#'
 cnv_plotMixComponents = function(features, components, ...) {
 
 
@@ -415,3 +457,7 @@ getArmLocation = function(genome_build = c("hg19", "hg38")){
 
     res
 }
+
+
+utils::globalVariables(c(".x", "aes", "chrom", "chromosome", "element_text", "geom_bar", "geom_line", "ggplot", "labs",
+                         "scale_x_continuous", "stat_function", "theme", "theme_classic", "value", "x", "ylab"))
