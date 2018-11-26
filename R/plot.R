@@ -285,6 +285,12 @@ cnv_getLengthFraction = function(CN_data,
         segTab = segTab[!grepl("chr23", segTab$chromosome), ]
     }
 
+    valid_chr = c(paste0("chr", 1:22), "chrX", "chrY")
+    if (!all(segTab$chromosome %in% valid_chr)) {
+        message("Filter some invalid segments... (not as 1:22 and X, Y)")
+        segTab = base::subset(segTab, chromosome %in% valid_chr)
+    }
+
     arm_data = getArmLocation(genome_build)
     # logical operation
 
