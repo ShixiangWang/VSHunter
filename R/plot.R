@@ -58,7 +58,7 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
             axis(side = 1, at = b, labels = colnames(contrib), lwd = 2, cex.axis = barcode_size,
                  las = 2, line = 1, hadj = 0.8, font = 2, tick = FALSE)
             axis(side = 2, at = seq(0, 1, 0.25), lwd = 3, font = 2, las = 2, cex.axis = 0.9)
-            mtext(text = "Signature exposures", side = 2, font = 2, cex = 1, line = 2.8)
+            mtext(text = "Signature exposures", side = 2, font = 2, cex = 1, line = 2.8, srt = 90) # strange srt
             par(mar = rep(2, 4))
             plot.new()
             #par(mar = c(2, 3, 0, 0))
@@ -70,9 +70,10 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
             par(mar = c(3, 4, 2, 1))
             b = barplot(contrib, axes = FALSE, horiz = FALSE, col = cols, border = NA, names.arg = rep("", ncol(contrib)))
             axis(side = 2, at = seq(0, 1, 0.25), lwd = 3, font = 2, las = 2, cex.axis = 0.9)
-            mtext(text = "Signature exposure", side = 2, font = 2, cex = 1, line = 2.8)
+            mtext(text = "Signature exposure", side = 2, font = 2, cex = 1, line = 2.8, srt=90)
+            par(mar = rep(2, 4))
             plot.new()
-            par(mar = c(2, 3, 0, 0))
+            #par(mar = c(2, 3, 0, 0))
             legend(x = "left", legend = rownames(contrib), col = cols[1:nrow(contrib)],
                    border = NA, bty = "n", pch = 15, xpd = TRUE, ncol = 1,
                    cex = 1.2, pt.cex = 1.5, horiz = TRUE)
@@ -251,3 +252,4 @@ cnv_plotMixComponents = function(features, components, ...) {
 }
 
 
+# cnv_plotLengthFrequency = function(data, )
