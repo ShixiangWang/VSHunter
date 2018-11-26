@@ -259,12 +259,12 @@ cnv_getLengthFraction = function(CN_data,
     stopifnot(is.list(CN_data) | is.data.frame(CN_data))
     genome_build = match.arg(genome_build)
 
-    if (is.list(CN_data)) {
+    if (inherits(CN_data, "list")) {
         segTab = base::Reduce(rbind, CN_data)
         segTab$sample = base::rep(x = names(CN_data),
                                      times = sapply(CN_data, function(x) nrow(x)))
     } else {
-        segTab = CN_data[, c(cols, samples_col)]
+        segTab = CN_data[, c(cols, sample_col)]
         if (ncol(segTab) == 5) {
             colnames(segTab) = c("chromosome", "start", "end", "segVal", "sample")
         } else if (ncol(segTab) == 4) {
@@ -299,24 +299,34 @@ cnv_getLengthFraction = function(CN_data,
         x = segTab[i, ]
 
         # locate chromosome
-        arm_chr = base::subset(arm_data, chrom==x$chromosome)
+        arm_loc = base::subset(arm_data, chrom==x$chromosome)
 
         y = c(x$start, x$end)
-        if (y[2] <= arm_chr$p_end & y[1] >= arm_chr$p_start) {
-            location = paste0(sub("chr", "", arm_chr$chrom), "p")
+        if (y[2] <= arm_loc$p_end & y[1] >= arm_loc$p_start) {
+            location = paste0(sub("chr", "", arm_loc$chrom), "p")
             annotation = "short arm"
-            fraction = (y[2] - y[1] + 1) / (arm_chr$p_end - arm_chr$p_start + 1)
-        } else if (y[2] <= arm_chr$q_end & y[1] >= arm_chr$q_start) {
-            location = paste0(sub("chr", "", arm_chr$chrom), "q")
+            fraction = (y[2] - y[1] + 1) / (arm_loc$p_end - arm_loc$p_start + 1)
+        } else if (y[2] <= arm_loc$q_end & y[1] >= arm_loc$q_start) {
+            location = paste0(sub("chr", "", arm_loc$chrom), "q")
             annotation = "long arm"
-            fraction = (y[2] - y[1] + 1) / (arm_chr$q_end - arm_chr$q_start + 1)
-        } else if (y[1] >= arm_chr$p_start & y[1] <= arm_chr$p_end & y[2] >= arm_chr$q_start & y[2] <= arm_chr$q_end) {
-            location = paste0(sub("chr", "", arm_chr$chrom), "pq") # across p and q arm
+            fraction = (y[2] - y[1] + 1) / (arm_loc$q_end - arm_loc$q_start + 1)
+        } else if (y[1] >= arm_loc$p_start & y[1] <= arm_loc$p_end & y[2] >= arm_loc$q_start & y[2] <= arm_loc$q_end) {
+            location = paste0(sub("chr", "", arm_loc$chrom), "pq") # across p and q arm
             annotation = "across short and long arm"
-            fraction = 2 * ((y[2] - y[1] + 1) / arm_chr$total_size)
+            fraction = 2 * ((y[2] - y[1] + 1) / arm_loc$total_size)
+        } else if (y[1] < arm_loc$p_end & y[2] < arm_loc$q_start) {
+            location = paste0(sub("chr", "", arm_loc$chrom), "p")
+            annotation = "short arm intersect with centromere region"
+            # only calculate region does not intersect
+            fraction = (y[2] - y[1] + 1 - (y[2] - arm_loc$p_end) ) / (arm_loc$p_end - arm_loc$p_start + 1)
+        } else if (y[1] > arm_loc$p_end & y[1] < arm_loc$q_start & y[2] > arm_loc$q_start ) {
+            location = paste0(sub("chr", "", arm_loc$chrom), "q")
+            annotation = "long arm intersect with centromere region"
+            # only calculate region does not intersect
+            fraction = (y[2] - y[1] + 1 - (y[1] - arm_loc$q_start)) / (arm_loc$q_end - arm_loc$q_start + 1)
         } else {
             location = "Unknown"
-            annotation = "Unknow segment, best discard it"
+            annotation = "Unknow segment, locate in centromere region"
             fraction = NA_real_
         }
 
