@@ -497,36 +497,46 @@ cnv_generateSbCMatrix = function(CN_features,
             readRDS("Nat_Gen_component_parameters.rds")
     }
 
-    if (cores > 1) {
-        #require(foreach)
-        requireNamespace("foreach", quietly = TRUE)
-        feats = c("segsize",
-                  "bp10MB",
-                  "osCN",
-                  "changepoint",
-                  "copynumber",
-                  "bpchrarm")
-        doMC::registerDoMC(cores)
 
-        full_mat = foreach(feat = feats, .combine = cbind) %dopar% {
-            calculateSumOfPosteriors(
-                CN_features[[feat]],
-                all_components[[feat]],
-                feat,
-                rowIter = rowIter,
-                cores = cores
-            )
-        }
-    } else {
-        full_mat <- cbind(
-            calculateSumOfPosteriors(CN_features[["segsize"]], all_components[["segsize"]], "segsize"),
-            calculateSumOfPosteriors(CN_features[["bp10MB"]], all_components[["bp10MB"]], "bp10MB"),
-            calculateSumOfPosteriors(CN_features[["osCN"]], all_components[["osCN"]], "osCN"),
-            calculateSumOfPosteriors(CN_features[["changepoint"]], all_components[["changepoint"]], "changepoint"),
-            calculateSumOfPosteriors(CN_features[["copynumber"]], all_components[["copynumber"]], "copynumber"),
-            calculateSumOfPosteriors(CN_features[["bpchrarm"]], all_components[["bpchrarm"]], "bpchrarm")
-        )
-    }
+
+    full_mat <- cbind(
+        calculateSumOfPosteriors(CN_features[["segsize"]], all_components[["segsize"]], "segsize", cores = cores),
+        calculateSumOfPosteriors(CN_features[["bp10MB"]], all_components[["bp10MB"]], "bp10MB", cores = cores),
+        calculateSumOfPosteriors(CN_features[["osCN"]], all_components[["osCN"]], "osCN", cores = cores),
+        calculateSumOfPosteriors(CN_features[["changepoint"]], all_components[["changepoint"]], "changepoint", cores = cores),
+        calculateSumOfPosteriors(CN_features[["copynumber"]], all_components[["copynumber"]], "copynumber", cores = cores),
+        calculateSumOfPosteriors(CN_features[["bpchrarm"]], all_components[["bpchrarm"]], "bpchrarm", cores = cores))
+
+    # if (cores > 1) {
+    #     require(foreach)
+    #     requireNamespace("foreach", quietly = TRUE)
+    #     feats = c("segsize",
+    #               "bp10MB",
+    #               "osCN",
+    #               "changepoint",
+    #               "copynumber",
+    #               "bpchrarm")
+    #     doMC::registerDoMC(cores)
+    #
+    #     full_mat = foreach(feat = feats, .combine = cbind) %dopar% {
+    #         calculateSumOfPosteriors(
+    #             CN_features[[feat]],
+    #             all_components[[feat]],
+    #             feat,
+    #             rowIter = rowIter,
+    #             cores = cores
+    #         )
+    #     }
+    # } else {
+    #     full_mat <- cbind(
+    #         calculateSumOfPosteriors(CN_features[["segsize"]], all_components[["segsize"]], "segsize"),
+    #         calculateSumOfPosteriors(CN_features[["bp10MB"]], all_components[["bp10MB"]], "bp10MB"),
+    #         calculateSumOfPosteriors(CN_features[["osCN"]], all_components[["osCN"]], "osCN"),
+    #         calculateSumOfPosteriors(CN_features[["changepoint"]], all_components[["changepoint"]], "changepoint"),
+    #         calculateSumOfPosteriors(CN_features[["copynumber"]], all_components[["copynumber"]], "copynumber"),
+    #         calculateSumOfPosteriors(CN_features[["bpchrarm"]], all_components[["bpchrarm"]], "bpchrarm")
+    #     )
+    # }
 
     rownames(full_mat) <- unique(CN_features[["segsize"]][, 1])
     full_mat[is.na(full_mat)] <- 0
