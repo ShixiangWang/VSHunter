@@ -14,7 +14,7 @@ biocViews:
 Imports: flexmix, 
         foreach, doMC, 
         YAPSA, QDNAseq, Biobase,
-        grDevices, RColorBrewer, ggplot2, cowplot, scales
+        grDevices, RColorBrewer, cowplot, scales
 Suggests: knitr, rmarkdown, prettydoc, pheatmap, 
 License: Apache License (>= 2.0)
 Encoding: UTF-8

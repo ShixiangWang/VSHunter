@@ -176,7 +176,7 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
 #' @param ... other options pass to \code{\link[cowplot]{plot_grid}} function of \code{cowplot} package.
 #'
 #' @return a ggplot object
-#' @import ggplot2 cowplot scales
+#' @import cowplot scales
 #' @export
 #'
 cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
@@ -186,30 +186,31 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
         })
 
     p_1 = ggplot(data = features$segsize, aes(x = value)) +
-        geom_line(stat="density") + labs(x = "Segment size", y = ylab) + theme_classic()
-    p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(0, 7:9),
+        geom_line(stat="density") + labs(x = "Segment size", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+    p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(7, 8),
                                    labels = scales::trans_format("log10", scales::math_format(10^.x)))
 
     p_2 = ggplot(data = features$copynumber, aes(x = value)) +
-        geom_line(stat="density") + labs(x = "Copy number", y = ylab) + theme_classic()
+        geom_line(stat="density") + labs(x = "Copy number", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
     p_3 = ggplot(data = features$changepoint, aes(x = value)) +
-        geom_line(stat="density") + labs(x = "Copy number changepoint", y = ylab) + theme_classic()
+        geom_line(stat="density") + labs(x = "Copy number changepoint", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
 
     p_4 = ggplot(data = features$bp10MB, aes(x = value)) +
-        geom_bar(stat = "count") + labs(x = "Breakpoint count per 10MB", y = ylab) + theme_classic()
+        geom_bar(stat = "count") + labs(x = "Breakpoint count per 10MB", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
     p_5 = ggplot(data = features$bpchrarm, aes(x = value)) +
-        geom_bar(stat = "count") + labs(x = "Breakpoint count per chr arm", y = ylab) + theme_classic()
+        geom_bar(stat = "count") + labs(x = "Breakpoint count per chr arm", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
     p_6 = ggplot(data = features$osCN, aes(x = as.factor(value))) +
-        geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme_classic()
+        geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
 
     osCN_tab = length(table(features$osCN$value))
+
     if (osCN_tab > 15 & osCN_tab <= 20) {
         p_6 = p_6 + theme(axis.text.x = element_text(size = 9))
     } else if (osCN_tab > 20 & osCN_tab <= 30) {
         p_6 = p_6 + theme(axis.text.x = element_text(size = 7))
     } else if (osCN_tab > 30 & osCN_tab <= 40) {
         p_6 = p_6 + theme(axis.text.x = element_text(size = 4))
-    } else {
+    } else if (osCN_tab > 40) {
         p_6 = p_6 + theme(axis.text.x = element_text(size = 3))
     }
 
