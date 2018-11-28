@@ -200,7 +200,18 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
     p_5 = ggplot(data = features$bpchrarm, aes(x = value)) +
         geom_bar(stat = "count") + labs(x = "Breakpoint count per chr arm", y = ylab) + theme_classic()
     p_6 = ggplot(data = features$osCN, aes(x = as.factor(value))) +
-        geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme_classic() + theme(text = element_text(color = "black"))
+        geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme_classic()
+
+    osCN_tab = length(table(features$osCN$value))
+    if (osCN_tab > 15 & osCN_tab <= 20) {
+        p_6 = p_6 + theme(axis.text.x = element_text(size = 9))
+    } else if (osCN_tab > 20 & osCN_tab <= 30) {
+        p_6 = p_6 + theme(axis.text.x = element_text(size = 7))
+    } else if (osCN_tab > 30 & osCN_tab <= 40) {
+        p_6 = p_6 + theme(axis.text.x = element_text(size = 4))
+    } else {
+        p_6 = p_6 + theme(axis.text.x = element_text(size = 3))
+    }
 
     p = cowplot::plot_grid(p_1, p_2, p_3, p_4, p_5, p_6,
                        nrow = 2, align = "hv", ...)
@@ -225,7 +236,7 @@ cnv_plotMixComponents = function(features, components, ...) {
 
     cbPalette <- c(RColorBrewer::brewer.pal(8,"Dark2"),RColorBrewer::brewer.pal(9,"Set1"),"black")
     plotNormDensity = function(value, matrix, xlab) {
-        p = ggplot(data = data.frame(x = c(min(value), max(value))),
+        p = ggplot(data = data.frame(x = seq(min(value), max(value), length.out = 100)),
                    aes(x)) + ylab("")
 
         for (i in 1:ncol(matrix)) {
