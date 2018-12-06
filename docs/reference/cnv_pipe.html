@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">VSHunter</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.1</span>
       </span>
     </div>
 
@@ -121,10 +121,11 @@
     </div>
 
     <pre class="usage"><span class='fu'>cnv_pipe</span>(<span class='no'>CN_data</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>genome_build</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"hg19"</span>, <span class='st'>"hg38"</span>),
-  <span class='kw'>min_comp</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>max_comp</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>min_prior</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
-  <span class='kw'>model_selection</span> <span class='kw'>=</span> <span class='st'>"BIC"</span>, <span class='kw'>nrep</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>niter</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>nTry</span> <span class='kw'>=</span> <span class='fl'>12</span>,
-  <span class='kw'>nrun</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123456</span>, <span class='kw'>plot_survey</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>testRandom</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>nmfalg</span> <span class='kw'>=</span> <span class='st'>"brunet"</span>)</pre>
+  <span class='kw'>de_novo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>reference_components</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_comp</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>max_comp</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>min_prior</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>model_selection</span> <span class='kw'>=</span> <span class='st'>"BIC"</span>,
+  <span class='kw'>nrep</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>niter</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>nTry</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>nrun</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123456</span>,
+  <span class='kw'>plot_survey</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>testRandom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>nmfalg</span> <span class='kw'>=</span> <span class='st'>"brunet"</span>,
+  <span class='kw'>tmp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,11 +139,23 @@ each one <code>data.frame</code> stores copy-number profile for one sample with 
     <tr>
       <th>cores</th>
       <td><p>number of compute cores to run this task. You can use <code>detectCores</code> function to check how
-many cores you can use.</p></td>
+many cores you can use. If you are using <code>cnv_pipe</code> feature, please do not use maximal number of
+cores in your computer, it may cause some unexpected problems.</p></td>
     </tr>
     <tr>
       <th>genome_build</th>
       <td><p>genome build version, must be one of 'hg19' or 'hg38'.</p></td>
+    </tr>
+    <tr>
+      <th>de_novo</th>
+      <td><p>default is <code>TRUE</code>. If set to <code>FALSE</code>, it will use reference components to
+generate sample-by-component matrix and then extract signatures.</p></td>
+    </tr>
+    <tr>
+      <th>reference_components</th>
+      <td><p>the object result from <code>cnv_fitMixModels</code>, default is <code>NULL</code>. When <code>de_novo</code>
+is <code>FALSE</code> and this
+argument is <code>NULL</code>, it will use reference components from Nature Genetics paper.</p></td>
     </tr>
     <tr>
       <th>min_comp</th>
@@ -195,6 +208,10 @@ According to <code>NMF</code> package documentation, nrun set to 50 is enough to
     <tr>
       <th>nmfalg</th>
       <td><p>specification of the NMF algorithm.</p></td>
+    </tr>
+    <tr>
+      <th>tmp</th>
+      <td><p>whether create a tmp directory to store temp result or not, default is <code>FALSE</code>.</p></td>
     </tr>
     </table>
     

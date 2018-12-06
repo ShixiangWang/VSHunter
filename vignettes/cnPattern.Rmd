@@ -78,7 +78,7 @@ library(VSHunter)
 Load example data:
 
 ```{r}
-load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
+load(system.file("extdata/example_cn_list.RData", package = "VSHunter"))
 ```
 
 `tcga_segTabs` is a list contain absolute copy number profile for multiple samples, each sample is a `data.frame` in the list.

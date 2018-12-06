@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>chromosome size of genome build hg38 — chromsize.hg38 • VSHunter</title>
+<title>Plot CNV signatures — cnv_plotSignatures • VSHunter</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="chromosome size of genome build hg38 — chromsize.hg38" />
+<meta property="og:title" content="Plot CNV signatures — cnv_plotSignatures" />
 
-<meta property="og:description" content="chromosome size of genome build hg38" />
+<meta property="og:description" content="Plot CNV signature from multiple result objects from VSHunter package." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -109,40 +109,88 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>chromosome size of genome build hg38</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ShixiangWang/VSHunter/blob/master/R/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>chromsize.hg38.Rd</code></div>
+    <h1>Plot CNV signatures</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ShixiangWang/VSHunter/blob/master/R/plot.R'><code>R/plot.R</code></a></small>
+    <div class="hidden name"><code>cnv_plotSignatures.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>chromosome size of genome build hg38</p>
+    <p>Plot CNV signature from multiple result objects from <code>VSHunter</code> package.</p>
     
     </div>
 
-        
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>A data.frame</p>
+    <pre class="usage"><span class='fu'>cnv_plotSignatures</span>(<span class='kw'>Res</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>contributions</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>patient_order</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fl'>1.2</span>, <span class='kw'>show_title</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>axis_lwd</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>title_size</span> <span class='kw'>=</span> <span class='fl'>1.3</span>, <span class='kw'>show_barcodes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>barcode_size</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>yaxisLim</span> <span class='kw'>=</span> <span class='fl'>0.3</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>Res</th>
+      <td><p>a result <code>list</code> generated from CNV signature pipeline or a <code>NMFfitX</code> object from <code>NMF</code> package.</p></td>
+    </tr>
+    <tr>
+      <th>contributions</th>
+      <td><p>if <code>TRUE</code>, plot contributions instead of signatures.</p></td>
+    </tr>
+    <tr>
+      <th>color</th>
+      <td><p>user custom colors.</p></td>
+    </tr>
+    <tr>
+      <th>patient_order</th>
+      <td><p>user custom patient order.</p></td>
+    </tr>
+    <tr>
+      <th>font_size</th>
+      <td><p>font size.</p></td>
+    </tr>
+    <tr>
+      <th>show_title</th>
+      <td><p>if <code>TRUE</code>, show title.</p></td>
+    </tr>
+    <tr>
+      <th>axis_lwd</th>
+      <td><p>line width of axis.</p></td>
+    </tr>
+    <tr>
+      <th>title_size</th>
+      <td><p>title size.</p></td>
+    </tr>
+    <tr>
+      <th>show_barcodes</th>
+      <td><p>if <code>TRUE</code>, show barcode.</p></td>
+    </tr>
+    <tr>
+      <th>barcode_size</th>
+      <td><p>barcode size when plot contribution.</p></td>
+    </tr>
+    <tr>
+      <th>yaxisLim</th>
+      <td><p>limit of y axis.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>other options pass to <code>barplot</code>.</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Generate from UCSC gold path</p>
+    <p>Nothing</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>chromsize.hg38</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#format">Format</a></li>
-
-      <li><a href="#source">Source</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      <li><a href="#value">Value</a></li>
+          </ul>
 
   </div>
 </div>
