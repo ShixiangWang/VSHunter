@@ -6,7 +6,7 @@ output: github_document
 
 # VSHunter: Capture variation signatures from genomic data
 
-[![GitHub tag](https://img.shields.io/github/tag/ShixiangWang/VSHunter.svg?label=Github)](https://github.com/ShixiangWang/VSHunter)
+[![GitHub tag](https://img.shields.io/github/tag/ShixiangWang/VSHunter.svg?label=Github)](https://github.com/ShixiangWang/VSHunter) [![Build status](https://ci.appveyor.com/api/projects/status/2n62nnwl8u2dpmc5/branch/master?svg=true)](https://ci.appveyor.com/project/ShixiangWang/vshunter/branch/master)
 
 The goal of VSHunter is to capture variation signature from genomic data. For now, we decode copy number pattern from **absolute copy number profile**. This package collects R code from paper _[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)_ and tidy them as a open source R package for bioinformatics community.
 

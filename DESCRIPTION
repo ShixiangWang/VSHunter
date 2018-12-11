@@ -9,13 +9,13 @@ Authors@R: person("Shixiang", "Wang", email = "w_shixiang@163.com", role = c("au
 Maintainer: Shixiang Wang <w_shixiang@163.com>
 URL: https://github.com/ShixiangWang/VSHunter
 BugReports: https://github.com/ShixiangWang/VSHunter/issues
-Depends: R (>= 3.3), NMF
+Depends: R (>= 3.3), NMF, cowplot
 biocViews:
 Imports: flexmix, 
         foreach, doMC, 
         YAPSA, QDNAseq, Biobase,
-        grDevices, RColorBrewer, cowplot, scales
-Suggests: knitr, rmarkdown, prettydoc, pheatmap, 
+        grDevices, RColorBrewer
+Suggests: knitr, rmarkdown, prettydoc, pheatmap
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true

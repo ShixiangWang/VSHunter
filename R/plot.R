@@ -176,7 +176,7 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
 #' @param ... other options pass to \code{\link[cowplot]{plot_grid}} function of \code{cowplot} package.
 #'
 #' @return a ggplot object
-#' @import cowplot scales
+#' @import cowplot
 #' @export
 #'
 cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
@@ -185,10 +185,12 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
         return(x)
         })
 
-    p_1 = ggplot(data = features$segsize, aes(x = value)) +
-        geom_line(stat="density") + labs(x = "Segment size", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
-    p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(7, 8),
-                                   labels = scales::trans_format("log10", scales::math_format(10^.x)))
+    #requireNamespace("cowplot")
+    #cowplot::theme_cowplot()
+    p_1 = ggplot(data = features$segsize, aes(x = log10(value))) +
+        geom_line(stat="density") + labs(x = "Segment size (log10 based)", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+    #p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(7, 8),
+    #                               labels = scales::trans_format("log10", scales::math_format(10^.x)))
 
     p_2 = ggplot(data = features$copynumber, aes(x = value)) +
         geom_line(stat="density") + labs(x = "Copy number", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
@@ -199,20 +201,23 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
         geom_bar(stat = "count") + labs(x = "Breakpoint count per 10MB", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
     p_5 = ggplot(data = features$bpchrarm, aes(x = value)) +
         geom_bar(stat = "count") + labs(x = "Breakpoint count per chr arm", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
-    p_6 = ggplot(data = features$osCN, aes(x = as.factor(value))) +
+
+    p_6 = ggplot(data = features$osCN, aes(x = value)) +
         geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+    # p_6 = ggplot(data = features$osCN, aes(x = as.factor(value))) +
+    #     geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
 
-    osCN_tab = length(table(features$osCN$value))
-
-    if (osCN_tab > 15 & osCN_tab <= 20) {
-        p_6 = p_6 + theme(axis.text.x = element_text(size = 9))
-    } else if (osCN_tab > 20 & osCN_tab <= 30) {
-        p_6 = p_6 + theme(axis.text.x = element_text(size = 7))
-    } else if (osCN_tab > 30 & osCN_tab <= 40) {
-        p_6 = p_6 + theme(axis.text.x = element_text(size = 4))
-    } else if (osCN_tab > 40) {
-        p_6 = p_6 + theme(axis.text.x = element_text(size = 3))
-    }
+    # osCN_tab = length(table(features$osCN$value))
+    #
+    # if (osCN_tab > 15 & osCN_tab <= 20) {
+    #     p_6 = p_6 + theme(axis.text.x = element_text(size = 9))
+    # } else if (osCN_tab > 20 & osCN_tab <= 30) {
+    #     p_6 = p_6 + theme(axis.text.x = element_text(size = 7))
+    # } else if (osCN_tab > 30 & osCN_tab <= 40) {
+    #     p_6 = p_6 + theme(axis.text.x = element_text(size = 4))
+    # } else if (osCN_tab > 40) {
+    #     p_6 = p_6 + theme(axis.text.x = element_text(size = 3))
+    # }
 
     p = cowplot::plot_grid(p_1, p_2, p_3, p_4, p_5, p_6,
                        nrow = 2, align = "hv", ...)
@@ -229,7 +234,7 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
 #' @param ... other options pass to \code{\link[cowplot]{plot_grid}} function of \code{cowplot} package.
 #'
 #' @return a ggplot object
-#' @import ggplot2 cowplot scales
+#' @import cowplot
 #' @export
 #'
 cnv_plotMixComponents = function(features, components, ...) {
@@ -280,7 +285,7 @@ cnv_plotMixComponents = function(features, components, ...) {
     })
 
     # norm distribution
-    comp_segsize = flexmix::parameters(components[["segsize"]])
+    comp_segsize = log10(flexmix::parameters(components[["segsize"]]))
     comp_copynumber = flexmix::parameters(components[["copynumber"]])
     comp_changepoint = flexmix::parameters(components[["changepoint"]])
     # pois distribution
@@ -289,9 +294,9 @@ cnv_plotMixComponents = function(features, components, ...) {
     comp_osCN = flexmix::parameters(components[["osCN"]])
 
     # norm plots
-    p_1 = plotNormDensity(features[["segsize"]]$value, comp_segsize, xlab = "Segment size")
-    p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(0, 7:9),
-            labels = scales::trans_format("log10", scales::math_format(10^.x)))
+    p_1 = plotNormDensity(log10(features[["segsize"]]$value), comp_segsize, xlab = "Segment size (log10 based)")
+    # p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(0, 7:9),
+    #         labels = scales::trans_format("log10", scales::math_format(10^.x)))
     p_2 = plotNormDensity(features[["copynumber"]]$value, comp_copynumber, xlab = "Copy number")
     p_3 = plotNormDensity(features[["changepoint"]]$value, comp_changepoint, xlab = "Copy-number changepoint")
 
@@ -306,6 +311,14 @@ cnv_plotMixComponents = function(features, components, ...) {
 }
 
 
+
+#' Calculate length fraction profile of copy number
+#'
+#' @inheritParams cnv_derivefeatures
+#' @inheritParams cnv_readprofile
+#' @author Shixiang Wang <w_shixiang@163.com>
+#' @return a data frame
+#' @export
 cnv_getLengthFraction = function(CN_data,
                                    genome_build = c("hg19", "hg38"),
                                    cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
@@ -399,6 +412,75 @@ cnv_getLengthFraction = function(CN_data,
 }
 
 
+#' Plot copy number distribution either by length or chromosome
+#'
+#' @param data a \code{data.frame}, result of \code{cnv_getLengthFraction} function.
+#' @param rm_normal logical. Whether removel normal copy (i.e. "segVal" equals 2), default is \code{TRUE}.
+#' @param mode either "ld" for distribution by CN length or "cd" for distribution by chromosome.
+#' @param fill when \code{mode} is "cd", if \code{fill} is \code{TRUE}, plot percentage instead of count.
+#' @author Shixiang Wang <w_shixiang@163.com>
+#'
+#' @return a ggplot object
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' cnv_plotLengthSummary(data, mode = "cd")
+#' }
+cnv_plotDistributionProfile = function(data, rm_normal=TRUE, mode = c("ld", "cd"),
+                                 fill = FALSE) {
+
+    stopifnot(is.logical(rm_normal), is.data.frame(data), is.logical(fill))
+    mode = match.arg(mode)
+
+    # if remove normal copy number segments
+    if (rm_normal) {
+        if (! "segVal" %in% colnames(data)) {
+            stop("'segVal' must be provided as a column.")
+        }
+        data = base::subset(data, data[, "segVal"] != 2)
+    }
+
+    if (mode == "ld"){
+        # plot length distribution
+        if (! "fraction" %in% colnames(data)) {
+            stop("'fraction' must be provided as a column.")
+        }
+        ggplot(data, aes(x=fraction, y=..density..)) +
+            geom_histogram(bins = 100) +
+            labs(x = "Length of SCNA\n(normalized to chromosome arms)",
+                 y = "Percentage\n(as fraction of all SCNAs)")
+    } else if (mode == "cd") {
+        # plot chr distribution
+        if (! all(c("chromosome", "location") %in% colnames(data))) {
+            stop("'chromosome', 'location' must be provided as columns.")
+        }
+
+        if (is.character(data$chromosome[1])) {
+            data$chromosome = sub("chr", "", data$chromosome, ignore.case = TRUE)
+            data = subset(data, chromosome %in% as.character(1:22))
+        } else if (is.integer(data$chromosome[1])) {
+            data = subset(data, chromosome %in% 1:22)
+        }
+
+        # only keep chr 1 to 22
+        data$chromosome = factor(as.character(data$chromosome), levels = as.character(1:22))
+
+        # only keep p, q, pq
+        data$location = factor(sub("[0-9]*", "", data$location), levels = c("p", "pq", "q"))
+
+        # plot
+        if (!fill) {
+            ggplot(data, aes(x=chromosome, fill = location)) +
+                geom_bar() + xlab("Chromosome")
+        } else {
+            ggplot(data, aes(x=chromosome, fill = location)) +
+                geom_bar(position = "fill") + ylab("Percentage") + xlab("Chromosome")
+            }
+
+    }
+}
+
 
 getArmLocation = function(genome_build = c("hg19", "hg38")){
     # get chromosome lengths and centromere locations
@@ -472,4 +554,6 @@ getArmLocation = function(genome_build = c("hg19", "hg38")){
 
 
 utils::globalVariables(c(".x", "aes", "chrom", "chromosome", "element_text", "geom_bar", "geom_line", "ggplot", "labs",
-                         "scale_x_continuous", "stat_function", "theme", "theme_classic", "value", "x", "ylab"))
+                         "scale_x_continuous", "stat_function", "theme", "theme_classic", "value", "x", "ylab",
+                         "temp", "fraction", "..density..", "geom_histogram",
+                         "location", "xlab", "unit"))

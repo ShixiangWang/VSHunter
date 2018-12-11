@@ -894,7 +894,7 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
                     nrep = 1, niter = 1000,
                     nTry = 12, nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = FALSE,
                     nmfalg = "brunet", tmp = FALSE){
-    stopifnot(exists("CN_data"), nTry < 100, is.logical(plot_survey), testRandom = TRUE)
+    stopifnot(exists("CN_data"), nTry < 100, is.logical(plot_survey), is.logical(testRandom))
 
     genome_build = match.arg(genome_build)
     cat("===============================================\n")
@@ -912,13 +912,14 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
     cat("Minimal prior value                    :", min_prior, "\n")
     cat("Model selection strategy               :", model_selection, "\n")
     cat("Number of run for each component       :", nrep, "\n")
-    cat("Maxi  mal number of iteration            :", niter, "\n")
+    cat("Maximal number of iteration            :", niter, "\n")
     cat("Maximum NMF rank in survey             :", nTry, "\n")
     cat("Number of run for each rank            :", nrun, "\n")
     cat("Seed number                            :", seed, "\n")
     cat("Plot survey                            :", plot_survey, "\n")
     cat("Use random data in survey              :", testRandom, "\n")
     cat("Algorithm of NMF                       :", nmfalg, "\n")
+    cat("Store temp result data?                :", temp, "\n")
     cat("==========\n")
 
     cat("Part 2 - Derive feature distributions\n")
