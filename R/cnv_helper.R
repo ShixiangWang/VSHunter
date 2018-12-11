@@ -106,13 +106,15 @@ calculateSumOfPosteriors <-
             # require(foreach)
             # require(doMC)
             requireNamespace("foreach", quietly = T)
-            requireNamespace("doMC", quietly = T)
+            #requireNamespace("doMC", quietly = T)
+            requireNamespace("doParallel", quietly = T)
 
             len = dim(CN_feature)[1]
             iters = floor(len / rowIter)
             lastiter = iters[length(iters)]
 
-            registerDoMC(cores)
+            #registerDoMC(cores)
+            registerDoParallel(cores = cores)
             curr_posterior = foreach(i = 0:iters, .combine = rbind) %dopar% {
                 start = i * rowIter + 1
                 if (i != lastiter) {

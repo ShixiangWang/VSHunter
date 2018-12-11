@@ -121,7 +121,7 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
 #' @param genome_build genome build version, must be one of 'hg19' or 'hg38'.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a \code{list} contains six copy number feature distributions.
-#' @import foreach doMC QDNAseq Biobase
+#' @import foreach doParallel QDNAseq Biobase
 #' @export
 #'
 #' @examples
@@ -161,7 +161,8 @@ cnv_derivefeatures = function(CN_data,
     if (cores > 1) {
         #require(foreach)
         requireNamespace("foreach", quietly = TRUE)
-        doMC::registerDoMC(cores)
+        #doMC::registerDoMC(cores)
+        doParallel::registerDoParallel(cores = cores)
 
         temp_list = foreach::foreach(i = 1:6) %dopar% {
             if (i == 1) {
@@ -247,7 +248,8 @@ cnv_fitMixModels = function(CN_features,
     if (cores > 1) {
         #require(foreach)
         requireNamespace("foreach", quietly = TRUE)
-        doMC::registerDoMC(cores)
+        #doMC::registerDoMC(cores)
+        doParallel::registerDoParallel(cores = cores)
 
         temp_list = foreach(i = 1:6) %dopar% {
             if (i == 1 & i %in% featsToFit) {
@@ -463,7 +465,7 @@ cnv_fitMixModels = function(CN_features,
 #' @inheritParams cnv_derivefeatures
 #' @param rowIter step size of iteration for rows of ech CNV feature \code{data.frame}.
 #' @author Geoffrey Macintyre, Shixiang Wang
-#' @import doMC
+#' @import doParallel
 #' @return a numeric sample-by-component \code{matrix}
 #' @export
 #'
@@ -817,7 +819,7 @@ cnv_quantifySigExposure <-
 #' @inheritParams cnv_chooseSigNumber
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
-#' @import doMC NMF YAPSA
+#' @import doParallel NMF YAPSA
 #' @export
 #'
 #' @examples
@@ -878,7 +880,7 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' argument is \code{NULL}, it will use reference components from Nature Genetics paper.
 #' @author Shixiang Wang <w_shixiang@163.com>
 #' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
-#' @import foreach doMC QDNAseq Biobase NMF YAPSA
+#' @import foreach doParallel QDNAseq Biobase NMF YAPSA
 #' @export
 #'
 #' @examples
