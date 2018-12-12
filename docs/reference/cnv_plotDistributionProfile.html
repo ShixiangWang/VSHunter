@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Derive copy number feature distributions — cnv_derivefeatures • VSHunter</title>
+<title>Plot copy number distribution either by length or chromosome — cnv_plotDistributionProfile • VSHunter</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,12 +30,9 @@
 
 
 
-<meta property="og:title" content="Derive copy number feature distributions — cnv_derivefeatures" />
+<meta property="og:title" content="Plot copy number distribution either by length or chromosome — cnv_plotDistributionProfile" />
 
-<meta property="og:description" content="This function summarise each copy-number profile using a number of different
-feature distributions: sigment size, breakpoint number (per ten megabase), change-point copy-number,
-segment copy-number, breakpoint number(per chromosome arm), length of segments with oscilating
-copy-number" />
+<meta property="og:description" content="Plot copy number distribution either by length or chromosome" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,55 +100,49 @@ copy-number" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Derive copy number feature distributions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ShixiangWang/VSHunter/blob/master/R/cnv_main.R'><code>R/cnv_main.R</code></a></small>
-    <div class="hidden name"><code>cnv_derivefeatures.Rd</code></div>
+    <h1>Plot copy number distribution either by length or chromosome</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ShixiangWang/VSHunter/blob/master/R/plot.R'><code>R/plot.R</code></a></small>
+    <div class="hidden name"><code>cnv_plotDistributionProfile.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function summarise each copy-number profile using a number of different
-feature distributions: sigment size, breakpoint number (per ten megabase), change-point copy-number,
-segment copy-number, breakpoint number(per chromosome arm), length of segments with oscilating
-copy-number</p>
+    <p>Plot copy number distribution either by length or chromosome</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cnv_derivefeatures</span>(<span class='no'>CN_data</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>genome_build</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"hg19"</span>,
-  <span class='st'>"hg38"</span>))</pre>
+    <pre class="usage"><span class='fu'>cnv_plotDistributionProfile</span>(<span class='no'>data</span>, <span class='kw'>rm_normal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ld"</span>,
+  <span class='st'>"cd"</span>), <span class='kw'>fill</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>CN_data</th>
-      <td><p>a <code>QDNAseqCopyNumbers</code> object or a list contains multiple <code>data.frame</code>s
-each one <code>data.frame</code> stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
-'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.</p></td>
+      <th>data</th>
+      <td><p>a <code>data.frame</code>, result of <code>cnv_getLengthFraction</code> function.</p></td>
     </tr>
     <tr>
-      <th>cores</th>
-      <td><p>number of compute cores to run this task. You can use <code>detectCores</code> function to check how
-many cores you can use. If you are using <code>cnv_pipe</code> feature, please do not use maximal number of
-cores in your computer, it may cause some unexpected problems.</p></td>
+      <th>rm_normal</th>
+      <td><p>logical. Whether removel normal copy (i.e. "segVal" equals 2), default is <code>TRUE</code>.</p></td>
     </tr>
     <tr>
-      <th>genome_build</th>
-      <td><p>genome build version, must be one of 'hg19' or 'hg38'.</p></td>
+      <th>mode</th>
+      <td><p>either "ld" for distribution by CN length or "cd" for distribution by chromosome.</p></td>
+    </tr>
+    <tr>
+      <th>fill</th>
+      <td><p>when <code>mode</code> is "cd", if <code>fill</code> is <code>TRUE</code>, plot percentage instead of count.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code>list</code> contains six copy number feature distributions.</p>
+    <p>a ggplot object</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'>## load example copy-number data from tcga</span>
-<span class='fu'>load</span>(<span class='fu'>system.file</span>(<span class='st'>"inst/extdata"</span>, <span class='st'>"example_cn_list.RData"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"VSHunter"</span>))
-<span class='co'>## generate copy-number features</span>
-<span class='no'>tcga_features</span> <span class='kw'>=</span> <span class='fu'>cnv_derivefeatures</span>(<span class='kw'>CN_data</span> <span class='kw'>=</span> <span class='no'>tcga_segTabs</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>genome_build</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>)
+<span class='fu'>cnv_plotLengthSummary</span>(<span class='no'>data</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"cd"</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -166,7 +157,7 @@ cores in your computer, it may cause some unexpected problems.</p></td>
 
     <h2>Author</h2>
     
-Geoffrey Macintyre, Shixiang Wang
+Shixiang Wang &lt;w_shixiang@163.com&gt;
 
   </div>
 </div>

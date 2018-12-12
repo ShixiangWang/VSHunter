@@ -21,7 +21,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = FALSE
+  eval = TRUE
 )
 ```
 
@@ -91,23 +91,6 @@ tcga_frac = cnv_getLengthFraction(tcga_segTabs)
 ```
 
 
-Visualize CNV distribution by normalized CN length or chromosome.
-
-```{r}
-cnv_plotDistributionProfile(tcga_frac)
-```
-
-
-```{r}
-cnv_plotDistributionProfile(tcga_frac, mode = "cd")
-```
-
-```{r}
-cnv_plotDistributionProfile(tcga_frac, mode = "cd" , fill = TRUE)
-```
-
-
-
 ### Derive feature distributions
 
 ```{r}
@@ -168,9 +151,40 @@ tcga_results = cnv_autoCaptureSignatures(tcga_sample_component_matrix, nrun=10, 
 
 The result object is a `list` which contains all results need fro downstream analysis, include NMF result related to best rank value, signature matrix, absolute and relative exposure (contribution) and best rank survey etc..
 
+
+
 ### CNV signature calling pipeline
 
 This feature is implemented in `cnv_pipe()` function.
+
+ 
+ 
+## Visualization 
+
+
+Visualize CNV distribution by normalized CN length or chromosome.
+
+```{r}
+cnv_plotDistributionProfile(tcga_frac)
+```
+
+```{r}
+cnv_plotDistributionProfile(tcga_frac, mode = "cd")
+```
+
+```{r}
+cnv_plotDistributionProfile(tcga_frac, mode = "cd" , fill = TRUE)
+```
+
+
+Plot functions:
+
+```{r, eval=FALSE}
+cnv_plotDistributionProfile()
+cnv_plotFeatureDistribution()
+cnv_plotMixComponents()
+cnv_plotSignatures()
+```
 
  
 ## Citation
