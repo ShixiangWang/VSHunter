@@ -2,7 +2,7 @@
 % Please edit documentation in R/cnv_main.R
 \name{cnv_quantifySigExposure}
 \alias{cnv_quantifySigExposure}
-\title{quantify exposure for samples using Linear Combination Decomposition (LCD)}
+\title{Quantify exposure for samples using Linear Combination Decomposition (LCD)}
 \usage{
 cnv_quantifySigExposure(sample_by_component,
   component_by_signature = NULL)
@@ -18,7 +18,7 @@ https://www.nature.com/articles/s41588-018-0179-8}
 a \code{list} contains absolute/relative exposure.
 }
 \description{
-quantify exposure for samples using Linear Combination Decomposition (LCD)
+Quantify exposure for samples using Linear Combination Decomposition (LCD)
 }
 \examples{
 \dontrun{

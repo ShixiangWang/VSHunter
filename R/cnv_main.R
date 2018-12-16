@@ -26,7 +26,7 @@
 #' @title  Read copy number as a list of data.frame from data.frame or files
 #' @description This function is used to read copy number profile for preparing CNV signature
 #' analysis.
-#' @param input a \code{data.frame} or a file or a directory contains copy number profile
+#' @param input a \code{data.frame} or a file or a directory contains copy number profile.
 #' @param is_dir is \code{input} a directory?
 #' @param pattern an optional regular expression used to select part of files if input is a directory, more detail please see
 #' \code{list.files} function.
@@ -34,7 +34,7 @@
 #' @param sep the field separator character. Values on each line of the file are separated by this character.
 #' @param cols four characters used to specify chromosome, start position,
 #'  end position and copy number value, respectively. Default use names from ABSOLUTE calling result.
-#' @param have_sampleCol Whether input have sample column or not.
+#' @param have_sampleCol does input have sample column?
 #' This argument must be \code{TRUE} and \code{sample_col} also
 #' properly be assigned when input is a file or a \code{data.frame}.
 #' @param sample_col a character used to specify the sample column name.
@@ -70,12 +70,22 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
                 }
                 temp = temp[, cols]
                 colnames(temp) = c("chromosome", "start", "end", "segVal")
-                files_list[[tempName]] = temp
+                if (nrow(temp) <= 22) {
+                    warning("Sample ", tempName, " is discarded because of few segments (<=22)")
+                } else {
+                    files_list[[tempName]] = temp
+                }
+
             } else {
                 message("Select file names as sample names.")
                 temp = temp[, cols]
                 colnames(temp) = c("chromosome", "start", "end", "segVal")
-                files_list[[files[i]]] == temp
+                if (nrow(temp) <= 22) {
+                    warning("File ", files[i], " is discarded because of few segments (<=22)")
+                } else {
+                    files_list[[files[i]]] = temp
+                }
+
             }
         }
         return(files_list)
@@ -99,7 +109,12 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
         tempDF = input[input[, sample_col] == samples[i], ]
         tempDF = tempDF[, cols]
         colnames(tempDF) = c("chromosome", "start", "end", "segVal")
-        res_list[[samples[i]]] = tempDF
+
+        if (nrow(tempDF) <= 22) {
+            warning("Sample ", samples[i], " is discarded because of few segments (<=22)")
+        } else {
+            res_list[[samples[i]]] = tempDF
+        }
     }
 
     return(res_list)
@@ -111,8 +126,8 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
 #' @description This function summarise each copy-number profile using a number of different
 #' feature distributions: sigment size, breakpoint number (per ten megabase), change-point copy-number,
 #' segment copy-number, breakpoint number(per chromosome arm), length of segments with oscilating
-#' copy-number
-#' @param CN_data a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s
+#' copy-number.
+#' @param CN_data a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
 #' each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 #' 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.
 #' @param cores number of compute cores to run this task. You can use \code{detectCores} function to check how
@@ -571,7 +586,7 @@ cnv_generateSbCMatrix = function(CN_features,
 #'
 #' @examples
 #' \dontrun{
-#' #' ## load example copy-number data from tcga
+#' ## load example copy-number data from tcga
 #' load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 #' ## generate copy-number features
 #' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
@@ -756,7 +771,7 @@ cnv_extractSignatures <-
     }
 
 #---------------------------------------------------------------------------
-#' @title quantify exposure for samples using Linear Combination Decomposition (LCD)
+#' @title Quantify exposure for samples using Linear Combination Decomposition (LCD)
 #'
 #' @inheritParams cnv_chooseSigNumber
 #' @param component_by_signature a componet by signature matrix, default is \code{NULL},
@@ -865,7 +880,7 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 }
 
 
-#' CNV signature pipeline
+#' Calling CNV signature pipeline
 #' @description  this pipeline integrate multiple independent steps in \code{VSHunter}.
 #' @inheritParams cnv_derivefeatures
 #' @inheritParams cnv_fitMixModels

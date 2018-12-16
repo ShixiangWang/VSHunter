@@ -2,7 +2,7 @@
 % Please edit documentation in R/cnv_main.R
 \name{cnv_pipe}
 \alias{cnv_pipe}
-\title{CNV signature pipeline}
+\title{Calling CNV signature pipeline}
 \usage{
 cnv_pipe(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
   de_novo = TRUE, reference_components = NULL, min_comp = 2,
@@ -12,7 +12,7 @@ cnv_pipe(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
   tmp = FALSE)
 }
 \arguments{
-\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s
+\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
 each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.}
 

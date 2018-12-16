@@ -9,7 +9,7 @@ cnv_getLengthFraction(CN_data, genome_build = c("hg19", "hg38"),
   sample_col = "sample")
 }
 \arguments{
-\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s
+\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
 each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.}
 

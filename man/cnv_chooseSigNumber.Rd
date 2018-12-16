@@ -34,7 +34,7 @@ This function use \code{NMF} package to evaluate the optimal number of signature
 }
 \examples{
 \dontrun{
-#' ## load example copy-number data from tcga
+## load example copy-number data from tcga
 load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 ## generate copy-number features
 tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")

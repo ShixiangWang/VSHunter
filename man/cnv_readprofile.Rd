@@ -10,7 +10,7 @@ cnv_readprofile(input, is_dir = FALSE, pattern = NULL,
   sample_col = "sample")
 }
 \arguments{
-\item{input}{a \code{data.frame} or a file or a directory contains copy number profile}
+\item{input}{a \code{data.frame} or a file or a directory contains copy number profile.}
 
 \item{is_dir}{is \code{input} a directory?}
 
@@ -24,7 +24,7 @@ cnv_readprofile(input, is_dir = FALSE, pattern = NULL,
 \item{cols}{four characters used to specify chromosome, start position,
 end position and copy number value, respectively. Default use names from ABSOLUTE calling result.}
 
-\item{have_sampleCol}{Whether input have sample column or not.
+\item{have_sampleCol}{does input have sample column?
 This argument must be \code{TRUE} and \code{sample_col} also
 properly be assigned when input is a file or a \code{data.frame}.}
 

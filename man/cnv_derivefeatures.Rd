@@ -8,7 +8,7 @@ cnv_derivefeatures(CN_data, cores = 1, genome_build = c("hg19",
   "hg38"))
 }
 \arguments{
-\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s
+\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
 each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.}
 
@@ -25,7 +25,7 @@ a \code{list} contains six copy number feature distributions.
 This function summarise each copy-number profile using a number of different
 feature distributions: sigment size, breakpoint number (per ten megabase), change-point copy-number,
 segment copy-number, breakpoint number(per chromosome arm), length of segments with oscilating
-copy-number
+copy-number.
 }
 \examples{
 \dontrun{
