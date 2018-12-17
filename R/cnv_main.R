@@ -940,7 +940,7 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
     cat("Plot survey                            :", plot_survey, "\n")
     cat("Use random data in survey              :", testRandom, "\n")
     cat("Algorithm of NMF                       :", nmfalg, "\n")
-    cat("Store temp result data?                :", temp, "\n")
+    cat("Store temp result data?                :", tmp, "\n")
     cat("==========\n")
 
     cat("Part 2 - Derive feature distributions\n")
