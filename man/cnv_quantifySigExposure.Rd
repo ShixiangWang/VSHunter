@@ -39,6 +39,9 @@ tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_compone
  tcga_sample_component_matrix, component_by_signature = w)
 }
 }
+\seealso{
+\code{\link[=cnv_plotSignatures]{cnv_plotSignatures()}} for plot signatures and their exposures (contributions).
+}
 \author{
 Geoffrey Macintyre, Shixiang Wang
 }

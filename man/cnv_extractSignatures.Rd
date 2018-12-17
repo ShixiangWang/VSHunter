@@ -16,8 +16,8 @@ cnv_extractSignatures(sample_by_component, nsig, seed = 123456,
 
 \item{nmfalg}{specification of the NMF algorithm.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
-many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 }
 \value{
@@ -41,6 +41,9 @@ tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_compone
  cores = 1, plot = FALSE)
  tcga_signatures = cnv_extractSignatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
 }
+}
+\seealso{
+\code{\link[=cnv_plotSignatures]{cnv_plotSignatures()}} for plot signatures and their exposures (contributions).
 }
 \author{
 Geoffrey Macintyre, Shixiang Wang

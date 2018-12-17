@@ -16,8 +16,8 @@ of features or samples.}
 \item{nrun}{the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
 According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
-many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 
 \item{seed}{seed number.}
@@ -46,6 +46,9 @@ tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_compone
 ## optimal rank survey13
 tcga_results = cnv_autoCaptureSignatures(tcga_sample_component_matrix, nrun=10, cores = 1)
 }
+}
+\seealso{
+\code{\link[=cnv_plotSignatures]{cnv_plotSignatures()}} for plot signatures and their exposures (contributions).
 }
 \author{
 Geoffrey Macintyre, Shixiang Wang

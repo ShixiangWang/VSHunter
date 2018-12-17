@@ -12,8 +12,8 @@ cnv_derivefeatures(CN_data, cores = 1, genome_build = c("hg19",
 each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
-many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 
 \item{genome_build}{genome build version, must be one of 'hg19' or 'hg38'.}
@@ -34,6 +34,9 @@ load(system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter"))
 ## generate copy-number features
 tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 }
+}
+\seealso{
+\code{\link[=cnv_plotFeatureDistribution]{cnv_plotFeatureDistribution()}} for plotting feature distributions.
 }
 \author{
 Geoffrey Macintyre, Shixiang Wang

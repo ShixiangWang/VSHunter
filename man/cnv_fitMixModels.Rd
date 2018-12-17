@@ -27,8 +27,8 @@ refer to \code{flexmix} package.}
 
 \item{niter}{maximal number of iteration to achive converge.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{detectCores} function to check how
-many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 
 \item{featsToFit}{integer vector used for task assignment in parallel computation. Do not change it.}
@@ -49,6 +49,9 @@ tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_bui
 ## fit mixture model  (this will take some time)
 tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 }
+}
+\seealso{
+\code{\link[=cnv_plotMixComponents]{cnv_plotMixComponents()}} for plotting mixture component models.
 }
 \author{
 Geoffrey Macintyre, Shixiang Wang

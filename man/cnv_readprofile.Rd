@@ -37,6 +37,11 @@ a \code{list} contains absolute copy-number profile for multiple samples.
 This function is used to read copy number profile for preparing CNV signature
 analysis.
 }
+\seealso{
+\code{\link[=cnv_derivefeatures]{cnv_derivefeatures()}} for deriving CNV features, \code{\link[=cnv_getLengthFraction]{cnv_getLengthFraction()}} for calculating
+CNV length fraction (normalized to arm), \code{\link[=cnv_plotDistributionProfile]{cnv_plotDistributionProfile()}} for plotting profile of
+CNV distribution.
+}
 \author{
-Shixiang Wang <w_shixiang@163.com>
+Shixiang Wang \href{mailto:w_shixiang@163.com}{w_shixiang@163.com}
 }

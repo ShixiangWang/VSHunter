@@ -42,6 +42,9 @@
 #' @return a \code{list} contains absolute copy-number profile for multiple samples.
 #' @importFrom utils read.csv
 #' @export
+#' @seealso [cnv_derivefeatures()] for deriving CNV features, [cnv_getLengthFraction()] for calculating
+#' CNV length fraction (normalized to arm), [cnv_plotDistributionProfile()] for plotting profile of
+#' CNV distribution.
 cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = FALSE, sep = "\t",
                             cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
                             have_sampleCol = TRUE, sample_col = "sample") {
@@ -130,14 +133,15 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
 #' @param CN_data a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
 #' each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 #' 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.
-#' @param cores number of compute cores to run this task. You can use \code{detectCores} function to check how
-#' many cores you can use. If you are using \code{cnv_pipe} feature, please do not use maximal number of
+#' @param cores number of compute cores to run this task. You can use [parallel::detectCores()] function to check how
+#' many cores you can use. If you are using [cnv_pipe()] feature, please do not use maximal number of
 #' cores in your computer, it may cause some unexpected problems.
 #' @param genome_build genome build version, must be one of 'hg19' or 'hg38'.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a \code{list} contains six copy number feature distributions.
 #' @import foreach doParallel QDNAseq Biobase
 #' @export
+#' @seealso [cnv_plotFeatureDistribution()] for plotting feature distributions.
 #'
 #' @examples
 #' \dontrun{
@@ -240,6 +244,7 @@ cnv_derivefeatures = function(CN_data,
 #' @return a \code{list} contain \code{flexmix} object of copy-number features.
 #' @import flexmix
 #' @export
+#' @seealso [cnv_plotMixComponents()] for plotting mixture component models.
 #'
 #' @examples
 #' \dontrun{
@@ -732,10 +737,9 @@ cnv_chooseSigNumber <-
 #' @param nmfalg specification of the NMF algorithm.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import NMF
-#'
 #' @return a object of \code{NMF} run.
 #' @export
-#'
+#' @seealso [cnv_plotSignatures()] for plot signatures and their exposures (contributions).
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -782,7 +786,7 @@ cnv_extractSignatures <-
 #' @return a \code{list} contains absolute/relative exposure.
 #' @import YAPSA
 #' @export
-#'
+#' @inherit cnv_extractSignatures seealso
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -836,7 +840,7 @@ cnv_quantifySigExposure <-
 #' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
 #' @import doParallel NMF YAPSA
 #' @export
-#'
+#' @inherit cnv_extractSignatures seealso
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -897,7 +901,10 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
 #' @import foreach doParallel QDNAseq Biobase NMF YAPSA
 #' @export
-#'
+#' @inherit cnv_extractSignatures seealso
+#' @inherit cnv_readprofile seealso
+#' @inherit cnv_derivefeatures seealso
+#' @inherit cnv_fitMixModels seealso
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
