@@ -902,9 +902,6 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' @import foreach doParallel QDNAseq Biobase NMF YAPSA
 #' @export
 #' @inherit cnv_extractSignatures seealso
-#' @inherit cnv_readprofile seealso
-#' @inherit cnv_derivefeatures seealso
-#' @inherit cnv_fitMixModels seealso
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
