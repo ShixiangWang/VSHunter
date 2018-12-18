@@ -673,8 +673,8 @@ cnv_chooseSigNumber <-
                         "cophenetic",
                         "dispersion",
                         "sparseness",
-                        "silhouette",
-                        "residuals",
+                        #"silhouette",
+                        #"residuals",
                         "rss"
                     ),
                     xname = "Observed",
@@ -688,8 +688,8 @@ cnv_chooseSigNumber <-
                         "cophenetic",
                         "dispersion",
                         "sparseness",
-                        "silhouette",
-                        "residuals",
+                       # "silhouette",
+                       # "residuals",
                         "rss"
                     ),
                     main = "NMF Rank Survey"
@@ -709,22 +709,27 @@ cnv_chooseSigNumber <-
             print(p)
             dev.off()
 
-            return(
-                list(
-                    nmfEstimate = estim.r,
-                    bestRank = n,
-                    survey = nmf.sum,
-                    survey_plot = p,
-                    seed = seed
-                )
-            )
+            # return(
+            #     list(
+            #         nmfEstimate = estim.r,
+            #         bestRank = n,
+            #         survey = nmf.sum,
+            #         survey_plot = p,
+            #         seed = seed
+            #     )
+            # )
 
         }
 
+        if (!plot) p = NULL
+        if (!testRandom) estim.r.random = NULL
+
         return(list(
             nmfEstimate = estim.r,
+            nmfEstimate.random = estim.r.random,
             bestRank = n,
             survey = nmf.sum,
+            survey_plot = p,
             seed = seed
         ))
     }
@@ -861,7 +866,8 @@ cnv_autoCaptureSignatures = function(sample_by_component,
                                   seed = 123456,
                                   plot = TRUE,
                                   testRandom = TRUE) {
-    choose_res = cnv_chooseSigNumber(sample_by_component, nTry, nrun, cores, seed, plot = plot)
+    choose_res = cnv_chooseSigNumber(sample_by_component, nTry, nrun, cores, seed,
+                                     plot = plot, testRandom = testRandom)
     NMF_res = cnv_extractSignatures(sample_by_component,
                                  nsig = choose_res$bestRank,
                                  cores = cores)
@@ -870,11 +876,14 @@ cnv_autoCaptureSignatures = function(sample_by_component,
     exposure = cnv_quantifySigExposure(sample_by_component = sample_by_component,
                                    component_by_signature = w)
     message("Done.")
+
     return(
         list(
             NMF = NMF_res,
             signature = w,
             exposure = exposure,
+            nmfEstimate = choose_res$nmfEstimate,
+            nmfEstimate.random = choose_res$nmfEstimate.random,
             bestRank = choose_res$bestRank,
             survey = choose_res$survey,
             survey_plot = choose_res$survey_plot,
@@ -927,7 +936,7 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
     cat("Thread number                          :", cores, "\n")
     cat("Genome build                           :", genome_build, "\n")
     cat("De novo signature analysis?            :", de_novo, "\n")
-    cat("Use reference components from paper?   :", is.null(reference_components), "\n")
+    cat("Use reference components from paper?   :", !is.null(reference_components), "\n")
     cat("Minimal number of components           :", min_comp, "\n")
     cat("Maximal number of components           :", max_comp, "\n")
     cat("Minimal prior value                    :", min_prior, "\n")
