@@ -627,6 +627,10 @@ cnv_chooseSigNumber <-
                 .opt = list(shared.memory = FALSE, paste0("p", cores))
             )
 
+        pdf('nmf_consensus.pdf', bg = 'white', pointsize = 9, width = 12, height = 12, paper = "special")
+        NMF::consensusmap(estim.r)
+        dev.off()
+        message('created nmf_consensus.pdf')
 
         #--- copy from maftools and modified ---#
         nmf.sum = summary(estim.r) # Get summary of estimates
