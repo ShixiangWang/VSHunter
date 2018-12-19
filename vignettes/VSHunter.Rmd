@@ -9,10 +9,8 @@ output:
     toc: true
     theme: cayman
     highlight: github
-  pdf_document:
-    toc: true
 vignette: >
-  %\VignetteIndexEntry{download publical data in batch quickly and easily}
+  %\VignetteIndexEntry{Decode Pattern of Copy Number Profile}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---

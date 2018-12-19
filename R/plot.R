@@ -187,24 +187,30 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
 
     #requireNamespace("cowplot")
     #cowplot::theme_cowplot()
-    ggplot2::theme_set(cowplot::theme_cowplot(font_size = 12))
+    #ggplot2::theme_set(cowplot::theme_cowplot(font_size = 12))
     p_1 = ggplot(data = features$segsize, aes(x = log10(value))) +
-        geom_line(stat="density") + labs(x = "Segment size (log10 based)", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+        geom_line(stat="density") + labs(x = "Segment size (log10 based)", y = ylab) +
+        theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
     #p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(7, 8),
     #                               labels = scales::trans_format("log10", scales::math_format(10^.x)))
 
     p_2 = ggplot(data = features$copynumber, aes(x = value)) +
-        geom_line(stat="density") + labs(x = "Copy number", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+        geom_line(stat="density") + labs(x = "Copy number", y = ylab) +
+        theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
     p_3 = ggplot(data = features$changepoint, aes(x = value)) +
-        geom_line(stat="density") + labs(x = "Copy number changepoint", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+        geom_line(stat="density") + labs(x = "Copy number changepoint", y = ylab) +
+        theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
 
     p_4 = ggplot(data = features$bp10MB, aes(x = value)) +
-        geom_bar(stat = "count") + labs(x = "Breakpoint count per 10MB", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+        geom_bar(stat = "count") + labs(x = "Breakpoint count per 10MB", y = ylab) +
+        theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
     p_5 = ggplot(data = features$bpchrarm, aes(x = value)) +
-        geom_bar(stat = "count") + labs(x = "Breakpoint count per chr arm", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+        geom_bar(stat = "count") + labs(x = "Breakpoint count per chr arm", y = ylab) +
+        theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
 
     p_6 = ggplot(data = features$osCN, aes(x = value)) +
-        geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
+        geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) +
+        theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
     # p_6 = ggplot(data = features$osCN, aes(x = as.factor(value))) +
     #     geom_bar(stat = "count") + labs(x = "Oscilating CN chain length", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
 
