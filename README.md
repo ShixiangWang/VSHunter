@@ -1,10 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# VSHunter: Capture variation signatures from genomic data
+# VSHunter: Capture Variation Signatures from Genomic Data
 
-[![CRAN
-status](https://www.r-pkg.org/badges/version/VSHunter)](https://cran.r-project.org/package=VSHunter)
 [![GitHub
 tag](https://img.shields.io/github/tag/ShixiangWang/VSHunter.svg?label=Github)](https://github.com/ShixiangWang/VSHunter)
 [![Build
