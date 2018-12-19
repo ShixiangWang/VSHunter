@@ -187,6 +187,7 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
 
     #requireNamespace("cowplot")
     #cowplot::theme_cowplot()
+    ggplot2::theme_set(cowplot::theme_cowplot(font_size = 12))
     p_1 = ggplot(data = features$segsize, aes(x = log10(value))) +
         geom_line(stat="density") + labs(x = "Segment size (log10 based)", y = ylab) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm"))
     #p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(7, 8),
@@ -253,7 +254,7 @@ cnv_plotMixComponents = function(features, components, ...) {
                                   color = cbPalette[i])
         }
 
-        p = p+xlab(xlab)+theme_classic()
+        p = p+xlab(xlab)+theme_cowplot(font_size = 12)
         p
     }
 
@@ -273,7 +274,7 @@ cnv_plotMixComponents = function(features, components, ...) {
                                   color = cbPalette[i])
         }
 
-        p = p+xlab(xlab)+theme_classic()
+        p = p+xlab(xlab)+theme_cowplot(font_size = 12)
         p
     }
 
