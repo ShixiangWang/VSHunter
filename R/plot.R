@@ -109,12 +109,22 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
         }
 
         cnames = colnames(plotData)
-        len_c1 = sum(grepl("segsize", cnames))
-        len_c2 = sum(grepl("bp10MB", cnames))
-        len_c3 = sum(grepl("osCN", cnames))
-        len_c4 = sum(grepl("changepoint", cnames))
-        len_c5 = sum(grepl("copynumber", cnames))
-        len_c6 = sum(grepl("bpchrarm", cnames))
+
+        # order the features
+        plotData = plotData[, c(grep("bp10MB", cnames, value = TRUE),
+                                grep("copynumber", cnames, value = TRUE),
+                                grep("changepoint", cnames, value = TRUE),
+                                grep("bpchrarm", cnames, value = TRUE),
+                                grep("osCN", cnames, value = TRUE),
+                                grep("segsize", cnames, value = TRUE))]
+
+
+        len_c1 = sum(grepl("bp10MB", cnames))
+        len_c2 = sum(grepl("copynumber", cnames))
+        len_c3 = sum(grepl("changepoint", cnames))
+        len_c4 = sum(grepl("bpchrarm", cnames))
+        len_c5 = sum(grepl("osCN", cnames))
+        len_c6 = sum(grepl("segsize", cnames))
 
         len_seqc = c(len_c1,
                      len_c2,
@@ -158,7 +168,7 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
             rect(xleft = len_seq, ybottom = -0.05,
                  xright = ncol(plotData)*2, ytop = -0.02, col = color, border = 'gray70')
             if(i == nsigs){
-                text(labels = c("segsize","bp10MB","osCN","changepoint","copynumber","bpchrarm"),
+                text(labels = c("bp10MB", "copynumber", "changepoint", "bpchrarm","osCN", "segsize"),
                      y = rep(-0.1,6),x = len_seq[2:7]-len_seqc, cex = font_size,
                      font = 1.8, font.lab = 2, pos = 1.2, srt = 30)
             }
@@ -425,9 +435,12 @@ cnv_getLengthFraction = function(CN_data,
 #' @param rm_normal logical. Whether removel normal copy (i.e. "segVal" equals 2), default is \code{TRUE}.
 #' @param mode either "ld" for distribution by CN length or "cd" for distribution by chromosome.
 #' @param fill when \code{mode} is "cd", if \code{fill} is \code{TRUE}, plot percentage instead of count.
+#' @param scale_chr logical. If `TRUE`, normalize count to per Megabase unit.
+#' @inheritParams cnv_derivefeatures
 #' @author Shixiang Wang <w_shixiang@163.com>
 #'
 #' @return a ggplot object
+#' @import cowplot
 #' @export
 #'
 #' @examples
@@ -435,10 +448,11 @@ cnv_getLengthFraction = function(CN_data,
 #' cnv_plotLengthSummary(data, mode = "cd")
 #' }
 cnv_plotDistributionProfile = function(data, rm_normal=TRUE, mode = c("ld", "cd"),
-                                 fill = FALSE) {
+                                 fill = FALSE, scale_chr = TRUE, genome_build = c("hg19", "hg38")) {
 
     stopifnot(is.logical(rm_normal), is.data.frame(data), is.logical(fill))
     mode = match.arg(mode)
+    genome_build = match.arg(genome_build)
 
     # if remove normal copy number segments
     if (rm_normal) {
@@ -476,15 +490,59 @@ cnv_plotDistributionProfile = function(data, rm_normal=TRUE, mode = c("ld", "cd"
         # only keep p, q, pq
         data$location = factor(sub("[0-9]*", "", data$location), levels = c("p", "pq", "q"))
 
-        # plot
-        if (!fill) {
-            ggplot(data, aes(x=chromosome, fill = location)) +
-                geom_bar() + xlab("Chromosome")
-        } else {
-            ggplot(data, aes(x=chromosome, fill = location)) +
-                geom_bar(position = "fill") + ylab("Percentage") + xlab("Chromosome")
+        if (scale_chr) {
+            if (genome_build == "hg19") {
+                data("chromsize.hg19",
+                     package = "VSHunter",
+                     envir = environment())
+                chrlen = chromsize.hg19
+            } else {
+                data("chromsize.hg38",
+                     package = "VSHunter",
+                     envir = environment())
+                chrlen = chromsize.hg38
             }
 
+            p = ggplot(data, aes(x=chromosome, fill = location)) +
+                geom_bar() + xlab("Chromosome")
+
+            q = ggplot_build(p)$data[[1]][, c("x", "count", "fill")]
+
+            q$x = factor(as.character(q$x), levels = as.character(1:22))
+            q$fill = factor(q$fill, levels = c("#F8766D","#00BA38", "#619CFF"))
+
+            chrlen$chrom = gsub(pattern = "chr", replacement = "", x = chrlen$chrom)
+            q = merge(q, chrlen, by.x = "x", by.y = "chrom")
+            q[["count"]] = 1000000 * (q[["count"]] / q[["size"]])
+            # data.table::setDT(data)
+            # data.table::setDT(chrlen)
+            # chrlen$chrom = gsub(pattern = "chr", replacement = "", x = chrlen$chrom)
+            # data = merge(data, chrlen, by.x = "chromosome", by.y = "chrom")
+            # data[, c(), by = chromosome]
+            # plot
+            if (!fill) {
+                ggplot(q, aes(x, y = count, fill = fill)) +
+                    geom_bar(stat = "identity") +
+                    scale_fill_discrete(name = "location", labels = c("p", "pq", "q")) +
+                    labs(x = "Chromosome", y = "Normalized count (per Mb)")
+
+            } else {
+                ggplot(q, aes(x, y = count, fill = fill)) +
+                    geom_bar(stat = "identity", position = "fill") +
+                    scale_fill_discrete(name = "location", labels = c("p", "pq", "q")) +
+                    labs(x = "Chromosome", y = "Percentage")
+            }
+
+        } else {
+            # plot
+            if (!fill) {
+                ggplot(data, aes(x=chromosome, fill = location)) +
+                    geom_bar() + xlab("Chromosome")
+            } else {
+                ggplot(data, aes(x=chromosome, fill = location)) +
+                    geom_bar(position = "fill") + ylab("Percentage") + xlab("Chromosome")
+            }
+        }
     }
 }
 
@@ -563,4 +621,4 @@ getArmLocation = function(genome_build = c("hg19", "hg38")){
 utils::globalVariables(c(".x", "aes", "chrom", "chromosome", "element_text", "geom_bar", "geom_line", "ggplot", "labs",
                          "scale_x_continuous", "stat_function", "theme", "theme_classic", "value", "x", "ylab",
                          "temp", "fraction", "..density..", "geom_histogram",
-                         "location", "xlab", "unit"))
+                         "location", "xlab", "unit", "count", "scale_fill_discrete"))

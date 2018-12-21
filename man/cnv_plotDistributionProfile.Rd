@@ -5,7 +5,8 @@
 \title{Plot copy number distribution either by length or chromosome}
 \usage{
 cnv_plotDistributionProfile(data, rm_normal = TRUE, mode = c("ld",
-  "cd"), fill = FALSE)
+  "cd"), fill = FALSE, scale_chr = TRUE, genome_build = c("hg19",
+  "hg38"))
 }
 \arguments{
 \item{data}{a \code{data.frame}, result of \code{cnv_getLengthFraction} function.}
@@ -15,6 +16,10 @@ cnv_plotDistributionProfile(data, rm_normal = TRUE, mode = c("ld",
 \item{mode}{either "ld" for distribution by CN length or "cd" for distribution by chromosome.}
 
 \item{fill}{when \code{mode} is "cd", if \code{fill} is \code{TRUE}, plot percentage instead of count.}
+
+\item{scale_chr}{logical. If \code{TRUE}, normalize count to per Megabase unit.}
+
+\item{genome_build}{genome build version, must be one of 'hg19' or 'hg38'.}
 }
 \value{
 a ggplot object
