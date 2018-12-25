@@ -5,7 +5,8 @@
 \title{Auto-capture signature and coresponding exposure}
 \usage{
 cnv_autoCaptureSignatures(sample_by_component, nTry = 12, nrun = 10,
-  cores = 1, seed = 123456, plot = TRUE, testRandom = TRUE)
+  cores = 1, seed = 123456, plot = TRUE, testRandom = TRUE,
+  nmfalg = "brunet")
 }
 \arguments{
 \item{sample_by_component}{a sample-by-component \code{matrix}, generate from \code{cnv_generateSbCMatrix} function.}
@@ -25,6 +26,8 @@ cores in your computer, it may cause some unexpected problems.}
 \item{plot}{\code{logical}. If \code{TRUE}, plot best rank survey.}
 
 \item{testRandom}{if generate random data from input to test measurements. Default is \code{TRUE}.}
+
+\item{nmfalg}{specification of the NMF algorithm.}
 }
 \value{
 a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..

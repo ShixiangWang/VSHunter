@@ -7,9 +7,9 @@
 cnv_pipe(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
   de_novo = TRUE, reference_components = NULL, min_comp = 2,
   max_comp = 10, min_prior = 0.001, model_selection = "BIC",
-  nrep = 1, niter = 1000, nTry = 12, nrun = 10, seed = 123456,
-  plot_survey = TRUE, testRandom = FALSE, nmfalg = "brunet",
-  tmp = FALSE)
+  nrep = 1, niter = 1000, nTry = 12, ranks = NULL, nrun = 10,
+  seed = 123456, plot_survey = TRUE, testRandom = FALSE,
+  nmfalg = "brunet", tmp = FALSE)
 }
 \arguments{
 \item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
@@ -45,6 +45,8 @@ refer to \code{flexmix} package.}
 
 \item{nTry}{the maximal tried number of signatures, default is 12. Of note, this value should far less than number
 of features or samples.}
+
+\item{ranks}{a integer vector, manually specify \code{ranks} to capture instead of using auto-capture feature.}
 
 \item{nrun}{the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
 According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.}

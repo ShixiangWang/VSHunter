@@ -135,18 +135,20 @@ calculateSumOfPosteriors <-
         ## foreach and parallelising doesn't make the following code faster.
         for (i in unique(mat$ID))
         {
-            posterior_sum <- rbind(posterior_sum, colSums(mat[mat$ID == i, c(-1, -2)]))
+            posterior_sum <-
+                rbind(posterior_sum, colSums(mat[mat$ID == i, c(-1, -2)]))
         }
         params <- flexmix::parameters(components)
         if (!is.null(nrow(params)))
         {
-            posterior_sum <- posterior_sum[, order(params[1, ])]
+            posterior_sum <- posterior_sum[, order(params[1,])]
         }
         else
         {
             posterior_sum <- posterior_sum[, order(params)]
         }
-        colnames(posterior_sum) <- paste0(name, 1:ncol(posterior_sum))
+        colnames(posterior_sum) <-
+            paste0(name, 1:ncol(posterior_sum))
         rownames(posterior_sum) <- rownames(unique(mat$ID))
         posterior_sum
     }
@@ -159,7 +161,8 @@ getSegsize <- function(abs_profiles)
     {
         if (class(abs_profiles) == "QDNAseqCopyNumbers")
         {
-            segTab <- getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
+            segTab <-
+                getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
         }
         else
         {
@@ -167,9 +170,11 @@ getSegsize <- function(abs_profiles)
             colnames(segTab)[4] <- "segVal"
         }
         segTab$segVal[as.numeric(segTab$segVal) < 0] <- 0
-        seglen <- (as.numeric(segTab$end) - as.numeric(segTab$start))
+        seglen <-
+            (as.numeric(segTab$end) - as.numeric(segTab$start))
         seglen <- seglen[seglen > 0]
-        out <- rbind(out, cbind(ID = rep(i, length(seglen)), value = seglen))
+        out <-
+            rbind(out, cbind(ID = rep(i, length(seglen)), value = seglen))
     }
     rownames(out) <- NULL
     data.frame(out, stringsAsFactors = F)
@@ -183,7 +188,8 @@ getBPnum <- function(abs_profiles, chrlen)
     {
         if (class(abs_profiles) == "QDNAseqCopyNumbers")
         {
-            segTab <- getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
+            segTab <-
+                getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
         } else
         {
             segTab <- abs_profiles[[i]]
@@ -192,13 +198,18 @@ getBPnum <- function(abs_profiles, chrlen)
 
         # unify chromosome column
         segTab$chromosome = as.character(segTab$chromosome)
-        segTab$chromosome = sub(pattern = "chr", replacement = "chr", x = segTab$chromosome, ignore.case = TRUE)
+        segTab$chromosome = sub(
+            pattern = "chr",
+            replacement = "chr",
+            x = segTab$chromosome,
+            ignore.case = TRUE
+        )
         if (any(!grepl("chr", segTab$chromosome))) {
             segTab$chromosome[!grepl("chr", segTab$chromosome)] = paste0("chr", segTab$chromosome[!grepl("chr", segTab$chromosome)])
         }
         if (any(grepl("chr23", segTab$chromosome))) {
             warning("'23' is not a supported chromosome, related rows will be discarded.")
-            segTab = segTab[!grepl("chr23", segTab$chromosome), ]
+            segTab = segTab[!grepl("chr23", segTab$chromosome),]
         }
 
         chrs <- unique(segTab$chromosome)
@@ -206,7 +217,7 @@ getBPnum <- function(abs_profiles, chrlen)
         allBPnum <- c()
         for (c in chrs)
         {
-            currseg <- segTab[segTab$chromosome == c, ]
+            currseg <- segTab[segTab$chromosome == c,]
             intervals <-
                 seq(1, chrlen[chrlen[, 1] == c, 2] + 10000000, 10000000)
             res <-
@@ -230,7 +241,8 @@ getOscilation <- function(abs_profiles)
     {
         if (class(abs_profiles) == "QDNAseqCopyNumbers")
         {
-            segTab <- getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
+            segTab <-
+                getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
         } else
         {
             segTab <- abs_profiles[[i]]
@@ -239,13 +251,18 @@ getOscilation <- function(abs_profiles)
 
         # unify chromosome column
         segTab$chromosome = as.character(segTab$chromosome)
-        segTab$chromosome = sub(pattern = "chr", replacement = "chr", x = segTab$chromosome, ignore.case = TRUE)
+        segTab$chromosome = sub(
+            pattern = "chr",
+            replacement = "chr",
+            x = segTab$chromosome,
+            ignore.case = TRUE
+        )
         if (any(!grepl("chr", segTab$chromosome))) {
             segTab$chromosome[!grepl("chr", segTab$chromosome)] = paste0("chr", segTab$chromosome[!grepl("chr", segTab$chromosome)])
         }
         if (any(grepl("chr23", segTab$chromosome))) {
             warning("'23' is not a supported chromosome, related rows will be discarded.")
-            segTab = segTab[!grepl("chr23", segTab$chromosome), ]
+            segTab = segTab[!grepl("chr23", segTab$chromosome),]
         }
 
         chrs <- unique(segTab$chromosome)
@@ -282,80 +299,88 @@ getOscilation <- function(abs_profiles)
     data.frame(out, stringsAsFactors = F)
 }
 
-getCentromereDistCounts <- function(abs_profiles, centromeres, chrlen)
-{
-    out <- c()
-    samps <- getSampNames(abs_profiles)
-    for (i in samps)
+getCentromereDistCounts <-
+    function(abs_profiles, centromeres, chrlen)
     {
-        if (class(abs_profiles) == "QDNAseqCopyNumbers")
+        out <- c()
+        samps <- getSampNames(abs_profiles)
+        for (i in samps)
         {
-            segTab <- getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
-        } else
-        {
-            segTab <- abs_profiles[[i]]
-            colnames(segTab)[4] <- "segVal"
-        }
-        # unify chromosome column
-        segTab$chromosome = as.character(segTab$chromosome)
-        segTab$chromosome = sub(pattern = "chr", replacement = "chr", x = segTab$chromosome, ignore.case = TRUE)
-        if (any(!grepl("chr", segTab$chromosome))) {
-            segTab$chromosome[!grepl("chr", segTab$chromosome)] = paste0("chr", segTab$chromosome[!grepl("chr", segTab$chromosome)])
-        }
-        if (any(grepl("chr23", segTab$chromosome))) {
-            warning("'23' is not a supported chromosome, related rows will be discarded.")
-            segTab = segTab[!grepl("chr23", segTab$chromosome), ]
-        }
-        chrs <- unique(segTab$chromosome)
-        all_dists <- c()
-        for (c in chrs)
-        {
-            if (nrow(segTab) > 1)
+            if (class(abs_profiles) == "QDNAseqCopyNumbers")
             {
-                starts <- as.numeric(segTab[segTab$chromosome == c, 2])[-1]
-                segstart <-
-                    as.numeric(segTab[segTab$chromosome == c, 2])[1]
-                ends <- as.numeric(segTab[segTab$chromosome == c, 3])
-                segend <- ends[length(ends)]
-                ends <- ends[-length(ends)]
-                # centstart <-
-                #     as.numeric(centromeres[substr(centromeres[, 2], 4, 5) == c, 3])
-                # centend <-
-                #     as.numeric(centromeres[substr(centromeres[, 2], 4, 5) == c, 4])
-                # chrend <- chrlen[substr(chrlen[, 1], 4, 5) == c, 2]
+                segTab <-
+                    getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
+            } else
+            {
+                segTab <- abs_profiles[[i]]
+                colnames(segTab)[4] <- "segVal"
+            }
+            # unify chromosome column
+            segTab$chromosome = as.character(segTab$chromosome)
+            segTab$chromosome = sub(
+                pattern = "chr",
+                replacement = "chr",
+                x = segTab$chromosome,
+                ignore.case = TRUE
+            )
+            if (any(!grepl("chr", segTab$chromosome))) {
+                segTab$chromosome[!grepl("chr", segTab$chromosome)] = paste0("chr", segTab$chromosome[!grepl("chr", segTab$chromosome)])
+            }
+            if (any(grepl("chr23", segTab$chromosome))) {
+                warning("'23' is not a supported chromosome, related rows will be discarded.")
+                segTab = segTab[!grepl("chr23", segTab$chromosome),]
+            }
+            chrs <- unique(segTab$chromosome)
+            all_dists <- c()
+            for (c in chrs)
+            {
+                if (nrow(segTab) > 1)
+                {
+                    starts <- as.numeric(segTab[segTab$chromosome == c, 2])[-1]
+                    segstart <-
+                        as.numeric(segTab[segTab$chromosome == c, 2])[1]
+                    ends <-
+                        as.numeric(segTab[segTab$chromosome == c, 3])
+                    segend <- ends[length(ends)]
+                    ends <- ends[-length(ends)]
+                    # centstart <-
+                    #     as.numeric(centromeres[substr(centromeres[, 2], 4, 5) == c, 3])
+                    # centend <-
+                    #     as.numeric(centromeres[substr(centromeres[, 2], 4, 5) == c, 4])
+                    # chrend <- chrlen[substr(chrlen[, 1], 4, 5) == c, 2]
 
-                centstart <-
-                    as.numeric(centromeres[centromeres$chrom == c, 2])
-                centend <-
-                    as.numeric(centromeres[centromeres$chrom == c, 3])
-                chrend <- chrlen[chrlen$chrom == c, 2]
+                    centstart <-
+                        as.numeric(centromeres[centromeres$chrom == c, 2])
+                    centend <-
+                        as.numeric(centromeres[centromeres$chrom == c, 3])
+                    chrend <- chrlen[chrlen$chrom == c, 2]
 
-                ndist <-
-                    cbind(rep(NA, length(starts)), rep(NA, length(starts)))
-                ndist[starts <= centstart, 1] <-
-                    (centstart - starts[starts <= centstart]) / (centstart - segstart) * -1
-                ndist[starts >= centend, 1] <-
-                    (starts[starts >= centend] - centend) / (segend - centend)
-                ndist[ends <= centstart, 2] <-
-                    (centstart - ends[ends <= centstart]) / (centstart - segstart) * -1
-                ndist[ends >= centend, 2] <-
-                    (ends[ends >= centend] - centend) / (segend - centend)
-                ndist <- apply(ndist, 1, min)
+                    ndist <-
+                        cbind(rep(NA, length(starts)), rep(NA, length(starts)))
+                    ndist[starts <= centstart, 1] <-
+                        (centstart - starts[starts <= centstart]) / (centstart - segstart) * -1
+                    ndist[starts >= centend, 1] <-
+                        (starts[starts >= centend] - centend) / (segend - centend)
+                    ndist[ends <= centstart, 2] <-
+                        (centstart - ends[ends <= centstart]) / (centstart - segstart) * -1
+                    ndist[ends >= centend, 2] <-
+                        (ends[ends >= centend] - centend) / (segend - centend)
+                    ndist <- apply(ndist, 1, min)
 
-                all_dists <- rbind(all_dists, sum(ndist > 0))
-                all_dists <- rbind(all_dists, sum(ndist <= 0))
+                    all_dists <- rbind(all_dists, sum(ndist > 0))
+                    all_dists <- rbind(all_dists, sum(ndist <= 0))
+                }
+            }
+            if (nrow(all_dists) > 0)
+            {
+                out <- rbind(out, cbind(ID = i, value = all_dists[, 1]))
             }
         }
-        if (nrow(all_dists) > 0)
-        {
-            out <- rbind(out, cbind(ID = i, value = all_dists[, 1]))
-        }
+        rownames(out) <- NULL
+        out = data.frame(out, stringsAsFactors = F)
+        out = na.omit(out)
+        out
     }
-    rownames(out) <- NULL
-    out = data.frame(out, stringsAsFactors = F)
-    out = na.omit(out)
-    out
-}
 
 
 getChangepointCN <- function(abs_profiles)
@@ -366,7 +391,8 @@ getChangepointCN <- function(abs_profiles)
     {
         if (class(abs_profiles) == "QDNAseqCopyNumbers")
         {
-            segTab <- getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
+            segTab <-
+                getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
         }
         else
         {
@@ -386,7 +412,8 @@ getChangepointCN <- function(abs_profiles)
         {
             allcp <- 0 #if there are no changepoints
         }
-        out <- rbind(out, cbind(ID = rep(i, length(allcp)), value = allcp))
+        out <-
+            rbind(out, cbind(ID = rep(i, length(allcp)), value = allcp))
     }
     rownames(out) <- NULL
     data.frame(out, stringsAsFactors = F)
@@ -400,7 +427,8 @@ getCN <- function(abs_profiles)
     {
         if (class(abs_profiles) == "QDNAseqCopyNumbers")
         {
-            segTab <- getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
+            segTab <-
+                getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
         }
         else
         {
@@ -409,7 +437,8 @@ getCN <- function(abs_profiles)
         }
         segTab$segVal[as.numeric(segTab$segVal) < 0] <- 0
         cn <- as.numeric(segTab$segVal)
-        out <- rbind(out, cbind(ID = rep(i, length(cn)), value = cn))
+        out <-
+            rbind(out, cbind(ID = rep(i, length(cn)), value = cn))
     }
     rownames(out) <- NULL
     data.frame(out, stringsAsFactors = F)
@@ -434,13 +463,13 @@ getSegTable <- function(x)
     sn <- Biobase::assayDataElement(dat, "segmented")
     fd <- Biobase::fData(dat)
     fd$use -> use
-    fdfiltfull <- fd[use, ]
-    sn <- sn[use, ]
+    fdfiltfull <- fd[use,]
+    sn <- sn[use,]
     segTable <- c()
     for (c in unique(fdfiltfull$chromosome))
     {
         snfilt <- sn[fdfiltfull$chromosome == c]
-        fdfilt <- fdfiltfull[fdfiltfull$chromosome == c, ]
+        fdfilt <- fdfiltfull[fdfiltfull$chromosome == c,]
         sn.rle <- rle(snfilt)
         starts <-
             cumsum(c(1, sn.rle$lengths[-length(sn.rle$lengths)]))
@@ -469,15 +498,18 @@ getPloidy <- function(abs_profiles)
     {
         if (class(abs_profiles) == "QDNAseqCopyNumbers")
         {
-            segTab <- getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
+            segTab <-
+                getSegTable(abs_profiles[, which(colnames(abs_profiles) == i)])
         }
         else
         {
             segTab <- abs_profiles[[i]]
             colnames(segTab)[4] <- "segVal"
         }
-        segLen <- (as.numeric(segTab$end) - as.numeric(segTab$start))
-        ploidy <- sum((segLen / sum(segLen)) * as.numeric(segTab$segVal))
+        segLen <-
+            (as.numeric(segTab$end) - as.numeric(segTab$start))
+        ploidy <-
+            sum((segLen / sum(segLen)) * as.numeric(segTab$segVal))
         out <- c(out, ploidy)
     }
     data.frame(out, stringsAsFactors = F)

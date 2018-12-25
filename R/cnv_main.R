@@ -45,27 +45,47 @@
 #' @seealso [cnv_derivefeatures()] for deriving CNV features, [cnv_getLengthFraction()] for calculating
 #' CNV length fraction (normalized to arm), [cnv_plotDistributionProfile()] for plotting profile of
 #' CNV distribution.
-cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = FALSE, sep = "\t",
-                            cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
-                            have_sampleCol = TRUE, sample_col = "sample") {
-    stopifnot(is.logical(is_dir), is.logical(have_sampleCol),
-              is.character(sample_col), length(sample_col) == 1)
+cnv_readprofile = function(input,
+                           is_dir = FALSE,
+                           pattern = NULL,
+                           ignore_case = FALSE,
+                           sep = "\t",
+                           cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
+                           have_sampleCol = TRUE,
+                           sample_col = "sample") {
+    stopifnot(
+        is.logical(is_dir),
+        is.logical(have_sampleCol),
+        is.character(sample_col),
+        length(sample_col) == 1
+    )
     if (is_dir) {
         message("Treat input as a directory...")
         if (length(input) != 1) {
             stop("Only can take one directory as input!")
         }
         # get files and exclude directories
-        all.files <- list.files(path = input, pattern = pattern,
-                                all.files = FALSE, recursive = FALSE,
-                                ignore.case = ignore_case)
+        all.files <- list.files(
+            path = input,
+            pattern = pattern,
+            all.files = FALSE,
+            recursive = FALSE,
+            ignore.case = ignore_case
+        )
         files = all.files[!file.info(file.path(input, all.files))$isdir]
-        if (length(files) == 0) stop("No files exist, please check!")
+        if (length(files) == 0)
+            stop("No files exist, please check!")
         files_path = file.path(input, files)
         files_list = list()
         for (i in seq_along(files_path)) {
-            temp = read.csv(file = files_path[i], sep = sep, comment.char = "#", stringsAsFactors = FALSE)
-            if (!all(cols %in% colnames(temp))) stop("not all cols are in file, please check.")
+            temp = read.csv(
+                file = files_path[i],
+                sep = sep,
+                comment.char = "#",
+                stringsAsFactors = FALSE
+            )
+            if (!all(cols %in% colnames(temp)))
+                stop("not all cols are in file, please check.")
             if (have_sampleCol) {
                 tempName = unique(temp[, sample_col])
                 if (length(tempName) > 1) {
@@ -74,7 +94,9 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
                 temp = temp[, cols]
                 colnames(temp) = c("chromosome", "start", "end", "segVal")
                 if (nrow(temp) <= 22) {
-                    warning("Sample ", tempName, " is discarded because of few segments (<=22)")
+                    warning("Sample ",
+                            tempName,
+                            " is discarded because of few segments (<=22)")
                 } else {
                     files_list[[tempName]] = temp
                 }
@@ -84,7 +106,9 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
                 temp = temp[, cols]
                 colnames(temp) = c("chromosome", "start", "end", "segVal")
                 if (nrow(temp) <= 22) {
-                    warning("File ", files[i], " is discarded because of few segments (<=22)")
+                    warning("File ",
+                            files[i],
+                            " is discarded because of few segments (<=22)")
                 } else {
                     files_list[[files[i]]] = temp
                 }
@@ -98,23 +122,34 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
             stop("Muliple files are not a valid input, please use directory as input.")
         }
 
-        if (!file.exists(input)) stop("input file not exists")
-        if (!have_sampleCol) stop("When input is a file, sample column must set.")
-        input = read.csv(file = input, sep = sep, comment.char = "#", stringsAsFactors = FALSE)
+        if (!file.exists(input))
+            stop("input file not exists")
+        if (!have_sampleCol)
+            stop("When input is a file, sample column must set.")
+        input = read.csv(
+            file = input,
+            sep = sep,
+            comment.char = "#",
+            stringsAsFactors = FALSE
+        )
     }
 
-    if (!sample_col %in% colnames(input)) stop("sample column user set not exists in input file.")
-    if (!all(cols %in% colnames(input))) stop("not all cols are in file, please check.")
+    if (!sample_col %in% colnames(input))
+        stop("sample column user set not exists in input file.")
+    if (!all(cols %in% colnames(input)))
+        stop("not all cols are in file, please check.")
     samples = unique(input[, sample_col])
 
     res_list = list()
     for (i in seq_along(samples)) {
-        tempDF = input[input[, sample_col] == samples[i], ]
+        tempDF = input[input[, sample_col] == samples[i],]
         tempDF = tempDF[, cols]
         colnames(tempDF) = c("chromosome", "start", "end", "segVal")
 
         if (nrow(tempDF) <= 22) {
-            warning("Sample ", samples[i], " is discarded because of few segments (<=22)")
+            warning("Sample ",
+                    samples[i],
+                    " is discarded because of few segments (<=22)")
         } else {
             res_list[[samples[i]]] = tempDF
         }
@@ -151,8 +186,8 @@ cnv_readprofile = function(input, is_dir = FALSE, pattern = NULL, ignore_case = 
 #' tcga_features = cnv_derivefeatures(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #'}
 cnv_derivefeatures = function(CN_data,
-                           cores = 1,
-                           genome_build = c("hg19", "hg38")) {
+                              cores = 1,
+                              genome_build = c("hg19", "hg38")) {
     genome_build = match.arg(genome_build)
     # get chromosome lengths and centromere locations
     if (genome_build == "hg19") {
@@ -176,7 +211,7 @@ cnv_derivefeatures = function(CN_data,
     }
 
     # only keep 1:22 and x, y
-    chrlen = chrlen[chrlen$chrom %in% centromeres$chrom, ]
+    chrlen = chrlen[chrlen$chrom %in% centromeres$chrom,]
     if (cores > 1) {
         #require(foreach)
         requireNamespace("foreach", quietly = TRUE)
@@ -256,15 +291,15 @@ cnv_derivefeatures = function(CN_data,
 #' tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 #' }
 cnv_fitMixModels = function(CN_features,
-                         seed = 123456,
-                         min_comp = 2,
-                         max_comp = 10,
-                         min_prior = 0.001,
-                         model_selection = "BIC",
-                         nrep = 1,
-                         niter = 1000,
-                         cores = 1,
-                         featsToFit = seq(1, 6)) {
+                            seed = 123456,
+                            min_comp = 2,
+                            max_comp = 10,
+                            min_prior = 0.001,
+                            model_selection = "BIC",
+                            nrep = 1,
+                            niter = 1000,
+                            cores = 1,
+                            featsToFit = seq(1, 6)) {
     if (cores > 1) {
         #require(foreach)
         requireNamespace("foreach", quietly = TRUE)
@@ -501,17 +536,21 @@ cnv_fitMixModels = function(CN_features,
 #' tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_components, cores = 1)
 #' }
 cnv_generateSbCMatrix = function(CN_features,
-                              all_components = NULL,
-                              cores = 1,
-                              rowIter = 1000)
+                                 all_components = NULL,
+                                 cores = 1,
+                                 rowIter = 1000)
 {
     if (is.null(all_components))
     {
         # all_components <-
         #     readRDS(paste(this_path, "data/component_parameters.rds", sep = "/"))
-        message("About reference components\n   more detail please see https://github.com/ShixiangWang/absoluteCNVdata")
+        message(
+            "About reference components\n   more detail please see https://github.com/ShixiangWang/absoluteCNVdata"
+        )
         if (!file.exists("Nat_Gen_component_parameters.rds")) {
-            message("Nat_Gen_component_parameters.rds doesnot exist, will download reference components.")
+            message(
+                "Nat_Gen_component_parameters.rds doesnot exist, will download reference components."
+            )
             download.file(url = "https://github.com/ShixiangWang/absoluteCNVdata/raw/master/component_parameters.rds",
                           destfile = "Nat_Gen_component_parameters.rds")
         }
@@ -527,7 +566,8 @@ cnv_generateSbCMatrix = function(CN_features,
         calculateSumOfPosteriors(CN_features[["osCN"]], all_components[["osCN"]], "osCN", cores = cores),
         calculateSumOfPosteriors(CN_features[["changepoint"]], all_components[["changepoint"]], "changepoint", cores = cores),
         calculateSumOfPosteriors(CN_features[["copynumber"]], all_components[["copynumber"]], "copynumber", cores = cores),
-        calculateSumOfPosteriors(CN_features[["bpchrarm"]], all_components[["bpchrarm"]], "bpchrarm", cores = cores))
+        calculateSumOfPosteriors(CN_features[["bpchrarm"]], all_components[["bpchrarm"]], "bpchrarm", cores = cores)
+    )
 
     # if (cores > 1) {
     #     require(foreach)
@@ -582,6 +622,7 @@ cnv_generateSbCMatrix = function(CN_features,
 #' @param seed seed number.
 #' @param plot \code{logical}. If \code{TRUE}, plot best rank survey.
 #' @param testRandom if generate random data from input to test measurements. Default is \code{TRUE}.
+#' @param nmfalg specification of the NMF algorithm.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import NMF
 #' @import grDevices
@@ -610,10 +651,12 @@ cnv_chooseSigNumber <-
              nrun = 10,
              cores = 1,
              seed = 123456,
-             plot = TRUE, testRandom = TRUE)
+             plot = TRUE,
+             testRandom = TRUE,
+             nmfalg = "brunet")
     {
         message('Estimating best rank..')
-        nmfalg <- "brunet"
+        #nmfalg <- "brunet"
 
         #suppressMessages(library(NMF))
         estim.r <-
@@ -627,7 +670,14 @@ cnv_chooseSigNumber <-
                 .opt = list(shared.memory = FALSE, paste0("p", cores))
             )
 
-        pdf('nmf_consensus.pdf', bg = 'white', pointsize = 9, width = 12, height = 12, paper = "special")
+        pdf(
+            'nmf_consensus.pdf',
+            bg = 'white',
+            pointsize = 9,
+            width = 12,
+            height = 12,
+            paper = "special"
+        )
         NMF::consensusmap(estim.r)
         dev.off()
         message('created nmf_consensus.pdf')
@@ -673,14 +723,12 @@ cnv_chooseSigNumber <-
                 p <- NMF::plot(
                     estim.r,
                     estim.r.random,
-                    what = c(
-                        "cophenetic",
-                        "dispersion",
-                        "sparseness",
-                        #"silhouette",
-                        #"residuals",
-                        "rss"
-                    ),
+                    what = c("cophenetic",
+                             "dispersion",
+                             "sparseness",
+                             #"silhouette",
+                             #"residuals",
+                             "rss"),
                     xname = "Observed",
                     yname = "Randomised",
                     main = "NMF Rank Survey"
@@ -688,14 +736,12 @@ cnv_chooseSigNumber <-
             } else {
                 p <- NMF::plot(
                     estim.r,
-                    what = c(
-                        "cophenetic",
-                        "dispersion",
-                        "sparseness",
-                       # "silhouette",
-                       # "residuals",
-                        "rss"
-                    ),
+                    what = c("cophenetic",
+                             "dispersion",
+                             "sparseness",
+                             # "silhouette",
+                             # "residuals",
+                             "rss"),
                     main = "NMF Rank Survey"
                 )
             }
@@ -725,17 +771,21 @@ cnv_chooseSigNumber <-
 
         }
 
-        if (!plot) p = NULL
-        if (!testRandom) estim.r.random = NULL
+        if (!plot)
+            p = NULL
+        if (!testRandom)
+            estim.r.random = NULL
 
-        return(list(
-            nmfEstimate = estim.r,
-            nmfEstimate.random = estim.r.random,
-            bestRank = n,
-            survey = nmf.sum,
-            survey_plot = p,
-            seed = seed
-        ))
+        return(
+            list(
+                nmfEstimate = estim.r,
+                nmfEstimate.random = estim.r.random,
+                bestRank = n,
+                survey = nmf.sum,
+                survey_plot = p,
+                seed = seed
+            )
+        )
     }
 
 #--------------------------
@@ -743,7 +793,6 @@ cnv_chooseSigNumber <-
 #' @title Extract signature based on specified rank value
 #' @inheritParams cnv_chooseSigNumber
 #' @param nsig specification of the factorization rank.
-#' @param nmfalg specification of the NMF algorithm.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import NMF
 #' @return a object of \code{NMF} run.
@@ -864,21 +913,30 @@ cnv_quantifySigExposure <-
 #' tcga_results = cnv_autoCaptureSignatures(tcga_sample_component_matrix, nrun=10, cores = 1)
 #' }
 cnv_autoCaptureSignatures = function(sample_by_component,
-                                  nTry = 12,
-                                  nrun = 10,
-                                  cores = 1,
-                                  seed = 123456,
-                                  plot = TRUE,
-                                  testRandom = TRUE) {
-    choose_res = cnv_chooseSigNumber(sample_by_component, nTry, nrun, cores, seed,
-                                     plot = plot, testRandom = testRandom)
+                                     nTry = 12,
+                                     nrun = 10,
+                                     cores = 1,
+                                     seed = 123456,
+                                     plot = TRUE,
+                                     testRandom = TRUE,
+                                     nmfalg = "brunet") {
+    choose_res = cnv_chooseSigNumber(
+        sample_by_component,
+        nTry,
+        nrun,
+        cores,
+        seed,
+        plot = plot,
+        testRandom = testRandom,
+        nmfalg = nmfalg
+    )
     NMF_res = cnv_extractSignatures(sample_by_component,
-                                 nsig = choose_res$bestRank,
-                                 cores = cores)
+                                    nsig = choose_res$bestRank,
+                                    cores = cores, nmfalg = nmfalg)
     w = NMF::basis(NMF_res)
     #h = NMF::coef(NMF_res)
     exposure = cnv_quantifySigExposure(sample_by_component = sample_by_component,
-                                   component_by_signature = w)
+                                       component_by_signature = w)
     message("Done.")
 
     return(
@@ -903,6 +961,7 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' @inheritParams cnv_fitMixModels
 #' @inheritParams cnv_chooseSigNumber
 #' @inheritParams cnv_extractSignatures
+#' @param ranks a integer vector, manually specify `ranks` to capture instead of using auto-capture feature.
 #' @param tmp whether create a tmp directory to store temp result or not, default is \code{FALSE}.
 #' @param plot_survey \code{logical}. If \code{TRUE}, plot best rank survey.
 #' @param de_novo default is \code{TRUE}. If set to \code{FALSE}, it will use reference components to
@@ -922,13 +981,29 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' ## run cnv signature pipeline
 #' result = cnv_pipe(CN_data = tcga_segTabs, cores = 1, genome_build = "hg19")
 #' }
-cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
-                    de_novo = TRUE, reference_components = NULL,
-                    min_comp = 2, max_comp = 10, min_prior = 0.001, model_selection = "BIC",
-                    nrep = 1, niter = 1000,
-                    nTry = 12, nrun = 10, seed = 123456, plot_survey = TRUE, testRandom = FALSE,
-                    nmfalg = "brunet", tmp = FALSE){
-    stopifnot(exists("CN_data"), nTry < 100, is.logical(plot_survey), is.logical(testRandom))
+cnv_pipe = function(CN_data,
+                    cores = 1,
+                    genome_build = c("hg19", "hg38"),
+                    de_novo = TRUE,
+                    reference_components = NULL,
+                    min_comp = 2,
+                    max_comp = 10,
+                    min_prior = 0.001,
+                    model_selection = "BIC",
+                    nrep = 1,
+                    niter = 1000,
+                    nTry = 12,
+                    ranks = NULL,
+                    nrun = 10,
+                    seed = 123456,
+                    plot_survey = TRUE,
+                    testRandom = FALSE,
+                    nmfalg = "brunet",
+                    tmp = FALSE) {
+    stopifnot(exists("CN_data"),
+              nTry < 100,
+              is.logical(plot_survey),
+              is.logical(testRandom))
 
     genome_build = match.arg(genome_build)
     cat("===============================================\n")
@@ -940,7 +1015,9 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
     cat("Thread number                          :", cores, "\n")
     cat("Genome build                           :", genome_build, "\n")
     cat("De novo signature analysis?            :", de_novo, "\n")
-    cat("Use reference components from paper?   :", !is.null(reference_components), "\n")
+    cat("Use reference components from paper?   :",
+        !is.null(reference_components),
+        "\n")
     cat("Minimal number of components           :", min_comp, "\n")
     cat("Maximal number of components           :", max_comp, "\n")
     cat("Minimal prior value                    :", min_prior, "\n")
@@ -958,26 +1035,40 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
 
     cat("Part 2 - Derive feature distributions\n")
     cat("==========\n")
-    features = cnv_derivefeatures(CN_data = CN_data, cores = cores, genome_build = genome_build)
+    features = cnv_derivefeatures(CN_data = CN_data,
+                                  cores = cores,
+                                  genome_build = genome_build)
 
     if (tmp) {
         tmp_dir = file.path(getwd(), "tmp")
-        dir.create(tmp_dir, showWarnings = FALSE, recursive = TRUE)
+        dir.create(tmp_dir,
+                   showWarnings = FALSE,
+                   recursive = TRUE)
     }
 
-    if (tmp) save(features, file = file.path(tmp_dir, "VSHunter_CNV_features.RData"))
+    if (tmp)
+        save(features, file = file.path(tmp_dir, "VSHunter_CNV_features.RData"))
 
     cat("Part 3 - Fit model components (this may take some time)\n")
     cat("==========\n")
     if (!de_novo) {
         cat("Detect de_novo argument is FALSE, skip this step...\n")
     } else {
-        components = cnv_fitMixModels(CN_features = features, seed = seed,
-                                      min_comp = min_comp, max_comp = max_comp,
-                                      min_prior = min_prior, model_selection = model_selection,
-                                      nrep = nrep, niter = niter, cores = cores)
+        components = cnv_fitMixModels(
+            CN_features = features,
+            seed = seed,
+            min_comp = min_comp,
+            max_comp = max_comp,
+            min_prior = min_prior,
+            model_selection = model_selection,
+            nrep = nrep,
+            niter = niter,
+            cores = cores
+        )
 
-        if (tmp) save(components, file = file.path(tmp_dir, "VSHunter_CNV_components.RData"))
+        if (tmp)
+            save(components,
+                 file = file.path(tmp_dir, "VSHunter_CNV_components.RData"))
     }
 
 
@@ -991,25 +1082,55 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
         sample_component_matrix = cnv_generateSbCMatrix(features, components, cores = cores)
     }
 
-    if (tmp) save(sample_component_matrix,
-                  file = file.path(tmp_dir, "VSHunter_CNV_SbCMatrix.RData"))
+    if (tmp)
+        save(sample_component_matrix,
+             file = file.path(tmp_dir, "VSHunter_CNV_SbCMatrix.RData"))
 
     cat("Part 5 - Capture signatures of copy number profile (this may take much time)\n")
     cat("==========\n")
 
-    results = cnv_autoCaptureSignatures(sample_component_matrix, nTry = nTry,
-                                        nrun=nrun, cores = cores, seed = seed,
-                                        plot = plot_survey, testRandom = testRandom)
+    if (!is.null(ranks)) {
+        cat("Specified ranks: ", ranks, "\n")
+        results = cnv_extractSignatures(sample_by_component, nsig = ranks,
+                                        seed = seed, nmfalg = nmfalg,
+                                        cores = cores)
+    } else {
+        results = cnv_autoCaptureSignatures(
+            sample_component_matrix,
+            nTry = nTry,
+            nrun = nrun,
+            cores = cores,
+            seed = seed,
+            plot = plot_survey,
+            testRandom = testRandom,
+            nmfalg = nmfalg
+        )
+    }
 
     cat("Pipeline done.\n")
 
     if (!de_novo) {
-        if (is.null(reference_components)) message("Of note, the components can obtain from https://github.com/ShixiangWang/absoluteCNVdata")
-        return(c(list(features = features, components = reference_components,
-                      sample_component_matrix = sample_component_matrix), results))
+        if (is.null(reference_components))
+            message(
+                "Of note, the components can obtain from https://github.com/ShixiangWang/absoluteCNVdata"
+            )
+        return(c(
+            list(
+                features = features,
+                components = reference_components,
+                sample_component_matrix = sample_component_matrix
+            ),
+            results
+        ))
     } else {
-        return(c(list(features = features, components = components,
-                      sample_component_matrix = sample_component_matrix), results))
+        return(c(
+            list(
+                features = features,
+                components = components,
+                sample_component_matrix = sample_component_matrix
+            ),
+            results
+        ))
     }
 }
 
@@ -1019,5 +1140,14 @@ cnv_pipe = function(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
 # create multiple function used from association analysis.
 
 
-utils::globalVariables(c("centromeres.hg19", "centromeres.hg38", "chromsize.hg19", "chromsize.hg38",
-                         "feat", "i"))
+utils::globalVariables(
+    c(
+        "centromeres.hg19",
+        "centromeres.hg38",
+        "chromsize.hg19",
+        "chromsize.hg38",
+        "feat",
+        "i",
+        "sample_by_component"
+    )
+)

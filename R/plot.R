@@ -19,10 +19,18 @@
 #' @return Nothing
 #' @export
 #'
-cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
-                              patient_order = NULL, font_size = 1.2, show_title = TRUE,
-                              axis_lwd = 2, title_size = 1.3, show_barcodes = FALSE, barcode_size = 0.5,
-                              yaxisLim = 0.3, ...) {
+cnv_plotSignatures = function(Res = NULL,
+                              contributions = FALSE,
+                              color = NULL,
+                              patient_order = NULL,
+                              font_size = 1.2,
+                              show_title = TRUE,
+                              axis_lwd = 2,
+                              title_size = 1.3,
+                              show_barcodes = FALSE,
+                              barcode_size = 0.5,
+                              yaxisLim = 0.3,
+                              ...) {
     # modify from https://github.com/PoisonAlien/maftools/blob/master/R/plotSignatures.R
 
     # input can be multipe objects from different functions
@@ -32,18 +40,22 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
     if (inherits(Res, "NMFfitX1")) {
         #-- Signatures
         w = NMF::basis(Res)
-        w = apply(w, 2, function(x) x / sum(x)) # Scale signatures (basis)
+        w = apply(w, 2, function(x)
+            x / sum(x)) # Scale signatures (basis)
         colnames(w) = paste("Signature", 1:ncol(w), sep = "_")
 
         #-- Contribution (this mainly come from result of LCD, it is ok directly from NMF)
         h = NMF::coef(Res)
-        h = apply(h, 2, function(x) x/sum(x)) # Scale contributions (coefs)
+        h = apply(h, 2, function(x)
+            x / sum(x)) # Scale contributions (coefs)
 
         rownames(h) = paste("Signature", 1:ncol(w), sep = "_")
     } else if (is.list(Res)) {
-        if (!all(c("signature", "exposure") %in% names(Res))) stop("signature and exposure elements must in input list.")
+        if (!all(c("signature", "exposure") %in% names(Res)))
+            stop("signature and exposure elements must in input list.")
         w = Res$signature
-        w = apply(w, 2, function(x) x / sum(x)) # Scale signatures (basis)
+        w = apply(w, 2, function(x)
+            x / sum(x)) # Scale signatures (basis)
 
         if (is.null(colnames(w))) {
             colnames(w) = paste("Signature", 1:ncol(w), sep = "_")
@@ -57,66 +69,148 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
 
     contrib = h
 
-    if(contributions){
+    if (contributions) {
         contribt = t(contrib)
         #calculate sd
-        if(!is.null(patient_order)){
-            contribt = contribt[patient_order,] #order on user-specified ordering of the genomes
-        }else{
-            contribt = contribt[order(contribt[,ncol(contribt)]),] #order according to standard deviation
+        if (!is.null(patient_order)) {
+            contribt = contribt[patient_order, ] #order on user-specified ordering of the genomes
+        } else{
+            contribt = contribt[order(contribt[, ncol(contribt)]), ] #order according to standard deviation
         }
 
         #contrib = t(contribt[,1:(ncol(contribt)-1)])
-        contrib = t(contribt[,1:(ncol(contribt))])
+        contrib = t(contribt[, 1:(ncol(contribt))])
 
         cols = RColorBrewer::brewer.pal(n = 8, name = 'Set2')
 
-        if(show_barcodes){
-            lo = layout(mat = matrix(data = c(1, 2), nrow = 2), heights = c(6, 2))
+        if (show_barcodes) {
+            lo = layout(mat = matrix(data = c(1, 2), nrow = 2),
+                        heights = c(6, 2))
             par(mar = c(6, 4, 2, 1))
-            b = barplot(contrib, axes = FALSE, horiz = FALSE, col = cols, border = NA, names.arg = rep("", ncol(contrib)))
-            axis(side = 1, at = b, labels = colnames(contrib), lwd = 2, cex.axis = barcode_size,
-                 las = 2, line = 1, hadj = 0.8, font = 2, tick = FALSE)
-            axis(side = 2, at = seq(0, 1, 0.25), lwd = 3, font = 2, las = 2, cex.axis = 0.9)
-            mtext(text = "Signature exposures", side = 2, font = 2, cex = 1, line = 2.8, srt = 90) # strange srt
+            b = barplot(
+                contrib,
+                axes = FALSE,
+                horiz = FALSE,
+                col = cols,
+                border = NA,
+                names.arg = rep("", ncol(contrib))
+            )
+            axis(
+                side = 1,
+                at = b,
+                labels = colnames(contrib),
+                lwd = 2,
+                cex.axis = barcode_size,
+                las = 2,
+                line = 1,
+                hadj = 0.8,
+                font = 2,
+                tick = FALSE
+            )
+            axis(
+                side = 2,
+                at = seq(0, 1, 0.25),
+                lwd = 3,
+                font = 2,
+                las = 2,
+                cex.axis = 0.9
+            )
+            mtext(
+                text = "Signature exposures",
+                side = 2,
+                font = 2,
+                cex = 1,
+                line = 2.8,
+                srt = 90
+            ) # strange srt
             par(mar = rep(2, 4))
             plot.new()
             #par(mar = c(2, 3, 0, 0))
-            legend(x = "left", legend = rownames(contrib), col = cols[1:nrow(contrib)],
-                   border = NA, bty = "n", pch = 15, xpd = TRUE, ncol = 1,
-                   cex = 1.2, pt.cex = 1.5, horiz = TRUE)
-        }else{
-            lo = layout(mat = matrix(data = c(1, 2), nrow = 2), heights = c(6, 2))
+            legend(
+                x = "left",
+                legend = rownames(contrib),
+                col = cols[1:nrow(contrib)],
+                border = NA,
+                bty = "n",
+                pch = 15,
+                xpd = TRUE,
+                ncol = 1,
+                cex = 1.2,
+                pt.cex = 1.5,
+                horiz = TRUE
+            )
+        } else{
+            lo = layout(mat = matrix(data = c(1, 2), nrow = 2),
+                        heights = c(6, 2))
             par(mar = c(3, 4, 2, 1))
-            b = barplot(contrib, axes = FALSE, horiz = FALSE, col = cols, border = NA, names.arg = rep("", ncol(contrib)))
-            axis(side = 2, at = seq(0, 1, 0.25), lwd = 3, font = 2, las = 2, cex.axis = 0.9)
-            mtext(text = "Signature exposure", side = 2, font = 2, cex = 1, line = 2.8, srt=90)
+            b = barplot(
+                contrib,
+                axes = FALSE,
+                horiz = FALSE,
+                col = cols,
+                border = NA,
+                names.arg = rep("", ncol(contrib))
+            )
+            axis(
+                side = 2,
+                at = seq(0, 1, 0.25),
+                lwd = 3,
+                font = 2,
+                las = 2,
+                cex.axis = 0.9
+            )
+            mtext(
+                text = "Signature exposure",
+                side = 2,
+                font = 2,
+                cex = 1,
+                line = 2.8,
+                srt = 90
+            )
             par(mar = rep(2, 4))
             plot.new()
             #par(mar = c(2, 3, 0, 0))
-            legend(x = "left", legend = rownames(contrib), col = cols[1:nrow(contrib)],
-                   border = NA, bty = "n", pch = 15, xpd = TRUE, ncol = 1,
-                   cex = 1.2, pt.cex = 1.5, horiz = TRUE)
+            legend(
+                x = "left",
+                legend = rownames(contrib),
+                col = cols[1:nrow(contrib)],
+                border = NA,
+                bty = "n",
+                pch = 15,
+                xpd = TRUE,
+                ncol = 1,
+                cex = 1.2,
+                pt.cex = 1.5,
+                horiz = TRUE
+            )
         }
-    }else{
-
+    } else{
         plotData = as.data.frame(t(w))
         nsigs = nrow(plotData)
 
-        if(is.null(color)){
+        if (is.null(color)) {
             #color = c("blue","black","red","gray","green","maroon")
-            color = c('coral4', 'lightcyan4', 'deeppink3', 'lightsalmon1', 'forestgreen', 'cornflowerblue')
+            color = c(
+                'coral4',
+                'lightcyan4',
+                'deeppink3',
+                'lightsalmon1',
+                'forestgreen',
+                'cornflowerblue'
+            )
         }
 
         cnames = colnames(plotData)
 
         # order the features
-        plotData = plotData[, c(grep("bp10MB", cnames, value = TRUE),
-                                grep("copynumber", cnames, value = TRUE),
-                                grep("changepoint", cnames, value = TRUE),
-                                grep("bpchrarm", cnames, value = TRUE),
-                                grep("osCN", cnames, value = TRUE),
-                                grep("segsize", cnames, value = TRUE))]
+        plotData = plotData[, c(
+            grep("bp10MB", cnames, value = TRUE),
+            grep("copynumber", cnames, value = TRUE),
+            grep("changepoint", cnames, value = TRUE),
+            grep("bpchrarm", cnames, value = TRUE),
+            grep("osCN", cnames, value = TRUE),
+            grep("segsize", cnames, value = TRUE)
+        )]
 
 
         len_c1 = sum(grepl("bp10MB", cnames))
@@ -133,7 +227,7 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
                      len_c5,
                      len_c6)
 
-        colors = rep(color, times=len_seqc)
+        colors = rep(color, times = len_seqc)
 
         len_seq = c(0L)
         for (i in 1:length(len_seqc)) {
@@ -141,36 +235,86 @@ cnv_plotSignatures = function(Res = NULL, contributions = FALSE, color = NULL,
             len_seq = c(len_seq, s)
         }
 
-        par(mfrow = c(nsigs,1),oma = c(5,4,0,0) + 0.1, mar = c(0,0,2.5,0) + 0.1, las=1, tcl=-.25, font.main=4, xpd = NA)
+        par(
+            mfrow = c(nsigs, 1),
+            oma = c(5, 4, 0, 0) + 0.1,
+            mar = c(0, 0, 2.5, 0) + 0.1,
+            las = 1,
+            tcl = -.25,
+            font.main = 4,
+            xpd = NA
+        )
 
-        for(i in 1:nsigs){
-
+        for (i in 1:nsigs) {
             ae = rownames(plotData)[i]
-            d = as.matrix(plotData[i,])
-            if(is.na(yaxisLim)){
-                bh = ceiling(max(d, na.rm = TRUE) * 10)/10 #Bar height
-            }else{
+            d = as.matrix(plotData[i, ])
+            if (is.na(yaxisLim)) {
+                bh = ceiling(max(d, na.rm = TRUE) * 10) / 10 #Bar height
+            } else{
                 bh = 0.3
             }
 
-            barplot(d, xaxt = "n", yaxt = "n", col = colors, beside = TRUE, ylim = c(-0.1, bh),
-                    cex.main = 1, border = NA, font.axis = 2, font.lab = 2,
-                    adj = 0.25, ...)
-            if(show_title){
-                title(main = ae, cex.main = title_size, line = 0, adj = 0.98)
+            barplot(
+                d,
+                xaxt = "n",
+                yaxt = "n",
+                col = colors,
+                beside = TRUE,
+                ylim = c(-0.1, bh),
+                cex.main = 1,
+                border = NA,
+                font.axis = 2,
+                font.lab = 2,
+                adj = 0.25,
+                ...
+            )
+            if (show_title) {
+                title(
+                    main = ae,
+                    cex.main = title_size,
+                    line = 0,
+                    adj = 0.98
+                )
             }
 
             #mtext(text = ae, side = 1, line = 2, font = 1, cex = 0.5, at = 0.3)
-            axis(side = 2, at = seq(0, bh, 0.1),
-                 pos = -2, las = 2, lwd = axis_lwd, hadj = 1.1,
-                 font = 2, cex.axis = font_size)
+            axis(
+                side = 2,
+                at = seq(0, bh, 0.1),
+                pos = -2,
+                las = 2,
+                lwd = axis_lwd,
+                hadj = 1.1,
+                font = 2,
+                cex.axis = font_size
+            )
             #abline(h = seq(0, 0.3, 0.1),lty=2,lwd=0.3, col = 'gray70')
-            rect(xleft = len_seq, ybottom = -0.05,
-                 xright = ncol(plotData)*2, ytop = -0.02, col = color, border = 'gray70')
-            if(i == nsigs){
-                text(labels = c("bp10MB", "copynumber", "changepoint", "bpchrarm","osCN", "segsize"),
-                     y = rep(-0.1,6),x = len_seq[2:7]-len_seqc, cex = font_size,
-                     font = 1.8, font.lab = 2, pos = 1.2, srt = 30)
+            rect(
+                xleft = len_seq,
+                ybottom = -0.05,
+                xright = ncol(plotData) * 2,
+                ytop = -0.02,
+                col = color,
+                border = 'gray70'
+            )
+            if (i == nsigs) {
+                text(
+                    labels = c(
+                        "bp10MB",
+                        "copynumber",
+                        "changepoint",
+                        "bpchrarm",
+                        "osCN",
+                        "segsize"
+                    ),
+                    y = rep(-0.1, 6),
+                    x = len_seq[2:7] - len_seqc,
+                    cex = font_size,
+                    font = 1.8,
+                    font.lab = 2,
+                    pos = 1.2,
+                    srt = 30
+                )
             }
         }
     }
@@ -193,22 +337,22 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
     features = lapply(features, function(x) {
         x$value = as.numeric(x$value)
         return(x)
-        })
+    })
 
     #requireNamespace("cowplot")
     #cowplot::theme_cowplot()
     #ggplot2::theme_set(cowplot::theme_cowplot(font_size = 12))
     p_1 = ggplot(data = features$segsize, aes(x = log10(value))) +
-        geom_line(stat="density") + labs(x = "Segment size (log10 based)", y = ylab) +
+        geom_line(stat = "density") + labs(x = "Segment size (log10 based)", y = ylab) +
         theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
     #p_1 = p_1 + scale_x_continuous(breaks = 10 ^c(7, 8),
     #                               labels = scales::trans_format("log10", scales::math_format(10^.x)))
 
     p_2 = ggplot(data = features$copynumber, aes(x = value)) +
-        geom_line(stat="density") + labs(x = "Copy number", y = ylab) +
+        geom_line(stat = "density") + labs(x = "Copy number", y = ylab) +
         theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
     p_3 = ggplot(data = features$changepoint, aes(x = value)) +
-        geom_line(stat="density") + labs(x = "Copy number changepoint", y = ylab) +
+        geom_line(stat = "density") + labs(x = "Copy number changepoint", y = ylab) +
         theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "cm")) + theme_cowplot(font_size = 12)
 
     p_4 = ggplot(data = features$bp10MB, aes(x = value)) +
@@ -236,8 +380,15 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
     #     p_6 = p_6 + theme(axis.text.x = element_text(size = 3))
     # }
 
-    p = cowplot::plot_grid(p_1, p_2, p_3, p_4, p_5, p_6,
-                       nrow = 2, align = "hv", ...)
+    p = cowplot::plot_grid(p_1,
+                           p_2,
+                           p_3,
+                           p_4,
+                           p_5,
+                           p_6,
+                           nrow = 2,
+                           align = "hv",
+                           ...)
     p
 }
 
@@ -255,42 +406,57 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
 #' @export
 #'
 cnv_plotMixComponents = function(features, components, ...) {
-
-
-    cbPalette <- c(RColorBrewer::brewer.pal(8,"Dark2"),RColorBrewer::brewer.pal(9,"Set1"),"black")
+    cbPalette <-
+        c(
+            RColorBrewer::brewer.pal(8, "Dark2"),
+            RColorBrewer::brewer.pal(9, "Set1"),
+            "black"
+        )
     plotNormDensity = function(value, matrix, xlab) {
-        p = ggplot(data = data.frame(x = seq(min(value), max(value), length.out = 100)),
-                   aes(x)) + ylab("")
+        p = ggplot(data = data.frame(x = seq(
+            min(value), max(value), length.out = 100
+        )),
+        aes(x)) + ylab("")
 
         for (i in 1:ncol(matrix)) {
-            p = p + stat_function(fun = stats::dnorm, n = 1000,
-                                  args = list(
-                                      mean = matrix[1, i],
-                                      sd = matrix[2, i]),
-                                  color = cbPalette[i])
+            p = p + stat_function(
+                fun = stats::dnorm,
+                n = 1000,
+                args = list(mean = matrix[1, i],
+                            sd = matrix[2, i]),
+                color = cbPalette[i]
+            )
         }
 
-        p = p+xlab(xlab)+theme_cowplot(font_size = 12)
+        p = p + xlab(xlab) + theme_cowplot(font_size = 12)
         p
     }
 
-    plotPoisDensity = function(value, lambda, xlab, max_value=10) {
+    plotPoisDensity = function(value, lambda, xlab, max_value = 10) {
         if (is.null(max_value)) {
-            p = ggplot(data = data.frame(x = seq(min(value), max(value), length.out = 100)),
-                       aes(x)) + ylab("")
+            p = ggplot(data = data.frame(x = seq(
+                min(value), max(value), length.out = 100
+            )),
+            aes(x)) + ylab("")
         } else {
-            p = ggplot(data = data.frame(x = seq(min(value), max_value, length.out = 100)),
-                       aes(x)) + ylab("")
+            p = ggplot(data = data.frame(x = seq(
+                min(value), max_value, length.out = 100
+            )),
+            aes(x)) + ylab("")
         }
 
 
         for (i in 1:length(lambda)) {
-            p = p + stat_function(geom = "line",  n = 11, fun = stats::dpois,
-                                  args = list(lambda = lambda[i]),
-                                  color = cbPalette[i])
+            p = p + stat_function(
+                geom = "line",
+                n = 11,
+                fun = stats::dpois,
+                args = list(lambda = lambda[i]),
+                color = cbPalette[i]
+            )
         }
 
-        p = p+xlab(xlab)+theme_cowplot(font_size = 12)
+        p = p + xlab(xlab) + theme_cowplot(font_size = 12)
         p
     }
 
@@ -318,12 +484,25 @@ cnv_plotMixComponents = function(features, components, ...) {
     p_3 = plotNormDensity(features[["changepoint"]]$value, comp_changepoint, xlab = "Copy-number changepoint")
 
     # pois plots
-    p_4 = plotPoisDensity(features[["bp10MB"]]$value, comp_bp10MB, xlab = "Breakpoint count per 10MB", max_value = 10)
-    p_5 = plotPoisDensity(features[["bpchrarm"]]$value, comp_bpchrarm, xlab = "Breakpoint count per arm", max_value = 50)
+    p_4 = plotPoisDensity(features[["bp10MB"]]$value,
+                          comp_bp10MB,
+                          xlab = "Breakpoint count per 10MB",
+                          max_value = 10)
+    p_5 = plotPoisDensity(features[["bpchrarm"]]$value,
+                          comp_bpchrarm,
+                          xlab = "Breakpoint count per arm",
+                          max_value = 50)
     p_6 = plotPoisDensity(features[["osCN"]]$value, comp_osCN, xlab = "Oscilating CN chain length")
 
-    p = cowplot::plot_grid(p_1, p_2, p_3, p_4, p_5, p_6,
-                           nrow = 2, align = "hv", ...)
+    p = cowplot::plot_grid(p_1,
+                           p_2,
+                           p_3,
+                           p_4,
+                           p_5,
+                           p_6,
+                           nrow = 2,
+                           align = "hv",
+                           ...)
     p
 }
 
@@ -337,16 +516,17 @@ cnv_plotMixComponents = function(features, components, ...) {
 #' @return a data frame
 #' @export
 cnv_getLengthFraction = function(CN_data,
-                                   genome_build = c("hg19", "hg38"),
-                                   cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
-                                   sample_col = "sample"){
+                                 genome_build = c("hg19", "hg38"),
+                                 cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
+                                 sample_col = "sample") {
     stopifnot(is.list(CN_data) | is.data.frame(CN_data))
     genome_build = match.arg(genome_build)
 
     if (inherits(CN_data, "list")) {
         segTab = base::Reduce(rbind, CN_data)
         segTab$sample = base::rep(x = names(CN_data),
-                                     times = sapply(CN_data, function(x) nrow(x)))
+                                  times = sapply(CN_data, function(x)
+                                      nrow(x)))
     } else {
         segTab = CN_data[, c(cols, sample_col)]
         if (ncol(segTab) == 5) {
@@ -354,19 +534,26 @@ cnv_getLengthFraction = function(CN_data,
         } else if (ncol(segTab) == 4) {
             colnames(segTab) = c("chromosome", "start", "end", "sample")
         } else {
-            stop("If input is a data.frame, must have 4 necessary columns (chr, start, end, sample) and 1 optional column (segVal).")
+            stop(
+                "If input is a data.frame, must have 4 necessary columns (chr, start, end, sample) and 1 optional column (segVal)."
+            )
         }
     }
 
     # unify chromosome column
     segTab$chromosome = as.character(segTab$chromosome)
-    segTab$chromosome = sub(pattern = "chr", replacement = "chr", x = segTab$chromosome, ignore.case = TRUE)
+    segTab$chromosome = sub(
+        pattern = "chr",
+        replacement = "chr",
+        x = segTab$chromosome,
+        ignore.case = TRUE
+    )
     if (any(!grepl("chr", segTab$chromosome))) {
         segTab$chromosome[!grepl("chr", segTab$chromosome)] = paste0("chr", segTab$chromosome[!grepl("chr", segTab$chromosome)])
     }
     if (any(grepl("chr23", segTab$chromosome))) {
         warning("'23' is not a supported chromosome, related rows will be discarded.")
-        segTab = segTab[!grepl("chr23", segTab$chromosome), ]
+        segTab = segTab[!grepl("chr23", segTab$chromosome),]
     }
 
     valid_chr = c(paste0("chr", 1:22), "chrX", "chrY")
@@ -386,21 +573,24 @@ cnv_getLengthFraction = function(CN_data,
     )
 
     for (i in 1:nrow(segTab)) {
-        x = segTab[i, ]
+        x = segTab[i,]
 
         # locate chromosome
-        arm_loc = base::subset(arm_data, chrom==x$chromosome)
+        arm_loc = base::subset(arm_data, chrom == x$chromosome)
 
         y = c(x$start, x$end)
         if (y[2] <= arm_loc$p_end & y[1] >= arm_loc$p_start) {
             location = paste0(sub("chr", "", arm_loc$chrom), "p")
             annotation = "short arm"
             fraction = (y[2] - y[1] + 1) / (arm_loc$p_end - arm_loc$p_start + 1)
-        } else if (y[2] <= arm_loc$q_end & y[1] >= arm_loc$q_start) {
+        } else if (y[2] <= arm_loc$q_end &
+                   y[1] >= arm_loc$q_start) {
             location = paste0(sub("chr", "", arm_loc$chrom), "q")
             annotation = "long arm"
             fraction = (y[2] - y[1] + 1) / (arm_loc$q_end - arm_loc$q_start + 1)
-        } else if (y[1] >= arm_loc$p_start & y[1] <= arm_loc$p_end & y[2] >= arm_loc$q_start & y[2] <= arm_loc$q_end) {
+        } else if (y[1] >= arm_loc$p_start &
+                   y[1] <= arm_loc$p_end &
+                   y[2] >= arm_loc$q_start & y[2] <= arm_loc$q_end) {
             location = paste0(sub("chr", "", arm_loc$chrom), "pq") # across p and q arm
             annotation = "across short and long arm"
             fraction = 2 * ((y[2] - y[1] + 1) / arm_loc$total_size)
@@ -408,8 +598,9 @@ cnv_getLengthFraction = function(CN_data,
             location = paste0(sub("chr", "", arm_loc$chrom), "p")
             annotation = "short arm intersect with centromere region"
             # only calculate region does not intersect
-            fraction = (y[2] - y[1] + 1 - (y[2] - arm_loc$p_end) ) / (arm_loc$p_end - arm_loc$p_start + 1)
-        } else if (y[1] > arm_loc$p_end & y[1] < arm_loc$q_start & y[2] > arm_loc$q_start ) {
+            fraction = (y[2] - y[1] + 1 - (y[2] - arm_loc$p_end)) / (arm_loc$p_end - arm_loc$p_start + 1)
+        } else if (y[1] > arm_loc$p_end &
+                   y[1] < arm_loc$q_start & y[2] > arm_loc$q_start) {
             location = paste0(sub("chr", "", arm_loc$chrom), "q")
             annotation = "long arm intersect with centromere region"
             # only calculate region does not intersect
@@ -420,7 +611,7 @@ cnv_getLengthFraction = function(CN_data,
             fraction = NA_real_
         }
 
-        assign_df[i, ] = c(location, annotation, fraction)
+        assign_df[i,] = c(location, annotation, fraction)
         #assign_df = base::rbind(assign_df, c(location, annotation, percentage))
     }
     res = base::cbind(segTab, assign_df)
@@ -447,33 +638,38 @@ cnv_getLengthFraction = function(CN_data,
 #' \dontrun{
 #' cnv_plotLengthSummary(data, mode = "cd")
 #' }
-cnv_plotDistributionProfile = function(data, rm_normal=TRUE, mode = c("ld", "cd"),
-                                 fill = FALSE, scale_chr = TRUE, genome_build = c("hg19", "hg38")) {
-
-    stopifnot(is.logical(rm_normal), is.data.frame(data), is.logical(fill))
+cnv_plotDistributionProfile = function(data,
+                                       rm_normal = TRUE,
+                                       mode = c("ld", "cd"),
+                                       fill = FALSE,
+                                       scale_chr = TRUE,
+                                       genome_build = c("hg19", "hg38")) {
+    stopifnot(is.logical(rm_normal),
+              is.data.frame(data),
+              is.logical(fill))
     mode = match.arg(mode)
     genome_build = match.arg(genome_build)
 
     # if remove normal copy number segments
     if (rm_normal) {
-        if (! "segVal" %in% colnames(data)) {
+        if (!"segVal" %in% colnames(data)) {
             stop("'segVal' must be provided as a column.")
         }
         data = base::subset(data, data[, "segVal"] != 2)
     }
 
-    if (mode == "ld"){
+    if (mode == "ld") {
         # plot length distribution
-        if (! "fraction" %in% colnames(data)) {
+        if (!"fraction" %in% colnames(data)) {
             stop("'fraction' must be provided as a column.")
         }
-        ggplot(data, aes(x=fraction, y=..density..)) +
+        ggplot(data, aes(x = fraction, y = ..density..)) +
             geom_histogram(bins = 100) +
             labs(x = "Length of SCNA\n(normalized to chromosome arms)",
                  y = "Percentage\n(as fraction of all SCNAs)")
     } else if (mode == "cd") {
         # plot chr distribution
-        if (! all(c("chromosome", "location") %in% colnames(data))) {
+        if (!all(c("chromosome", "location") %in% colnames(data))) {
             stop("'chromosome', 'location' must be provided as columns.")
         }
 
@@ -488,7 +684,8 @@ cnv_plotDistributionProfile = function(data, rm_normal=TRUE, mode = c("ld", "cd"
         data$chromosome = factor(as.character(data$chromosome), levels = as.character(1:22))
 
         # only keep p, q, pq
-        data$location = factor(sub("[0-9]*", "", data$location), levels = c("p", "pq", "q"))
+        data$location = factor(sub("[0-9]*", "", data$location),
+                               levels = c("p", "pq", "q"))
 
         if (scale_chr) {
             if (genome_build == "hg19") {
@@ -503,15 +700,19 @@ cnv_plotDistributionProfile = function(data, rm_normal=TRUE, mode = c("ld", "cd"
                 chrlen = chromsize.hg38
             }
 
-            p = ggplot(data, aes(x=chromosome, fill = location)) +
+            p = ggplot(data, aes(x = chromosome, fill = location)) +
                 geom_bar() + xlab("Chromosome")
 
             q = ggplot_build(p)$data[[1]][, c("x", "count", "fill")]
 
             q$x = factor(as.character(q$x), levels = as.character(1:22))
-            q$fill = factor(q$fill, levels = c("#F8766D","#00BA38", "#619CFF"))
+            q$fill = factor(q$fill, levels = c("#F8766D", "#00BA38", "#619CFF"))
 
-            chrlen$chrom = gsub(pattern = "chr", replacement = "", x = chrlen$chrom)
+            chrlen$chrom = gsub(
+                pattern = "chr",
+                replacement = "",
+                x = chrlen$chrom
+            )
             q = merge(q, chrlen, by.x = "x", by.y = "chrom")
             q[["count"]] = 1000000 * (q[["count"]] / q[["size"]])
             # data.table::setDT(data)
@@ -523,23 +724,25 @@ cnv_plotDistributionProfile = function(data, rm_normal=TRUE, mode = c("ld", "cd"
             if (!fill) {
                 ggplot(q, aes(x, y = count, fill = fill)) +
                     geom_bar(stat = "identity") +
-                    scale_fill_discrete(name = "location", labels = c("p", "pq", "q")) +
+                    scale_fill_discrete(name = "location",
+                                        labels = c("p", "pq", "q")) +
                     labs(x = "Chromosome", y = "Normalized count (per Mb)")
 
             } else {
                 ggplot(q, aes(x, y = count, fill = fill)) +
                     geom_bar(stat = "identity", position = "fill") +
-                    scale_fill_discrete(name = "location", labels = c("p", "pq", "q")) +
+                    scale_fill_discrete(name = "location",
+                                        labels = c("p", "pq", "q")) +
                     labs(x = "Chromosome", y = "Percentage")
             }
 
         } else {
             # plot
             if (!fill) {
-                ggplot(data, aes(x=chromosome, fill = location)) +
+                ggplot(data, aes(x = chromosome, fill = location)) +
                     geom_bar() + xlab("Chromosome")
             } else {
-                ggplot(data, aes(x=chromosome, fill = location)) +
+                ggplot(data, aes(x = chromosome, fill = location)) +
                     geom_bar(position = "fill") + ylab("Percentage") + xlab("Chromosome")
             }
         }
@@ -547,7 +750,7 @@ cnv_plotDistributionProfile = function(data, rm_normal=TRUE, mode = c("ld", "cd"
 }
 
 
-getArmLocation = function(genome_build = c("hg19", "hg38")){
+getArmLocation = function(genome_build = c("hg19", "hg38")) {
     # get chromosome lengths and centromere locations
     if (genome_build == "hg19") {
         data("chromsize.hg19",
@@ -570,11 +773,11 @@ getArmLocation = function(genome_build = c("hg19", "hg38")){
     }
 
     # only keep 1:22 and x, y
-    chrlen = chrlen[chrlen$chrom %in% centromeres$chrom, ]
+    chrlen = chrlen[chrlen$chrom %in% centromeres$chrom,]
 
     # sort
-    chrlen = chrlen[order(chrlen$chrom), ]
-    centromeres = centromeres[order(centromeres$chrom), ]
+    chrlen = chrlen[order(chrlen$chrom),]
+    centromeres = centromeres[order(centromeres$chrom),]
 
     # compute and get results
     res = data.frame(
@@ -606,9 +809,13 @@ getArmLocation = function(genome_build = c("hg19", "hg38")){
         total_size = chrlen$size[chrlen$chrom == chr]
 
         res[i, 1] = as.character(chrom)
-        res[i, 2:8] = c(p_start, p_end, p_length,
-                       q_start, q_end, q_length,
-                       total_size)
+        res[i, 2:8] = c(p_start,
+                        p_end,
+                        p_length,
+                        q_start,
+                        q_end,
+                        q_length,
+                        total_size)
         i = i + 1
     }
     #rm(i, chrom, p_start, p_end, p_length, q_start, q_end, q_length,
@@ -618,7 +825,33 @@ getArmLocation = function(genome_build = c("hg19", "hg38")){
 }
 
 
-utils::globalVariables(c(".x", "aes", "chrom", "chromosome", "element_text", "geom_bar", "geom_line", "ggplot", "labs",
-                         "scale_x_continuous", "stat_function", "theme", "theme_classic", "value", "x", "ylab",
-                         "temp", "fraction", "..density..", "geom_histogram",
-                         "location", "xlab", "unit", "count", "scale_fill_discrete"))
+utils::globalVariables(
+    c(
+        ".x",
+        "aes",
+        "chrom",
+        "chromosome",
+        "element_text",
+        "geom_bar",
+        "geom_line",
+        "ggplot",
+        "labs",
+        "scale_x_continuous",
+        "stat_function",
+        "theme",
+        "theme_classic",
+        "value",
+        "x",
+        "ylab",
+        "temp",
+        "fraction",
+        "..density..",
+        "geom_histogram",
+        "location",
+        "xlab",
+        "unit",
+        "count",
+        "scale_fill_discrete",
+        "ggplot_build"
+    )
+)
