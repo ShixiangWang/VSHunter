@@ -1092,7 +1092,7 @@ cnv_pipe = function(CN_data,
 
     if (!is.null(ranks)) {
         cat("Specified ranks: ", ranks, "\n")
-        results = cnv_extractSignatures(sample_by_component, nsig = ranks,
+        results = cnv_extractSignatures(sample_component_matrix, nsig = ranks,
                                         seed = seed, nmfalg = nmfalg,
                                         cores = cores)
     } else {
@@ -1148,7 +1148,6 @@ utils::globalVariables(
         "chromsize.hg19",
         "chromsize.hg38",
         "feat",
-        "i",
-        "sample_by_component"
+        "i"
     )
 )
