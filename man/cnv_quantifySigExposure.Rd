@@ -8,11 +8,11 @@ cnv_quantifySigExposure(sample_by_component,
   component_by_signature = NULL)
 }
 \arguments{
-\item{sample_by_component}{a sample-by-component \code{matrix}, generate from \code{cnv_generateSbCMatrix} function.}
+\item{sample_by_component}{a sample-by-component \code{matrix}, generate from \link{cnv_generateSbCMatrix} function.}
 
-\item{component_by_signature}{a componet by signature matrix, default is \code{NULL},
-it will use pre-compiled data from CNV signature paper
-https://www.nature.com/articles/s41588-018-0179-8}
+\item{component_by_signature}{a componet by signature matrix,
+default is \code{NULL}, it will use pre-compiled data from CNV signature paper
+https://www.nature.com/articles/s41588-018-0179-8.}
 }
 \value{
 a \code{list} contains absolute/relative exposure.

@@ -8,12 +8,14 @@ cnv_derivefeatures(CN_data, cores = 1, genome_build = c("hg19",
   "hg38"))
 }
 \arguments{
-\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
-each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
+\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a \code{list} contains multiple \code{data.frame}s (recommended),
+each \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
-many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task.
+You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature,
+please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 
 \item{genome_build}{genome build version, must be one of 'hg19' or 'hg38'.}
@@ -24,7 +26,7 @@ a \code{list} contains six copy number feature distributions.
 \description{
 This function summarise each copy-number profile using a number of different
 feature distributions: sigment size, breakpoint number (per ten megabase), change-point copy-number,
-segment copy-number, breakpoint number(per chromosome arm), length of segments with oscilating
+segment copy-number, breakpoint number (per chromosome arm), length of segments with oscilating
 copy-number.
 }
 \examples{

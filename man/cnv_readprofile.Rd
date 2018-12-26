@@ -10,23 +10,23 @@ cnv_readprofile(input, is_dir = FALSE, pattern = NULL,
   sample_col = "sample")
 }
 \arguments{
-\item{input}{a \code{data.frame} or a file or a directory contains copy number profile.}
+\item{input}{a `data.frame`` or a file or a directory contains copy number profile.}
 
-\item{is_dir}{is \code{input} a directory?}
+\item{is_dir}{logical. Is `input`` a directory?}
 
-\item{pattern}{an optional regular expression used to select part of files if input is a directory, more detail please see
-\code{list.files} function.}
+\item{pattern}{an optional regular expression used to select part of files if input is a directory, more detail please see `list.files`` function.}
 
 \item{ignore_case}{logical. Should pattern-matching be case-insensitive?}
 
-\item{sep}{the field separator character. Values on each line of the file are separated by this character.}
+\item{sep}{the field separator character for input file(s) if \code{input} is not \code{data.frame}.}
 
 \item{cols}{four characters used to specify chromosome, start position,
-end position and copy number value, respectively. Default use names from ABSOLUTE calling result.}
+end position and copy number value in input, respectively.
+Default use names from ABSOLUTE calling result.}
 
-\item{have_sampleCol}{does input have sample column?
-This argument must be \code{TRUE} and \code{sample_col} also
-properly be assigned when input is a file or a \code{data.frame}.}
+\item{have_sampleCol}{logical. Does input have sample column?
+This parameter must be \code{TRUE} and \code{sample_col} also
+properly be assigned when `input`` is a file or a \code{data.frame} (i.e. not a directory).}
 
 \item{sample_col}{a character used to specify the sample column name.}
 }

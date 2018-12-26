@@ -9,7 +9,7 @@ cnv_fitMixModels(CN_features, seed = 123456, min_comp = 2,
   nrep = 1, niter = 1000, cores = 1, featsToFit = seq(1, 6))
 }
 \arguments{
-\item{CN_features}{a \code{list} generate from \code{cnv_derivefeatures} function.}
+\item{CN_features}{a \code{list} generate from \code{\link[=cnv_derivefeatures]{cnv_derivefeatures()}} function.}
 
 \item{seed}{seed number.}
 
@@ -17,28 +17,32 @@ cnv_fitMixModels(CN_features, seed = 123456, min_comp = 2,
 
 \item{max_comp}{maximal number of components to fit, default is 10.}
 
-\item{min_prior}{minimal prior value, default is 0.001. Details about custom setting please
-refer to \code{flexmix} package.}
+\item{min_prior}{minimal prior value, default is 0.001.
+Details about custom setting please refer to \strong{flexmix} package.}
 
-\item{model_selection}{model selection strategy, default is 'BIC'.Details about custom setting please
-refer to \code{flexmix} package.}
+\item{model_selection}{model selection strategy, default is 'BIC'.
+Details about custom setting please refer to \strong{flexmix} package.}
 
-\item{nrep}{number of run times for each value of component, keep only the solution with maximum likelihood.}
+\item{nrep}{number of run times for each value of component,
+keep only the solution with maximum likelihood.}
 
 \item{niter}{maximal number of iteration to achive converge.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
-many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task.
+You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature,
+please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 
-\item{featsToFit}{integer vector used for task assignment in parallel computation. Do not change it.}
+\item{featsToFit}{integer vector used for task assignment in parallel computation.
+\strong{Do not change it!}}
 }
 \value{
 a \code{list} contain \code{flexmix} object of copy-number features.
 }
 \description{
 Apply mixture modelling to breakdown each feature distribution into mixtures
-of Gaussian or mixtures of Poison distributions using the \code{flexmix} package.
+of Gaussian or mixtures of Poison distributions using the \strong{flexmix} package.
 }
 \examples{
 \dontrun{

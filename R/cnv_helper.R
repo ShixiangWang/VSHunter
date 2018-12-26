@@ -459,6 +459,10 @@ getSampNames <- function(abs_profiles)
 
 getSegTable <- function(x)
 {
+    if (!requireNamespace("Biobase", quietly = TRUE)){
+        stop("Package \"Biobase\" needed for this function to work. Please install it.",
+             call. = FALSE)
+    }
     dat <- x
     sn <- Biobase::assayDataElement(dat, "segmented")
     fd <- Biobase::fData(dat)

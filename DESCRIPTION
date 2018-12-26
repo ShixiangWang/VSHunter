@@ -12,10 +12,11 @@ BugReports: https://github.com/ShixiangWang/VSHunter/issues
 Depends: R (>= 3.3), NMF, cowplot
 biocViews:
 Imports: flexmix, 
-        foreach, doParallel, 
-        YAPSA, QDNAseq, Biobase,
-        grDevices, RColorBrewer
-Suggests: knitr, rmarkdown, prettydoc, pheatmap
+         foreach,
+         grDevices,
+         doParallel, 
+         RColorBrewer
+Suggests: knitr, rmarkdown, prettydoc, pheatmap, YAPSA, QDNAseq, Biobase
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true

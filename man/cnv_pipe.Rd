@@ -12,12 +12,14 @@ cnv_pipe(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
   nmfalg = "brunet", tmp = FALSE)
 }
 \arguments{
-\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
-each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
+\item{CN_data}{a \code{QDNAseqCopyNumbers} object or a \code{list} contains multiple \code{data.frame}s (recommended),
+each \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
-many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task.
+You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature,
+please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 
 \item{genome_build}{genome build version, must be one of 'hg19' or 'hg38'.}
@@ -25,37 +27,38 @@ cores in your computer, it may cause some unexpected problems.}
 \item{de_novo}{default is \code{TRUE}. If set to \code{FALSE}, it will use reference components to
 generate sample-by-component matrix and then extract signatures.}
 
-\item{reference_components}{the object result from \code{cnv_fitMixModels}, default is \code{NULL}. When \code{de_novo}
-is \code{FALSE} and this
+\item{reference_components}{the object result from \link{cnv_fitMixModels},
+default is \code{NULL}. When \code{de_novo} is \code{FALSE} and this
 argument is \code{NULL}, it will use reference components from Nature Genetics paper.}
 
 \item{min_comp}{minimal number of components to fit, default is 2.}
 
 \item{max_comp}{maximal number of components to fit, default is 10.}
 
-\item{min_prior}{minimal prior value, default is 0.001. Details about custom setting please
-refer to \code{flexmix} package.}
+\item{min_prior}{minimal prior value, default is 0.001.
+Details about custom setting please refer to \strong{flexmix} package.}
 
-\item{model_selection}{model selection strategy, default is 'BIC'.Details about custom setting please
-refer to \code{flexmix} package.}
+\item{model_selection}{model selection strategy, default is 'BIC'.
+Details about custom setting please refer to \strong{flexmix} package.}
 
-\item{nrep}{number of run times for each value of component, keep only the solution with maximum likelihood.}
+\item{nrep}{number of run times for each value of component,
+keep only the solution with maximum likelihood.}
 
 \item{niter}{maximal number of iteration to achive converge.}
 
-\item{nTry}{the maximal tried number of signatures, default is 12. Of note, this value should far less than number
-of features or samples.}
+\item{nTry}{the maximal tried number of signatures, default is 12.
+Of note, this value should far less than number of features or samples.}
 
 \item{ranks}{a integer vector, manually specify \code{ranks} to capture instead of using auto-capture feature.}
 
 \item{nrun}{the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
-According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.}
+According to \strong{NMF} package documentation, \code{nrun} set to 30~50 is enough to achieve robust result.}
 
 \item{seed}{seed number.}
 
-\item{plot_survey}{\code{logical}. If \code{TRUE}, plot best rank survey.}
+\item{plot_survey}{logical. If \code{TRUE}, plot rank survey.}
 
-\item{testRandom}{if generate random data from input to test measurements. Default is \code{TRUE}.}
+\item{testRandom}{Should generate random data from input to test measurements. Default is \code{TRUE}.}
 
 \item{nmfalg}{specification of the NMF algorithm.}
 

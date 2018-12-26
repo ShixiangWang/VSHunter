@@ -8,7 +8,7 @@ cnv_extractSignatures(sample_by_component, nsig, seed = 123456,
   nmfalg = "brunet", cores = 1)
 }
 \arguments{
-\item{sample_by_component}{a sample-by-component \code{matrix}, generate from \code{cnv_generateSbCMatrix} function.}
+\item{sample_by_component}{a sample-by-component \code{matrix}, generate from \link{cnv_generateSbCMatrix} function.}
 
 \item{nsig}{specification of the factorization rank.}
 
@@ -16,8 +16,10 @@ cnv_extractSignatures(sample_by_component, nsig, seed = 123456,
 
 \item{nmfalg}{specification of the NMF algorithm.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
-many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task.
+You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature,
+please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 }
 \value{

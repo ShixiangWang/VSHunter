@@ -26,20 +26,20 @@
 #' @title  Read copy number as a list of data.frame from data.frame or files
 #' @description This function is used to read copy number profile for preparing CNV signature
 #' analysis.
-#' @param input a \code{data.frame} or a file or a directory contains copy number profile.
-#' @param is_dir is \code{input} a directory?
-#' @param pattern an optional regular expression used to select part of files if input is a directory, more detail please see
-#' \code{list.files} function.
+#' @param input a `data.frame`` or a file or a directory contains copy number profile.
+#' @param is_dir logical. Is `input`` a directory?
+#' @param pattern an optional regular expression used to select part of files if input is a directory, more detail please see `list.files`` function.
 #' @param ignore_case logical. Should pattern-matching be case-insensitive?
-#' @param sep the field separator character. Values on each line of the file are separated by this character.
+#' @param sep the field separator character for input file(s) if `input` is not `data.frame`.
 #' @param cols four characters used to specify chromosome, start position,
-#'  end position and copy number value, respectively. Default use names from ABSOLUTE calling result.
-#' @param have_sampleCol does input have sample column?
-#' This argument must be \code{TRUE} and \code{sample_col} also
-#' properly be assigned when input is a file or a \code{data.frame}.
+#'  end position and copy number value in input, respectively.
+#'  Default use names from ABSOLUTE calling result.
+#' @param have_sampleCol logical. Does input have sample column?
+#' This parameter must be `TRUE` and `sample_col` also
+#' properly be assigned when `input`` is a file or a \code{data.frame} (i.e. not a directory).
 #' @param sample_col a character used to specify the sample column name.
 #' @author  Shixiang Wang <w_shixiang@163.com>
-#' @return a \code{list} contains absolute copy-number profile for multiple samples.
+#' @return a `list` contains absolute copy-number profile for multiple samples.
 #' @importFrom utils read.csv
 #' @export
 #' @seealso [cnv_derivefeatures()] for deriving CNV features, [cnv_getLengthFraction()] for calculating
@@ -163,18 +163,20 @@ cnv_readprofile = function(input,
 #' @title  Derive copy number feature distributions
 #' @description This function summarise each copy-number profile using a number of different
 #' feature distributions: sigment size, breakpoint number (per ten megabase), change-point copy-number,
-#' segment copy-number, breakpoint number(per chromosome arm), length of segments with oscilating
+#' segment copy-number, breakpoint number (per chromosome arm), length of segments with oscilating
 #' copy-number.
-#' @param CN_data a \code{QDNAseqCopyNumbers} object or a list contains multiple \code{data.frame}s,
-#' each one \code{data.frame} stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
+#' @param CN_data a `QDNAseqCopyNumbers` object or a `list` contains multiple `data.frame`s (recommended),
+#' each `data.frame` stores copy-number profile for one sample with 'chromosome', 'start', 'end' and
 #' 'segVal' these four necessary columns. Of note, 'segVal' column shoule be absolute copy number values.
-#' @param cores number of compute cores to run this task. You can use [parallel::detectCores()] function to check how
-#' many cores you can use. If you are using [cnv_pipe()] feature, please do not use maximal number of
+#' @param cores number of compute cores to run this task.
+#' You can use [parallel::detectCores()] function to check how
+#' many cores you can use. If you are using [cnv_pipe()] feature,
+#' please do not use maximal number of
 #' cores in your computer, it may cause some unexpected problems.
 #' @param genome_build genome build version, must be one of 'hg19' or 'hg38'.
 #' @author Geoffrey Macintyre, Shixiang Wang
-#' @return a \code{list} contains six copy number feature distributions.
-#' @import foreach doParallel QDNAseq Biobase
+#' @return a `list` contains six copy number feature distributions.
+#' @import foreach doParallel
 #' @export
 #' @seealso [cnv_plotFeatureDistribution()] for plotting feature distributions.
 #'
@@ -261,22 +263,24 @@ cnv_derivefeatures = function(CN_data,
 #
 #' @title Fit optimal number of mixture model components
 #' @description Apply mixture modelling to breakdown each feature distribution into mixtures
-#' of Gaussian or mixtures of Poison distributions using the \code{flexmix} package.
+#' of Gaussian or mixtures of Poison distributions using the **flexmix** package.
 #'
-#' @param CN_features a \code{list} generate from \code{cnv_derivefeatures} function.
+#' @param CN_features a `list` generate from [cnv_derivefeatures()] function.
 #' @param seed seed number.
 #' @param min_comp minimal number of components to fit, default is 2.
 #' @param max_comp maximal number of components to fit, default is 10.
-#' @param min_prior minimal prior value, default is 0.001. Details about custom setting please
-#' refer to \code{flexmix} package.
-#' @param model_selection model selection strategy, default is 'BIC'.Details about custom setting please
-#' refer to \code{flexmix} package.
-#' @param nrep number of run times for each value of component, keep only the solution with maximum likelihood.
+#' @param min_prior minimal prior value, default is 0.001.
+#' Details about custom setting please refer to **flexmix** package.
+#' @param model_selection model selection strategy, default is 'BIC'.
+#' Details about custom setting please refer to **flexmix** package.
+#' @param nrep number of run times for each value of component,
+#' keep only the solution with maximum likelihood.
 #' @param niter maximal number of iteration to achive converge.
 #' @inheritParams cnv_derivefeatures
-#' @param featsToFit integer vector used for task assignment in parallel computation. Do not change it.
+#' @param featsToFit integer vector used for task assignment in parallel computation.
+#' **Do not change it!**
 #' @author Geoffrey Macintyre, Shixiang Wang
-#' @return a \code{list} contain \code{flexmix} object of copy-number features.
+#' @return a `list` contain `flexmix` object of copy-number features.
 #' @import flexmix
 #' @export
 #' @seealso [cnv_plotMixComponents()] for plotting mixture component models.
@@ -512,16 +516,16 @@ cnv_fitMixModels = function(CN_features,
 #' @title Generate a sample-by-component matrix
 #' @description This function generate a sample-by-component matrix representing the sum of
 #' posterior probabilities of each copy-number event being assigned to each component.
-#' @param CN_features a \code{list} contains six copy number feature distributions, obtain this from
-#' \code{cnv_derivefeatures} function.
-#' @param all_components a \code{list} contain \code{flexmix} object of copy-number features, obtain this
-#' from \code{cnv_fitMixModels} function or use pre-compiled components data which come from CNV signature paper
-#' https://www.nature.com/articles/s41588-018-0179-8 (set this argument as \code{NULL}).
+#' @param CN_features a `list` contains six copy number feature distributions,
+#' obtain this from [cnv_derivefeatures()] function.
+#' @param all_components a `list` contain `flexmix` object of copy-number features, obtain this
+#' from [cnv_fitMixModels] function or use pre-compiled components data which come from CNV signature paper
+#' https://www.nature.com/articles/s41588-018-0179-8 (set this parameter as `NULL`).
 #' @inheritParams cnv_derivefeatures
 #' @param rowIter step size of iteration for rows of ech CNV feature \code{data.frame}.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import doParallel
-#' @return a numeric sample-by-component \code{matrix}
+#' @return a numeric sample-by-component `matrix`
 #' @export
 #'
 #' @examples
@@ -608,26 +612,25 @@ cnv_generateSbCMatrix = function(CN_features,
 
 #------------------------------------
 #' @title Choose optimal number of signatures
-#' @description This function use \code{NMF} package to evaluate the optimal number of signatures. The most
-# common approach is to choose the smallest rank for which cophenetic correlation coefficient
-# starts decreasing (Used by this function). Another approach is to choose the rank for which the plot of the residual
-# sum of squares (RSS) between the input matrix and its estimate shows an inflection point.
-#'
-#' @param sample_by_component a sample-by-component \code{matrix}, generate from \code{cnv_generateSbCMatrix} function.
-#' @param nTry the maximal tried number of signatures, default is 12. Of note, this value should far less than number
-#' of features or samples.
-#' @param nrun the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
-#' According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.
+#' @description This function use **NMF** package to evaluate the optimal number of signatures.
+#' The most common approach is to choose the smallest rank for which cophenetic correlation coefficient
+#' starts decreasing (Used by this function). Another approach is to choose the rank for which the plot
+#' of the residual sum of squares (RSS) between the input matrix and its estimate shows an inflection point.
+#' @param sample_by_component a sample-by-component `matrix`, generate from [cnv_generateSbCMatrix] function.
+#' @param nTry the maximal tried number of signatures, default is 12.
+#' Of note, this value should far less than number of features or samples.
+#' @param nrun the number of run to perform for each value in range of 2 to `nTry`, default is 10.
+#' According to **NMF** package documentation, `nrun` set to 30~50 is enough to achieve robust result.
 #' @inheritParams cnv_derivefeatures
 #' @param seed seed number.
-#' @param plot \code{logical}. If \code{TRUE}, plot best rank survey.
-#' @param testRandom if generate random data from input to test measurements. Default is \code{TRUE}.
+#' @param plot logical. If `TRUE`, plot rank survey.
+#' @param testRandom Should generate random data from input to test measurements. Default is `TRUE`.
 #' @param nmfalg specification of the NMF algorithm.
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import NMF
 #' @import grDevices
 #'
-#' @return a \code{list} contains information of NMF run and rank survey.
+#' @return a `list` contains information of NMF run and rank survey.
 #' @export
 #'
 #' @examples
@@ -836,13 +839,11 @@ cnv_extractSignatures <-
 #' @title Quantify exposure for samples using Linear Combination Decomposition (LCD)
 #'
 #' @inheritParams cnv_chooseSigNumber
-#' @param component_by_signature a componet by signature matrix, default is \code{NULL},
-#' it will use pre-compiled data from CNV signature paper
-#' https://www.nature.com/articles/s41588-018-0179-8
+#' @param component_by_signature a componet by signature matrix,
+#' default is `NULL`, it will use pre-compiled data from CNV signature paper
+#' https://www.nature.com/articles/s41588-018-0179-8.
 #' @author Geoffrey Macintyre, Shixiang Wang
-#'
-#' @return a \code{list} contains absolute/relative exposure.
-#' @import YAPSA
+#' @return a `list` contains absolute/relative exposure.
 #' @export
 #' @inherit cnv_extractSignatures seealso
 #' @examples
@@ -867,6 +868,10 @@ cnv_quantifySigExposure <-
     function(sample_by_component,
              component_by_signature = NULL)
     {
+        if (!requireNamespace("YAPSA", quietly = TRUE)) {
+            stop("Package \"YAPSA\" needed for this function to work. Please install it.",
+                 call. = FALSE)
+        }
         message("Quantifying exposure of signatures by LCD analysis...")
         if (is.null(component_by_signature))
         {
@@ -895,8 +900,8 @@ cnv_quantifySigExposure <-
 #'
 #' @inheritParams cnv_chooseSigNumber
 #' @author Geoffrey Macintyre, Shixiang Wang
-#' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
-#' @import doParallel NMF YAPSA
+#' @return a `list` contains results of NMF best rank survey, run, signature matrix, exposure list etc..
+#' @import doParallel NMF
 #' @export
 #' @inherit cnv_extractSignatures seealso
 #' @examples
@@ -956,22 +961,22 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 
 
 #' Calling CNV signature pipeline
-#' @description  this pipeline integrate multiple independent steps in \code{VSHunter}.
+#' @description  this pipeline integrate multiple independent steps in `VSHunter`.
 #' @inheritParams cnv_derivefeatures
 #' @inheritParams cnv_fitMixModels
 #' @inheritParams cnv_chooseSigNumber
 #' @inheritParams cnv_extractSignatures
 #' @param ranks a integer vector, manually specify `ranks` to capture instead of using auto-capture feature.
-#' @param tmp whether create a tmp directory to store temp result or not, default is \code{FALSE}.
-#' @param plot_survey \code{logical}. If \code{TRUE}, plot best rank survey.
-#' @param de_novo default is \code{TRUE}. If set to \code{FALSE}, it will use reference components to
+#' @param tmp whether create a tmp directory to store temp result or not, default is `FALSE`.
+#' @param plot_survey logical. If `TRUE`, plot rank survey.
+#' @param de_novo default is `TRUE`. If set to `FALSE`, it will use reference components to
 #' generate sample-by-component matrix and then extract signatures.
-#' @param reference_components the object result from \code{cnv_fitMixModels}, default is \code{NULL}. When \code{de_novo}
-#' is \code{FALSE} and this
-#' argument is \code{NULL}, it will use reference components from Nature Genetics paper.
+#' @param reference_components the object result from [cnv_fitMixModels],
+#' default is `NULL`. When `de_novo` is `FALSE` and this
+#' argument is `NULL`, it will use reference components from Nature Genetics paper.
 #' @author Shixiang Wang <w_shixiang@163.com>
-#' @return a \code{list} contains results of NMF best rank survey, run, signature matrix, exposure list etc..
-#' @import foreach doParallel QDNAseq Biobase NMF YAPSA
+#' @return a `list` contains results of NMF best rank survey, run, signature matrix, exposure list etc..
+#' @import foreach doParallel NMF
 #' @export
 #' @inherit cnv_extractSignatures seealso
 #' @examples

@@ -8,15 +8,17 @@ cnv_generateSbCMatrix(CN_features, all_components = NULL, cores = 1,
   rowIter = 1000)
 }
 \arguments{
-\item{CN_features}{a \code{list} contains six copy number feature distributions, obtain this from
-\code{cnv_derivefeatures} function.}
+\item{CN_features}{a \code{list} contains six copy number feature distributions,
+obtain this from \code{\link[=cnv_derivefeatures]{cnv_derivefeatures()}} function.}
 
 \item{all_components}{a \code{list} contain \code{flexmix} object of copy-number features, obtain this
-from \code{cnv_fitMixModels} function or use pre-compiled components data which come from CNV signature paper
-https://www.nature.com/articles/s41588-018-0179-8 (set this argument as \code{NULL}).}
+from \link{cnv_fitMixModels} function or use pre-compiled components data which come from CNV signature paper
+https://www.nature.com/articles/s41588-018-0179-8 (set this parameter as \code{NULL}).}
 
-\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
-many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task.
+You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature,
+please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 
 \item{rowIter}{step size of iteration for rows of ech CNV feature \code{data.frame}.}

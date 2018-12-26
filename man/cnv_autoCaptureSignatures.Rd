@@ -9,23 +9,25 @@ cnv_autoCaptureSignatures(sample_by_component, nTry = 12, nrun = 10,
   nmfalg = "brunet")
 }
 \arguments{
-\item{sample_by_component}{a sample-by-component \code{matrix}, generate from \code{cnv_generateSbCMatrix} function.}
+\item{sample_by_component}{a sample-by-component \code{matrix}, generate from \link{cnv_generateSbCMatrix} function.}
 
-\item{nTry}{the maximal tried number of signatures, default is 12. Of note, this value should far less than number
-of features or samples.}
+\item{nTry}{the maximal tried number of signatures, default is 12.
+Of note, this value should far less than number of features or samples.}
 
 \item{nrun}{the number of run to perform for each value in range of 2 to \code{nTry}, default is 10.
-According to \code{NMF} package documentation, nrun set to 50 is enough to achieve robust result.}
+According to \strong{NMF} package documentation, \code{nrun} set to 30~50 is enough to achieve robust result.}
 
-\item{cores}{number of compute cores to run this task. You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
-many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature, please do not use maximal number of
+\item{cores}{number of compute cores to run this task.
+You can use \code{\link[parallel:detectCores]{parallel::detectCores()}} function to check how
+many cores you can use. If you are using \code{\link[=cnv_pipe]{cnv_pipe()}} feature,
+please do not use maximal number of
 cores in your computer, it may cause some unexpected problems.}
 
 \item{seed}{seed number.}
 
-\item{plot}{\code{logical}. If \code{TRUE}, plot best rank survey.}
+\item{plot}{logical. If \code{TRUE}, plot rank survey.}
 
-\item{testRandom}{if generate random data from input to test measurements. Default is \code{TRUE}.}
+\item{testRandom}{Should generate random data from input to test measurements. Default is \code{TRUE}.}
 
 \item{nmfalg}{specification of the NMF algorithm.}
 }
