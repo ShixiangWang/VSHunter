@@ -32,6 +32,22 @@ Plot copy number distribution either by length or chromosome
 cnv_plotLengthSummary(data, mode = "cd")
 }
 }
+\seealso{
+Other CNV analysis functions: \code{\link{cnv_autoCaptureSignatures}},
+  \code{\link{cnv_chooseSigNumber}},
+  \code{\link{cnv_derivefeatures}},
+  \code{\link{cnv_extractSignatures}},
+  \code{\link{cnv_fitMixModels}},
+  \code{\link{cnv_generateSbCMatrix}},
+  \code{\link{cnv_getLengthFraction}},
+  \code{\link{cnv_pipe}},
+  \code{\link{cnv_plotFeatureDistribution}},
+  \code{\link{cnv_plotMixComponents}},
+  \code{\link{cnv_plotSignatures}},
+  \code{\link{cnv_quantifySigExposure}},
+  \code{\link{cnv_readprofile}}
+}
 \author{
 Shixiang Wang \href{mailto:w_shixiang@163.com}{w_shixiang@163.com}
 }
+\concept{CNV analysis functions}

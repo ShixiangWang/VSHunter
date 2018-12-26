@@ -17,6 +17,7 @@
 #' @param ... other options pass to \code{barplot}.
 #'
 #' @return Nothing
+#' @family CNV analysis functions
 #' @export
 #'
 cnv_plotSignatures = function(Res = NULL,
@@ -331,6 +332,7 @@ cnv_plotSignatures = function(Res = NULL,
 #'
 #' @return a ggplot object
 #' @import cowplot
+#' @family CNV analysis functions
 #' @export
 #'
 cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
@@ -404,6 +406,7 @@ cnv_plotFeatureDistribution = function(features, ylab = "", ...) {
 #' @return a ggplot object
 #' @import cowplot
 #' @export
+#' @family CNV analysis functions
 #'
 cnv_plotMixComponents = function(features, components, ...) {
     cbPalette <-
@@ -515,6 +518,7 @@ cnv_plotMixComponents = function(features, components, ...) {
 #' @author Shixiang Wang <w_shixiang@163.com>
 #' @return a data frame
 #' @export
+#' @family CNV analysis functions
 cnv_getLengthFraction = function(CN_data,
                                  genome_build = c("hg19", "hg38"),
                                  cols = c("Chromosome", "Start.bp", "End.bp", "modal_cn"),
@@ -633,7 +637,7 @@ cnv_getLengthFraction = function(CN_data,
 #' @return a ggplot object
 #' @import cowplot
 #' @export
-#'
+#' @family CNV analysis functions
 #' @examples
 #' \dontrun{
 #' cnv_plotLengthSummary(data, mode = "cd")

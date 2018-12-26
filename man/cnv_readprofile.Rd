@@ -10,11 +10,11 @@ cnv_readprofile(input, is_dir = FALSE, pattern = NULL,
   sample_col = "sample")
 }
 \arguments{
-\item{input}{a `data.frame`` or a file or a directory contains copy number profile.}
+\item{input}{a \code{data.frame} or a file or a directory contains copy number profile.}
 
-\item{is_dir}{logical. Is `input`` a directory?}
+\item{is_dir}{logical. Is \code{input} a directory?}
 
-\item{pattern}{an optional regular expression used to select part of files if input is a directory, more detail please see `list.files`` function.}
+\item{pattern}{an optional regular expression used to select part of files if input is a directory, more detail please see \code{list.files} function.}
 
 \item{ignore_case}{logical. Should pattern-matching be case-insensitive?}
 
@@ -26,7 +26,7 @@ Default use names from ABSOLUTE calling result.}
 
 \item{have_sampleCol}{logical. Does input have sample column?
 This parameter must be \code{TRUE} and \code{sample_col} also
-properly be assigned when `input`` is a file or a \code{data.frame} (i.e. not a directory).}
+properly be assigned when \code{input} is a file or a \code{data.frame} (i.e. not a directory).}
 
 \item{sample_col}{a character used to specify the sample column name.}
 }
@@ -41,7 +41,22 @@ analysis.
 \code{\link[=cnv_derivefeatures]{cnv_derivefeatures()}} for deriving CNV features, \code{\link[=cnv_getLengthFraction]{cnv_getLengthFraction()}} for calculating
 CNV length fraction (normalized to arm), \code{\link[=cnv_plotDistributionProfile]{cnv_plotDistributionProfile()}} for plotting profile of
 CNV distribution.
+
+Other CNV analysis functions: \code{\link{cnv_autoCaptureSignatures}},
+  \code{\link{cnv_chooseSigNumber}},
+  \code{\link{cnv_derivefeatures}},
+  \code{\link{cnv_extractSignatures}},
+  \code{\link{cnv_fitMixModels}},
+  \code{\link{cnv_generateSbCMatrix}},
+  \code{\link{cnv_getLengthFraction}},
+  \code{\link{cnv_pipe}},
+  \code{\link{cnv_plotDistributionProfile}},
+  \code{\link{cnv_plotFeatureDistribution}},
+  \code{\link{cnv_plotMixComponents}},
+  \code{\link{cnv_plotSignatures}},
+  \code{\link{cnv_quantifySigExposure}}
 }
 \author{
 Shixiang Wang \href{mailto:w_shixiang@163.com}{w_shixiang@163.com}
 }
+\concept{CNV analysis functions}

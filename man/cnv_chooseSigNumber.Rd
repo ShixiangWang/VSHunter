@@ -56,6 +56,22 @@ tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_compone
 }
 
 }
+\seealso{
+Other CNV analysis functions: \code{\link{cnv_autoCaptureSignatures}},
+  \code{\link{cnv_derivefeatures}},
+  \code{\link{cnv_extractSignatures}},
+  \code{\link{cnv_fitMixModels}},
+  \code{\link{cnv_generateSbCMatrix}},
+  \code{\link{cnv_getLengthFraction}},
+  \code{\link{cnv_pipe}},
+  \code{\link{cnv_plotDistributionProfile}},
+  \code{\link{cnv_plotFeatureDistribution}},
+  \code{\link{cnv_plotMixComponents}},
+  \code{\link{cnv_plotSignatures}},
+  \code{\link{cnv_quantifySigExposure}},
+  \code{\link{cnv_readprofile}}
+}
 \author{
 Geoffrey Macintyre, Shixiang Wang
 }
+\concept{CNV analysis functions}

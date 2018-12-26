@@ -1,9 +1,9 @@
 Package: VSHunter
 Title: Capture Variation Signatures from Genomic Data
-Description: Identify copy number signature from distribution of copy number features and 
-    location for enabling the interpretation of complex genomic changes in cancer
-    (mutation signature also will be included). 
-Version: 0.4.5
+Description: Identify copy number signatures from distribution of copy number 
+    features and mutation signatures from MAF 
+    for enabling the interpretation of complex genomic changes in cancer.
+Version: 0.5.0
 Authors@R: person("Shixiang", "Wang", email = "w_shixiang@163.com", role = c("aut", "cre"), 
             comment = c(ORCID = "0000-0001-9855-7357"))
 Maintainer: Shixiang Wang <w_shixiang@163.com>
@@ -15,9 +15,10 @@ Imports: flexmix,
          foreach,
          grDevices,
          doParallel, 
-         RColorBrewer
+         RColorBrewer,
+         maftools
 Suggests: knitr, rmarkdown, prettydoc, pheatmap, YAPSA, QDNAseq, Biobase
-License: Apache License (>= 2.0)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr

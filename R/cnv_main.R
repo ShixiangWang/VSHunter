@@ -26,9 +26,9 @@
 #' @title  Read copy number as a list of data.frame from data.frame or files
 #' @description This function is used to read copy number profile for preparing CNV signature
 #' analysis.
-#' @param input a `data.frame`` or a file or a directory contains copy number profile.
-#' @param is_dir logical. Is `input`` a directory?
-#' @param pattern an optional regular expression used to select part of files if input is a directory, more detail please see `list.files`` function.
+#' @param input a `data.frame` or a file or a directory contains copy number profile.
+#' @param is_dir logical. Is `input` a directory?
+#' @param pattern an optional regular expression used to select part of files if input is a directory, more detail please see `list.files` function.
 #' @param ignore_case logical. Should pattern-matching be case-insensitive?
 #' @param sep the field separator character for input file(s) if `input` is not `data.frame`.
 #' @param cols four characters used to specify chromosome, start position,
@@ -36,12 +36,13 @@
 #'  Default use names from ABSOLUTE calling result.
 #' @param have_sampleCol logical. Does input have sample column?
 #' This parameter must be `TRUE` and `sample_col` also
-#' properly be assigned when `input`` is a file or a \code{data.frame} (i.e. not a directory).
+#' properly be assigned when `input` is a file or a \code{data.frame} (i.e. not a directory).
 #' @param sample_col a character used to specify the sample column name.
 #' @author  Shixiang Wang <w_shixiang@163.com>
 #' @return a `list` contains absolute copy-number profile for multiple samples.
 #' @importFrom utils read.csv
 #' @export
+#' @family CNV analysis functions
 #' @seealso [cnv_derivefeatures()] for deriving CNV features, [cnv_getLengthFraction()] for calculating
 #' CNV length fraction (normalized to arm), [cnv_plotDistributionProfile()] for plotting profile of
 #' CNV distribution.
@@ -178,8 +179,8 @@ cnv_readprofile = function(input,
 #' @return a `list` contains six copy number feature distributions.
 #' @import foreach doParallel
 #' @export
+#' @family CNV analysis functions
 #' @seealso [cnv_plotFeatureDistribution()] for plotting feature distributions.
-#'
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -283,8 +284,8 @@ cnv_derivefeatures = function(CN_data,
 #' @return a `list` contain `flexmix` object of copy-number features.
 #' @import flexmix
 #' @export
+#' @family CNV analysis functions
 #' @seealso [cnv_plotMixComponents()] for plotting mixture component models.
-#'
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -527,7 +528,7 @@ cnv_fitMixModels = function(CN_features,
 #' @import doParallel
 #' @return a numeric sample-by-component `matrix`
 #' @export
-#'
+#' @family CNV analysis functions
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -629,10 +630,9 @@ cnv_generateSbCMatrix = function(CN_features,
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @import NMF
 #' @import grDevices
-#'
 #' @return a `list` contains information of NMF run and rank survey.
 #' @export
-#'
+#' @family CNV analysis functions
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -800,6 +800,7 @@ cnv_chooseSigNumber <-
 #' @import NMF
 #' @return a object of \code{NMF} run.
 #' @export
+#' @family CNV analysis functions
 #' @seealso [cnv_plotSignatures()] for plot signatures and their exposures (contributions).
 #' @examples
 #' \dontrun{
@@ -846,6 +847,7 @@ cnv_extractSignatures <-
 #' @return a `list` contains absolute/relative exposure.
 #' @export
 #' @inherit cnv_extractSignatures seealso
+#' @family CNV analysis functions
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -904,6 +906,7 @@ cnv_quantifySigExposure <-
 #' @import doParallel NMF
 #' @export
 #' @inherit cnv_extractSignatures seealso
+#' @family CNV analysis functions
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -979,6 +982,7 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' @import foreach doParallel NMF
 #' @export
 #' @inherit cnv_extractSignatures seealso
+#' @family CNV analysis functions
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -1140,10 +1144,6 @@ cnv_pipe = function(CN_data,
     }
 }
 
-
-
-# Analyses Part -----------------------------------------------------------
-# create multiple function used from association analysis.
 
 
 utils::globalVariables(
