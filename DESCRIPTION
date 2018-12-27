@@ -14,7 +14,8 @@ biocViews:
 Imports: flexmix, 
          foreach,
          grDevices,
-         doParallel, 
+         doParallel,
+         data.table,
          RColorBrewer,
          maftools
 Suggests: knitr, rmarkdown, prettydoc, pheatmap, YAPSA, QDNAseq, Biobase
