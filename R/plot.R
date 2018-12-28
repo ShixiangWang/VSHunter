@@ -690,6 +690,10 @@ cnv_plotDistributionProfile = function(data,
         # only keep p, q, pq
         data$location = factor(sub("[0-9]*", "", data$location),
                                levels = c("p", "pq", "q"))
+        if (sum(!(data$location %in% c("p", "pq", "q"))) > 0){
+            message("Discarding segments which located in centromere region...")
+            data = subset(data, location %in% c("p", "pq", "q"))
+        }
 
         if (scale_chr) {
             if (genome_build == "hg19") {

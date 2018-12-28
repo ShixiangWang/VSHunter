@@ -2,6 +2,7 @@
 % Please edit documentation in R/cnv_main.R
 \name{cnv_pipe}
 \alias{cnv_pipe}
+\alias{pipeline}
 \title{Calling CNV signature pipeline}
 \usage{
 cnv_pipe(CN_data, cores = 1, genome_build = c("hg19", "hg38"),

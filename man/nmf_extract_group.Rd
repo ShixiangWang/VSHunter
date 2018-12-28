@@ -4,10 +4,15 @@
 \alias{nmf_extract_group}
 \title{Extract groups (sample clustering) from NMF run results}
 \usage{
-nmf_extract_group(nmfObj, type = "consensus", matchConseOrder = F)
+nmf_extract_group(nmfObj, type = "consensus", matchConseOrder = FALSE)
 }
 \arguments{
 \item{nmfObj}{NMF run results}
+
+\item{type}{a character string that indicates the type of cluster membership should be returned，
+valid input is 'samples' or 'consensus'.}
+
+\item{matchConseOrder}{if \code{TRUE}, oder samples as they are shown in consensus map.}
 }
 \description{
 X = W x H

@@ -2,6 +2,7 @@
 % Please edit documentation in R/snv_main.R
 \name{snv_extractSignatures}
 \alias{snv_extractSignatures}
+\alias{snv_signatures}
 \title{Extract mutational signatures from trinucleotide context.}
 \usage{
 snv_extractSignatures(mat, n = NULL, nrun = 1, nTry = 6,

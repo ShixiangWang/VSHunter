@@ -2,6 +2,7 @@
 % Please edit documentation in R/snv_main.R
 \name{snv_trinucleotideMatrix}
 \alias{snv_trinucleotideMatrix}
+\alias{trinucleotide}
 \title{Extract single 5' and 3' bases flanking the mutated site for de-novo signature analysis. Also estimates APOBEC enrichment scores.}
 \usage{
 snv_trinucleotideMatrix(maf, ref_genome = NULL, prefix = NULL,

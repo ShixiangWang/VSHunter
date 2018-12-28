@@ -2,6 +2,7 @@
 % Please edit documentation in R/cnv_main.R
 \name{cnv_extractSignatures}
 \alias{cnv_extractSignatures}
+\alias{signatures}
 \title{Extract signature based on specified rank value}
 \usage{
 cnv_extractSignatures(sample_by_component, nsig, seed = 123456,
@@ -65,3 +66,4 @@ Other CNV analysis functions: \code{\link{cnv_autoCaptureSignatures}},
 Geoffrey Macintyre, Shixiang Wang
 }
 \concept{CNV analysis functions}
+\keyword{signature}

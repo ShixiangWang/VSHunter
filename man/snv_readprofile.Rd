@@ -2,6 +2,7 @@
 % Please edit documentation in R/snv_main.R
 \name{snv_readprofile}
 \alias{snv_readprofile}
+\alias{read_snv}
 \title{Read MAF files.}
 \usage{
 snv_readprofile(maf, clinicalData = NULL,

@@ -16,12 +16,12 @@ Wang, Shixiang, et al. \"APOBEC3B and APOBEC mutational signature
     packageStartupMessage(msg)
 }
 
-# .onLoad <- function(libname, pkgname) {
-#     # for (i in c("NMF")) {
-#     #     suppressMessages(requireNamespace(i, quietly = TRUE))
-#     # }
-#     invisible(suppressPackageStartupMessages(
-#         sapply(c("NMF"),
-#                requireNamespace, quietly = TRUE)
-#     ))
-# }
+.onLoad <- function(libname, pkgname) {
+    # for (i in c("NMF")) {
+    #     suppressMessages(requireNamespace(i, quietly = TRUE))
+    # }
+    invisible(suppressPackageStartupMessages(
+        sapply(c("NMF"),
+               requireNamespace, quietly = TRUE)
+    ))
+}

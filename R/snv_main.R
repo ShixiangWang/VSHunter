@@ -1,6 +1,7 @@
 #' @inherit maftools::read.maf
 #' @importFrom  maftools read.maf
 #' @family SNV analysis functions
+#' @aliases read_snv
 #' @examples
 #' \dontrun{
 #' laml.maf <- system.file("extdata", "tcga_laml.maf.gz", package = "maftools")
@@ -31,6 +32,7 @@ snv_readprofile = function(
 #' @inherit maftools::trinucleotideMatrix
 #' @importFrom  maftools trinucleotideMatrix
 #' @family SNV analysis functions
+#' @aliases trinucleotide
 #' @examples
 #' \dontrun{
 #' laml.tnm <- snv_trinucleotideMatrix(maf = laml, ref_genome = 'BSgenome.Hsapiens.UCSC.hg19',
@@ -48,9 +50,11 @@ snv_trinucleotideMatrix = function(
 
 #' @inherit maftools::extractSignatures
 #' @importFrom  maftools extractSignatures
+#' @import NMF
 #' @param nrun number of runs to perform on user specified rank.
 #' @param nrun_Try number of runs to perform when obtain a best-fit rank for NMF.
 #' @family SNV analysis functions
+#' @aliases snv_signatures
 #' @examples
 #' \dontrun{
 #' laml.tnm <- snv_trinucleotideMatrix(maf = laml, ref_genome = 'BSgenome.Hsapiens.UCSC.hg19',
@@ -437,14 +441,18 @@ snv_signatureEnrichment = function(
 #'
 #' This code is modified from [source](https://github.com/naikai/sake/blob/master/R/nmf_utils.R).
 #' @param nmfObj NMF run results
+#' @param type a character string that indicates the type of cluster membership should be returned，
+#' valid input is 'samples' or 'consensus'.
+#' @param matchConseOrder if `TRUE`, oder samples as they are shown in consensus map.
 #' @keywords NMF groups
+#' @import cluster
 #' @import NMF
 #' @export
 #' @examples
 #' \dontrun{
 #' nmf_extract_group(nmf_res)
 #' }
-nmf_extract_group <- function(nmfObj, type="consensus", matchConseOrder=F){
+nmf_extract_group <- function(nmfObj, type="consensus", matchConseOrder=FALSE){
     data <- NULL
     if(type=="consensus"){
         predict.consensus <- predict(nmfObj, what="consensus")

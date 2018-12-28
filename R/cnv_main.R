@@ -629,7 +629,6 @@ cnv_generateSbCMatrix = function(CN_features,
 #' @param testRandom Should generate random data from input to test measurements. Default is `TRUE`.
 #' @param nmfalg specification of the NMF algorithm.
 #' @author Geoffrey Macintyre, Shixiang Wang
-#' @importFrom NMF nmfEstimateRank consensusmap summary
 #' @importFrom grDevices pdf dev.off
 #' @return a `list` contains information of NMF run and rank survey.
 #' @export
@@ -778,9 +777,10 @@ cnv_chooseSigNumber <-
 #' @inheritParams cnv_chooseSigNumber
 #' @param nsig specification of the factorization rank.
 #' @author Geoffrey Macintyre, Shixiang Wang
-#' @importFrom NMF nmf
 #' @return a object of \code{NMF} run.
 #' @export
+#' @aliases signatures
+#' @keywords signature
 #' @family CNV analysis functions
 #' @seealso [cnv_plotSignatures()] for plot signatures and their contributions.
 #' @examples
@@ -884,7 +884,6 @@ cnv_quantifySigExposure <-
 #' @inheritParams cnv_chooseSigNumber
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a `list` contains results of NMF best rank survey, run, signature matrix, exposure list etc..
-#' @importFrom NMF basis coef
 #' @export
 #' @inherit cnv_extractSignatures seealso
 #' @family CNV analysis functions
@@ -971,6 +970,7 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' @author Shixiang Wang <w_shixiang@163.com>
 #' @return a `list` contains results of NMF best rank survey, run, signature matrix, exposure list etc..
 #' @export
+#' @aliases pipeline
 #' @inherit cnv_extractSignatures seealso
 #' @family CNV analysis functions
 #' @examples
