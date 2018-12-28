@@ -131,13 +131,6 @@ tcga_sig_choose2 = cnv_chooseSigNumber(tcga_sample_component_matrix, nrun = 10, 
 tcga_signatures = cnv_extractSignatures(tcga_sample_component_matrix, nsig = 3, cores = 4)
 ```
 
-### Quantify exposure for samples
-
-```{r}
-w = NMF::basis(tcga_signatures)
-#h = NMF::coef(tcga_signatures)
-tcga_exposure = cnv_quantifySigExposure(sample_by_component = tcga_sample_component_matrix, component_by_signature = w)
-```
 
 ### Auto-capture signatures
 

@@ -45,7 +45,7 @@ cnv_plotSignatures = function(Res = NULL,
             x / sum(x)) # Scale signatures (basis)
         colnames(w) = paste("Signature", 1:ncol(w), sep = "_")
 
-        #-- Contribution (this mainly come from result of LCD, it is ok directly from NMF)
+        #-- Contributions
         h = NMF::coef(Res)
         h = apply(h, 2, function(x)
             x / sum(x)) # Scale contributions (coefs)

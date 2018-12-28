@@ -625,11 +625,12 @@ cnv_generateSbCMatrix = function(CN_features,
 #' @inheritParams cnv_derivefeatures
 #' @param seed seed number.
 #' @param plot logical. If `TRUE`, plot rank survey.
+#' @param consensusmap_name a character, basename of consensus map output path.
 #' @param testRandom Should generate random data from input to test measurements. Default is `TRUE`.
 #' @param nmfalg specification of the NMF algorithm.
 #' @author Geoffrey Macintyre, Shixiang Wang
-#' @import NMF
-#' @import grDevices
+#' @importFrom NMF nmfEstimateRank consensusmap summary
+#' @importFrom grDevices pdf dev.off
 #' @return a `list` contains information of NMF run and rank survey.
 #' @export
 #' @family CNV analysis functions
@@ -655,6 +656,7 @@ cnv_chooseSigNumber <-
              cores = 1,
              seed = 123456,
              plot = TRUE,
+             consensusmap_name = "nmf_consensus",
              testRandom = TRUE,
              nmfalg = "brunet")
     {
@@ -674,7 +676,7 @@ cnv_chooseSigNumber <-
             )
 
         pdf(
-            'nmf_consensus.pdf',
+            paste0(consensusmap_name, ".pdf"),
             bg = 'white',
             pointsize = 9,
             width = 12,
@@ -683,10 +685,10 @@ cnv_chooseSigNumber <-
         )
         NMF::consensusmap(estim.r)
         dev.off()
-        message('created nmf_consensus.pdf')
+        message('created ', paste0(consensusmap_name, ".pdf"))
 
         #--- copy from maftools and modified ---#
-        nmf.sum = summary(estim.r) # Get summary of estimates
+        nmf.sum = NMF::summary(estim.r) # Get summary of estimates
         print(nmf.sum)
         nmf.sum$diff = c(0, diff(nmf.sum$cophenetic))
         bestFit = nmf.sum$rank[which(nmf.sum$diff < 0)][1]
@@ -751,27 +753,6 @@ cnv_chooseSigNumber <-
 
             print(p)
 
-            pdf(
-                'nmf_rank_survey.pdf',
-                bg = 'white',
-                pointsize = 9,
-                width = 8,
-                height = 6,
-                paper = "special"
-            )
-            print(p)
-            dev.off()
-
-            # return(
-            #     list(
-            #         nmfEstimate = estim.r,
-            #         bestRank = n,
-            #         survey = nmf.sum,
-            #         survey_plot = p,
-            #         seed = seed
-            #     )
-            # )
-
         }
 
         if (!plot)
@@ -797,11 +778,11 @@ cnv_chooseSigNumber <-
 #' @inheritParams cnv_chooseSigNumber
 #' @param nsig specification of the factorization rank.
 #' @author Geoffrey Macintyre, Shixiang Wang
-#' @import NMF
+#' @importFrom NMF nmf
 #' @return a object of \code{NMF} run.
 #' @export
 #' @family CNV analysis functions
-#' @seealso [cnv_plotSignatures()] for plot signatures and their exposures (contributions).
+#' @seealso [cnv_plotSignatures()] for plot signatures and their contributions.
 #' @examples
 #' \dontrun{
 #' ## load example copy-number data from tcga
@@ -832,7 +813,7 @@ cnv_extractSignatures <-
             seed = seed,
             nrun = 1000,
             method = nmfalg,
-            .opt = paste0("vp", cores)
+            .opt = paste0("p", cores)
         )
     }
 
@@ -903,7 +884,7 @@ cnv_quantifySigExposure <-
 #' @inheritParams cnv_chooseSigNumber
 #' @author Geoffrey Macintyre, Shixiang Wang
 #' @return a `list` contains results of NMF best rank survey, run, signature matrix, exposure list etc..
-#' @import doParallel NMF
+#' @importFrom NMF basis coef
 #' @export
 #' @inherit cnv_extractSignatures seealso
 #' @family CNV analysis functions
@@ -926,6 +907,7 @@ cnv_autoCaptureSignatures = function(sample_by_component,
                                      cores = 1,
                                      seed = 123456,
                                      plot = TRUE,
+                                     consensusmap_name = "nmf_consensus",
                                      testRandom = TRUE,
                                      nmfalg = "brunet") {
     choose_res = cnv_chooseSigNumber(
@@ -935,23 +917,32 @@ cnv_autoCaptureSignatures = function(sample_by_component,
         cores,
         seed,
         plot = plot,
+        consensusmap_name = consensusmap_name,
         testRandom = testRandom,
         nmfalg = nmfalg
     )
     NMF_res = cnv_extractSignatures(sample_by_component,
                                     nsig = choose_res$bestRank,
                                     cores = cores, nmfalg = nmfalg)
+    #-- Signatures
     w = NMF::basis(NMF_res)
-    #h = NMF::coef(NMF_res)
-    exposure = cnv_quantifySigExposure(sample_by_component = sample_by_component,
-                                       component_by_signature = w)
+    w = apply(w, 2, function(x)
+        x / sum(x)) # Scale signatures (basis)
+    colnames(w) = paste("Signature", 1:ncol(w), sep = "_")
+
+    #-- Contributions
+    h = NMF::coef(NMF_res)
+    h = apply(h, 2, function(x)
+        x / sum(x)) # Scale contributions (coefs)
+
+    rownames(h) = paste("Signature", 1:ncol(w), sep = "_")
     message("Done.")
 
     return(
         list(
             NMF = NMF_res,
-            signature = w,
-            exposure = exposure,
+            signatures = w,
+            contributions = h,
             nmfEstimate = choose_res$nmfEstimate,
             nmfEstimate.random = choose_res$nmfEstimate.random,
             bestRank = choose_res$bestRank,
@@ -979,7 +970,6 @@ cnv_autoCaptureSignatures = function(sample_by_component,
 #' argument is `NULL`, it will use reference components from Nature Genetics paper.
 #' @author Shixiang Wang <w_shixiang@163.com>
 #' @return a `list` contains results of NMF best rank survey, run, signature matrix, exposure list etc..
-#' @import foreach doParallel NMF
 #' @export
 #' @inherit cnv_extractSignatures seealso
 #' @family CNV analysis functions
@@ -1006,6 +996,7 @@ cnv_pipe = function(CN_data,
                     nrun = 10,
                     seed = 123456,
                     plot_survey = TRUE,
+                    consensusmap_name = "nmf_consensus",
                     testRandom = FALSE,
                     nmfalg = "brunet",
                     tmp = FALSE) {
@@ -1112,6 +1103,7 @@ cnv_pipe = function(CN_data,
             cores = cores,
             seed = seed,
             plot = plot_survey,
+            consensusmap_name = consensusmap_name,
             testRandom = testRandom,
             nmfalg = nmfalg
         )

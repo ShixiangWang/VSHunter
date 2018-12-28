@@ -5,7 +5,8 @@
 \title{Choose optimal number of signatures}
 \usage{
 cnv_chooseSigNumber(sample_by_component, nTry = 12, nrun = 10,
-  cores = 1, seed = 123456, plot = TRUE, testRandom = TRUE,
+  cores = 1, seed = 123456, plot = TRUE,
+  consensusmap_name = "nmf_consensus", testRandom = TRUE,
   nmfalg = "brunet")
 }
 \arguments{
@@ -26,6 +27,8 @@ cores in your computer, it may cause some unexpected problems.}
 \item{seed}{seed number.}
 
 \item{plot}{logical. If \code{TRUE}, plot rank survey.}
+
+\item{consensusmap_name}{a character, basename of consensus map output path.}
 
 \item{testRandom}{Should generate random data from input to test measurements. Default is \code{TRUE}.}
 

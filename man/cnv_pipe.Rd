@@ -8,7 +8,8 @@ cnv_pipe(CN_data, cores = 1, genome_build = c("hg19", "hg38"),
   de_novo = TRUE, reference_components = NULL, min_comp = 2,
   max_comp = 10, min_prior = 0.001, model_selection = "BIC",
   nrep = 1, niter = 1000, nTry = 12, ranks = NULL, nrun = 10,
-  seed = 123456, plot_survey = TRUE, testRandom = FALSE,
+  seed = 123456, plot_survey = TRUE,
+  consensusmap_name = "nmf_consensus", testRandom = FALSE,
   nmfalg = "brunet", tmp = FALSE)
 }
 \arguments{
@@ -57,6 +58,8 @@ According to \strong{NMF} package documentation, \code{nrun} set to 30~50 is eno
 \item{seed}{seed number.}
 
 \item{plot_survey}{logical. If \code{TRUE}, plot rank survey.}
+
+\item{consensusmap_name}{a character, basename of consensus map output path.}
 
 \item{testRandom}{Should generate random data from input to test measurements. Default is \code{TRUE}.}
 

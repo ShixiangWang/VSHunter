@@ -45,7 +45,7 @@ tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_compone
 }
 }
 \seealso{
-\code{\link[=cnv_plotSignatures]{cnv_plotSignatures()}} for plot signatures and their exposures (contributions).
+\code{\link[=cnv_plotSignatures]{cnv_plotSignatures()}} for plot signatures and their contributions.
 
 Other CNV analysis functions: \code{\link{cnv_autoCaptureSignatures}},
   \code{\link{cnv_chooseSigNumber}},
