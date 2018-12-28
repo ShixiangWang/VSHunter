@@ -445,7 +445,6 @@ snv_signatureEnrichment = function(
 #' valid input is 'samples' or 'consensus'.
 #' @param matchConseOrder if `TRUE`, oder samples as they are shown in consensus map.
 #' @keywords NMF groups
-#' @import cluster
 #' @import NMF
 #' @export
 #' @examples

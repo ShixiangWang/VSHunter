@@ -692,6 +692,9 @@ cnv_chooseSigNumber <-
         nmf.sum$diff = c(0, diff(nmf.sum$cophenetic))
         bestFit = nmf.sum$rank[which(nmf.sum$diff < 0)][1]
         #bestFit = nmf.sum[diff < 0, rank][1] #First point where cophenetic correlation coefficient starts decreasing
+        if (is.na(bestFit) | is.null(bestFit)) {
+            stop("Cannot find appropriate rank, please reset your arguments.")
+        }
 
         # https://blog.csdn.net/YJJ18636810884/article/details/83214566
         # https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-367
