@@ -1,6 +1,9 @@
+library("VSHunter")
+
 context("General test for common functions")
 
 test_that("example data exists", {
+    skip_on_cran()
     example_data = system.file("inst/extdata", "example_cn_list.RData", package = "VSHunter")
     expect_equal(file.exists(example_data), TRUE)
 })
