@@ -18,7 +18,8 @@ Imports: flexmix,
          data.table,
          RColorBrewer,
          maftools,
-         cowplot
+         cowplot,
+         cluster
 Suggests: 
     knitr,
     rmarkdown,
@@ -27,7 +28,8 @@ Suggests:
     YAPSA,
     QDNAseq,
     Biobase,
-    testthat
+    testthat,
+    covr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

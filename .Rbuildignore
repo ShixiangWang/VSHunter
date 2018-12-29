@@ -1,3 +1,5 @@
+^codecov\.yml$
+^\.travis\.yml$
 ^CRAN-RELEASE$
 ^doc$
 ^docs$
