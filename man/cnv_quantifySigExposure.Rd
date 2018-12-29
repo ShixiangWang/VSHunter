@@ -31,7 +31,7 @@ tcga_components = cnv_fitMixModels(CN_features = tcga_features, cores = 1)
 ## generate a sample-by-component matrix
 tcga_sample_component_matrix = cnv_generateSbCMatrix(tcga_features, tcga_components, cores = 1)
 ## optimal rank survey
- tcga_sig_choose = cnv_chooseSigNumber(tcga_sample_component_matrix,
+tcga_sig_choose = cnv_chooseSigNumber(tcga_sample_component_matrix,
  nrun = 10, cores = 1, plot = FALSE)
  tcga_signatures = cnv_extractSignatures(tcga_sample_component_matrix, nsig = 3, cores = 1)
  w = NMF::basis(tcga_signatures) # signature matrix

@@ -18,6 +18,8 @@ test_that("cnv_* (analysis) separated functions work normal", {
     expect_is(components, "list")
     sbc_matrix = cnv_generateSbCMatrix(features, components)
     expect_is(sbc_matrix, "matrix")
+
+    skip_on_travis()
     res = cnv_autoCaptureSignatures(sbc_matrix, nTry = 3)
     expect_is(res, "list")
 
