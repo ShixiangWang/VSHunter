@@ -8,8 +8,7 @@ tag](https://img.shields.io/github/tag/ShixiangWang/VSHunter.svg?label=Github)](
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Travis build
 status](https://travis-ci.org/ShixiangWang/VSHunter.svg?branch=master)](https://travis-ci.org/ShixiangWang/VSHunter)
-[![Coverage
-status](https://codecov.io/gh/ShixiangWang/cnPattern/branch/master/graph/badge.svg)](https://codecov.io/github/ShixiangWang/cnPattern?branch=master)
+[![codecov](https://codecov.io/gh/ShixiangWang/VSHunter/branch/master/graph/badge.svg)](https://codecov.io/gh/ShixiangWang/VSHunter)
 
 The goal of VSHunter is to capture variation signature from genomic
 data. For now, we decode copy number pattern from **absolute copy number

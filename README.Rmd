@@ -6,7 +6,7 @@ output: github_document
 
 # VSHunter: Capture Variation Signatures from Genomic Data
 
-[![GitHub tag](https://img.shields.io/github/tag/ShixiangWang/VSHunter.svg?label=Github)](https://github.com/ShixiangWang/VSHunter) [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental) [![Travis build status](https://travis-ci.org/ShixiangWang/VSHunter.svg?branch=master)](https://travis-ci.org/ShixiangWang/VSHunter) [![Coverage status](https://codecov.io/gh/ShixiangWang/cnPattern/branch/master/graph/badge.svg)](https://codecov.io/github/ShixiangWang/cnPattern?branch=master)
+[![GitHub tag](https://img.shields.io/github/tag/ShixiangWang/VSHunter.svg?label=Github)](https://github.com/ShixiangWang/VSHunter) [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental) [![Travis build status](https://travis-ci.org/ShixiangWang/VSHunter.svg?branch=master)](https://travis-ci.org/ShixiangWang/VSHunter) [![codecov](https://codecov.io/gh/ShixiangWang/VSHunter/branch/master/graph/badge.svg)](https://codecov.io/gh/ShixiangWang/VSHunter)
 
 The goal of VSHunter is to capture variation signature from genomic data. For now, we decode copy number pattern from **absolute copy number profile**. This package collects R code from paper _[Copy number signatures and mutational processes in ovarian carcinoma](https://www.nature.com/articles/s41588-018-0179-8)_ and tidy them as a open source R package for bioinformatics community.
 
