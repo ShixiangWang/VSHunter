@@ -94,7 +94,7 @@ cnv_readprofile = function(input,
                 }
                 temp = temp[, cols]
                 colnames(temp) = c("chromosome", "start", "end", "segVal")
-                if (nrow(temp) <= 22) {
+                if (nrow(temp) <= 0) {
                     warning("Sample ",
                             tempName,
                             " is discarded because of few segments (<=22)")
@@ -106,7 +106,7 @@ cnv_readprofile = function(input,
                 message("Select file names as sample names.")
                 temp = temp[, cols]
                 colnames(temp) = c("chromosome", "start", "end", "segVal")
-                if (nrow(temp) <= 22) {
+                if (nrow(temp) <= 0) {
                     warning("File ",
                             files[i],
                             " is discarded because of few segments (<=22)")
@@ -147,7 +147,7 @@ cnv_readprofile = function(input,
         tempDF = tempDF[, cols]
         colnames(tempDF) = c("chromosome", "start", "end", "segVal")
 
-        if (nrow(tempDF) <= 22) {
+        if (nrow(tempDF) <= 0) {
             warning("Sample ",
                     samples[i],
                     " is discarded because of few segments (<=22)")
