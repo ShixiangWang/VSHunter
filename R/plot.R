@@ -52,9 +52,9 @@ cnv_plotSignatures = function(Res = NULL,
 
         rownames(h) = paste("Signature", 1:ncol(w), sep = "_")
     } else if (is.list(Res)) {
-        if (!all(c("signature", "exposure") %in% names(Res)))
-            stop("signature and exposure elements must in input list.")
-        w = Res$signature
+        if (!all(c("signatures", "contributions") %in% names(Res)))
+            stop("signatures and contributions elements must in input list.")
+        w = Res$signatures
         w = apply(w, 2, function(x)
             x / sum(x)) # Scale signatures (basis)
 
@@ -62,7 +62,7 @@ cnv_plotSignatures = function(Res = NULL,
             colnames(w) = paste("Signature", 1:ncol(w), sep = "_")
         }
 
-        h = Res$exposure$relative_exposure
+        h = Res$contributions
         if (is.null(rownames(h))) {
             rownames(h) = paste("Signature", 1:ncol(w), sep = "_")
         }
